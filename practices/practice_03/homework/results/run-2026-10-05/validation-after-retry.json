@@ -1,0 +1,50 @@
+{
+  "only_system_prompt_changed": true,
+  "inputs_unchanged": true,
+  "report_original_prefix_preserved": true,
+  "fresh_sessions": 18,
+  "original_ab_and_speed_sessions": 16,
+  "extra_retry_sessions": 2,
+  "successful_reads": 23,
+  "failed_reads": 3,
+  "only_allowed_sources_read": true,
+  "reasoning_events_excluded": true,
+  "failed_or_empty_runs": [
+    "b-q3",
+    "retry-b-q3-1",
+    "retry-b-q3-2"
+  ],
+  "tests": {
+    "command": [
+      "make",
+      "test"
+    ],
+    "exit_code": 0,
+    "stdout": "Practice 1 artifacts: OK\nPractice 2 artifacts: OK\nStandard library only: ready\n",
+    "stderr": "test_duplicate (test_service.SubscribeTest.test_duplicate) ... ok\ntest_empty (test_service.SubscribeTest.test_empty) ... ok\ntest_subscribe (test_service.SubscribeTest.test_subscribe) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n",
+    "wall_seconds": 0.14288487497833557
+  },
+  "resources_after": {
+    "models": [
+      {
+        "name": "itmo-agent:latest",
+        "model": "itmo-agent:latest",
+        "size": 5295728229,
+        "digest": "f47072b51e7dc17d777811f2d5ad8fcc4802412edc6c039de171f148cca55f36",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "4.7B",
+          "quantization_level": "Q4_K_M"
+        },
+        "expires_at": "2026-10-05T20:05:16.181802+03:00",
+        "size_vram": 5295728229,
+        "context_length": 65536
+      }
+    ]
+  }
+}

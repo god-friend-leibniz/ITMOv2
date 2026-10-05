@@ -1,0 +1,26 @@
+{
+  "only_system_prompt_changed": true,
+  "inputs_unchanged": true,
+  "report_original_prefix_preserved": true,
+  "fresh_sessions": 16,
+  "successful_reads": 23,
+  "failed_reads": 3,
+  "only_allowed_sources_read": true,
+  "reasoning_events_excluded": true,
+  "failed_or_empty_runs": [
+    "b-q3"
+  ],
+  "tests": {
+    "command": [
+      "make",
+      "test"
+    ],
+    "exit_code": 0,
+    "stdout": "Practice 1 artifacts: OK\nPractice 2 artifacts: OK\nStandard library only: ready\n",
+    "stderr": "test_duplicate (test_service.SubscribeTest.test_duplicate) ... ok\ntest_empty (test_service.SubscribeTest.test_empty) ... ok\ntest_subscribe (test_service.SubscribeTest.test_subscribe) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n",
+    "wall_seconds": 0.16364754099049605
+  },
+  "resources_after": {
+    "models": []
+  }
+}

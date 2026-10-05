@@ -1,0 +1,64 @@
+{
+  "demo_unchanged": true,
+  "before": {
+    "Makefile": "7a2570dd2c7d0ce6f99a457f2b71b50f9dc1df042cba1e5f6bcf5cfa6c4ebef7",
+    "README.md": "5ae7b40a1eb237b415c2d1dd8badf40a928f0ca2c93b575c633366706845c58a",
+    "opencode.json": "8fbb717465e39ef3ab6c712d390103a91c8435aee78f51a3f38106d8d9553486",
+    "repo-system.txt": "693a627fd0805d75bd08047e8a2a61d555e309a620df091c86f5e66f60bd4315",
+    "service.py": "ecac77b689331d189f22b89e018b0ca1d27733ef24a162283f89aff92afa319d",
+    "test_service.py": "dd81c5c9d327c5ac3c69e870c0f4fec61166c1eeb6b8ec7872d49499d832a7e1"
+  },
+  "after": {
+    "Makefile": "7a2570dd2c7d0ce6f99a457f2b71b50f9dc1df042cba1e5f6bcf5cfa6c4ebef7",
+    "README.md": "5ae7b40a1eb237b415c2d1dd8badf40a928f0ca2c93b575c633366706845c58a",
+    "opencode.json": "8fbb717465e39ef3ab6c712d390103a91c8435aee78f51a3f38106d8d9553486",
+    "repo-system.txt": "693a627fd0805d75bd08047e8a2a61d555e309a620df091c86f5e66f60bd4315",
+    "service.py": "ecac77b689331d189f22b89e018b0ca1d27733ef24a162283f89aff92afa319d",
+    "test_service.py": "dd81c5c9d327c5ac3c69e870c0f4fec61166c1eeb6b8ec7872d49499d832a7e1"
+  },
+  "tests": {
+    "command": [
+      "make",
+      "test"
+    ],
+    "cwd": "/Users/maxwell/itmo/AI/ITMOv2/practices/practice_03/lab",
+    "exit_code": 0,
+    "stdout": "Standard library only: ready\n/Library/Developer/CommandLineTools/usr/bin/make -C demo test\npython3 -m unittest -v\n",
+    "stderr": "test_duplicate (test_service.SubscribeTest.test_duplicate) ... ok\ntest_empty (test_service.SubscribeTest.test_empty) ... ok\ntest_subscribe (test_service.SubscribeTest.test_subscribe) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n",
+    "wall_seconds": 0.12609450001036748
+  },
+  "agent_ps": {
+    "command": [
+      "ollama",
+      "ps"
+    ],
+    "cwd": "/Users/maxwell/itmo/AI/ITMOv2/practices/practice_03/lab",
+    "exit_code": 0,
+    "stdout": "NAME                 ID              SIZE      PROCESSOR    CONTEXT    UNTIL              \nitmo-agent:latest    f47072b51e7d    5.4 GB    100% GPU     65536      4 minutes from now    \n",
+    "stderr": "",
+    "wall_seconds": 0.15898179200303275
+  },
+  "agent_api_ps": {
+    "models": [
+      {
+        "name": "itmo-agent:latest",
+        "model": "itmo-agent:latest",
+        "size": 5446744144,
+        "digest": "f47072b51e7dc17d777811f2d5ad8fcc4802412edc6c039de171f148cca55f36",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "4.7B",
+          "quantization_level": "Q4_K_M"
+        },
+        "expires_at": "2026-10-05T16:05:32.065167+03:00",
+        "size_vram": 5446744144,
+        "context_length": 65536
+      }
+    ]
+  }
+}

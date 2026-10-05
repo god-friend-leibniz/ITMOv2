@@ -1,0 +1,36 @@
+{
+  "ps": {
+    "command": [
+      "ollama",
+      "ps"
+    ],
+    "cwd": "/Users/maxwell/itmo/AI/ITMOv2/practices/practice_03/lab",
+    "exit_code": 0,
+    "stdout": "NAME                 ID              SIZE      PROCESSOR    CONTEXT    UNTIL              \nitmo-agent:latest    f47072b51e7d    5.4 GB    100% GPU     65536      4 minutes from now    \n",
+    "stderr": "",
+    "wall_seconds": 0.015916000003926456
+  },
+  "api_ps": {
+    "models": [
+      {
+        "name": "itmo-agent:latest",
+        "model": "itmo-agent:latest",
+        "size": 5446744144,
+        "digest": "f47072b51e7dc17d777811f2d5ad8fcc4802412edc6c039de171f148cca55f36",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "4.7B",
+          "quantization_level": "Q4_K_M"
+        },
+        "expires_at": "2026-10-05T16:02:43.668087+03:00",
+        "size_vram": 5446744144,
+        "context_length": 65536
+      }
+    ]
+  }
+}

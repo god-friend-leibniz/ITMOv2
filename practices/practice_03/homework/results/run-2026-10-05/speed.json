@@ -1,0 +1,42 @@
+{
+  "A": {
+    "runs": [
+      "speed-a-1",
+      "speed-a-2",
+      "speed-a-3"
+    ],
+    "wall_seconds": [
+      24.991369457988185,
+      24.94047674999456,
+      26.011484417002066
+    ],
+    "median_wall_seconds": 24.991369457988185,
+    "output_tokens": [
+      357,
+      357,
+      357
+    ],
+    "method": "Three fresh warmed OpenCode sessions answering the same q1; wall includes CLI, inference and read tools",
+    "ttft_measured": false
+  },
+  "B": {
+    "runs": [
+      "speed-b-1",
+      "speed-b-2",
+      "speed-b-3"
+    ],
+    "wall_seconds": [
+      28.921432625007583,
+      27.806114459002856,
+      28.052839125011815
+    ],
+    "median_wall_seconds": 28.052839125011815,
+    "output_tokens": [
+      413,
+      413,
+      413
+    ],
+    "method": "Three fresh warmed OpenCode sessions answering the same q1; wall includes CLI, inference and read tools",
+    "ttft_measured": false
+  }
+}

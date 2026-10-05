@@ -1,0 +1,35 @@
+{
+  "ps": {
+    "command": [
+      "ollama",
+      "ps"
+    ],
+    "exit_code": 0,
+    "stdout": "NAME                 ID              SIZE      PROCESSOR    CONTEXT    UNTIL              \nitmo-agent:latest    f47072b51e7d    5.3 GB    100% GPU     65536      4 minutes from now    \n",
+    "stderr": "",
+    "wall_seconds": 0.07498041600047145
+  },
+  "api_ps": {
+    "models": [
+      {
+        "name": "itmo-agent:latest",
+        "model": "itmo-agent:latest",
+        "size": 5295728229,
+        "digest": "f47072b51e7dc17d777811f2d5ad8fcc4802412edc6c039de171f148cca55f36",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "4.7B",
+          "quantization_level": "Q4_K_M"
+        },
+        "expires_at": "2026-10-05T16:50:59.956517+03:00",
+        "size_vram": 5295728229,
+        "context_length": 65536
+      }
+    ]
+  }
+}
