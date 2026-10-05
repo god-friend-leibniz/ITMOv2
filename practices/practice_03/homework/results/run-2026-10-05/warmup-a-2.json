@@ -1,0 +1,19 @@
+{
+  "response": {
+    "model": "itmo-agent",
+    "created_at": "2026-10-05T13:53:09.806058Z",
+    "message": {
+      "role": "assistant",
+      "content": "READY"
+    },
+    "done": true,
+    "done_reason": "stop",
+    "total_duration": 401390042,
+    "load_duration": 183229917,
+    "prompt_eval_count": 17,
+    "prompt_eval_duration": 125218000,
+    "eval_count": 2,
+    "eval_duration": 37867000
+  },
+  "wall_seconds": 0.40255354199325666
+}

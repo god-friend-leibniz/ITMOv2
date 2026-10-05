@@ -1,0 +1,54 @@
+{
+  "baseline_warm": {
+    "files": [
+      "baseline-warm1",
+      "baseline-warm2",
+      "baseline-warm3"
+    ],
+    "median": {
+      "wall_seconds": 13.52478091600642,
+      "load_seconds": 0.160613875,
+      "total_seconds": 13.514364416,
+      "decode_tokens_per_second": 24.003540636546465
+    }
+  },
+  "system_warm": {
+    "files": [
+      "system-warm1",
+      "system-warm2",
+      "system-warm3"
+    ],
+    "median": {
+      "wall_seconds": 3.1102019999962067,
+      "load_seconds": 0.160298375,
+      "total_seconds": 3.098219542,
+      "decode_tokens_per_second": 24.441320993181936
+    }
+  },
+  "temperature_0.2": {
+    "files": [
+      "low42",
+      "low43",
+      "low44"
+    ],
+    "median": {
+      "wall_seconds": 2.960211083001923,
+      "load_seconds": 0.163498791,
+      "total_seconds": 2.950145541,
+      "decode_tokens_per_second": 22.59026529811129
+    }
+  },
+  "temperature_0.8": {
+    "files": [
+      "hot42",
+      "hot43",
+      "hot44"
+    ],
+    "median": {
+      "wall_seconds": 3.3229298749938607,
+      "load_seconds": 0.162775583,
+      "total_seconds": 3.312764791,
+      "decode_tokens_per_second": 25.77725018870269
+    }
+  }
+}

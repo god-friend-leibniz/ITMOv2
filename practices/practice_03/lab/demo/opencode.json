@@ -2,16 +2,45 @@
   "$schema": "https://opencode.ai/config.json",
   "model": "ollama/itmo-agent",
   "small_model": "ollama/itmo-agent",
+  "default_agent": "local-guide",
+  "enabled_providers": ["ollama"],
+  "autoupdate": false,
+  "share": "disabled",
+  "snapshot": false,
+  "plugin": [],
+  "lsp": false,
+  "formatter": false,
+  "permission": {
+    "*": "deny",
+    "read": {
+      "*": "deny",
+      "practices/practice_03/lab/demo/README.md": "allow",
+      "practices/practice_03/lab/demo/Makefile": "allow",
+      "practices/practice_03/lab/demo/service.py": "allow",
+      "practices/practice_03/lab/demo/test_service.py": "allow"
+    },
+    "glob": "deny",
+    "grep": "deny",
+    "bash": "deny",
+    "edit": "deny",
+    "task": "deny",
+    "skill": "deny",
+    "webfetch": "deny",
+    "websearch": "deny",
+    "external_directory": "deny"
+  },
   "provider": {
     "ollama": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "Ollama local",
       "options": {
-        "baseURL": "http://localhost:11434/v1"
+        "baseURL": "http://127.0.0.1:11435/v1"
       },
       "models": {
         "itmo-agent": {
           "name": "ITMO local 64k",
+          "tool_call": true,
+          "options": {"think": false, "seed": 42},
           "limit": {
             "context": 65536,
             "output": 4096
@@ -26,13 +55,26 @@
       "mode": "primary",
       "prompt": "{file:./repo-system.txt}",
       "steps": 8,
+      "temperature": 0.2,
       "permission": {
         "*": "deny",
-        "read": "allow",
-        "glob": "allow",
-        "grep": "allow"
+        "read": {
+          "*": "deny",
+          "practices/practice_03/lab/demo/README.md": "allow",
+          "practices/practice_03/lab/demo/Makefile": "allow",
+          "practices/practice_03/lab/demo/service.py": "allow",
+          "practices/practice_03/lab/demo/test_service.py": "allow"
+        },
+        "glob": "deny",
+        "grep": "deny",
+        "bash": "deny",
+        "edit": "deny",
+        "task": "deny",
+        "skill": "deny",
+        "webfetch": "deny",
+        "websearch": "deny",
+        "external_directory": "deny"
       }
     }
   }
 }
-

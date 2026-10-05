@@ -1,0 +1,204 @@
+{
+  "date_utc": "2026-10-05T13:40:09.894004+00:00",
+  "endpoint": "http://127.0.0.1:11435",
+  "commands": [
+    {
+      "command": [
+        "sw_vers"
+      ],
+      "exit_code": 0,
+      "stdout": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83\n",
+      "stderr": "",
+      "wall_seconds": 0.008099458005744964
+    },
+    {
+      "command": [
+        "sysctl",
+        "-n",
+        "machdep.cpu.brand_string",
+        "hw.memsize",
+        "hw.ncpu"
+      ],
+      "exit_code": 0,
+      "stdout": "Apple M4\n17179869184\n10\n",
+      "stderr": "",
+      "wall_seconds": 0.00373391700850334
+    },
+    {
+      "command": [
+        "df",
+        "-h",
+        "."
+      ],
+      "exit_code": 0,
+      "stdout": "Filesystem      Size    Used   Avail Capacity iused ifree %iused  Mounted on\n/dev/disk3s5   228Gi   179Gi    21Gi    90%    1.7M  216M    1%   /System/Volumes/Data\n",
+      "stderr": "",
+      "wall_seconds": 0.002466207995894365
+    },
+    {
+      "command": [
+        "ollama",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "ollama version is 0.32.5\n",
+      "stderr": "",
+      "wall_seconds": 0.010850624996237457
+    },
+    {
+      "command": [
+        "opencode",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "1.18.34\n",
+      "stderr": "",
+      "wall_seconds": 0.22146279099979438
+    },
+    {
+      "command": [
+        "python3",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "Python 3.14.6\n",
+      "stderr": "",
+      "wall_seconds": 0.007440707995556295
+    },
+    {
+      "command": [
+        "ollama",
+        "show",
+        "itmo-agent"
+      ],
+      "exit_code": 0,
+      "stdout": "  Model\n    architecture        qwen35    \n    parameters          4.7B      \n    context length      262144    \n    embedding length    2560      \n    quantization        Q4_K_M    \n    requires            0.17.1    \n\n  Capabilities\n    completion    \n    vision        \n    tools         \n    thinking      \n\n  Parameters\n    num_ctx             65536    \n    presence_penalty    1.5      \n    temperature         0.2      \n    top_k               20       \n    top_p               0.95     \n\n  License\n    Apache License               \n    Version 2.0, January 2004    \n    ...                          \n\n",
+      "stderr": "",
+      "wall_seconds": 0.013104249999742024
+    },
+    {
+      "command": [
+        "make",
+        "test"
+      ],
+      "exit_code": 0,
+      "stdout": "Practice 1 artifacts: OK\nPractice 2 artifacts: OK\nStandard library only: ready\n",
+      "stderr": "test_duplicate (test_service.SubscribeTest.test_duplicate) ... ok\ntest_empty (test_service.SubscribeTest.test_empty) ... ok\ntest_subscribe (test_service.SubscribeTest.test_subscribe) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n",
+      "wall_seconds": 0.126285625010496
+    }
+  ],
+  "tags": {
+    "models": [
+      {
+        "name": "itmo-agent:latest",
+        "model": "itmo-agent:latest",
+        "modified_at": "2026-10-05T15:45:59.577287774+03:00",
+        "size": 3389983753,
+        "digest": "f47072b51e7dc17d777811f2d5ad8fcc4802412edc6c039de171f148cca55f36",
+        "details": {
+          "parent_model": "qwen3.5:4b",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "4.7B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 262144,
+          "embedding_length": 2560
+        },
+        "capabilities": [
+          "vision",
+          "completion",
+          "tools",
+          "thinking"
+        ]
+      },
+      {
+        "name": "itmo-local:latest",
+        "model": "itmo-local:latest",
+        "modified_at": "2026-10-05T15:45:59.543263284+03:00",
+        "size": 3389984189,
+        "digest": "055e955d6555910835a97249c7e2ffb47894606686b5eddfed3c7324910a72f0",
+        "details": {
+          "parent_model": "qwen3.5:4b",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "4.7B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 262144,
+          "embedding_length": 2560
+        },
+        "capabilities": [
+          "vision",
+          "completion",
+          "tools",
+          "thinking"
+        ]
+      },
+      {
+        "name": "qwen3.5:4b",
+        "model": "qwen3.5:4b",
+        "modified_at": "2026-09-28T17:51:00.744891108+03:00",
+        "size": 3389983735,
+        "digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "4.7B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 262144,
+          "embedding_length": 2560
+        },
+        "capabilities": [
+          "vision",
+          "completion",
+          "tools",
+          "thinking"
+        ]
+      },
+      {
+        "name": "llava:7b",
+        "model": "llava:7b",
+        "modified_at": "2026-06-25T19:12:02.501019814+03:00",
+        "size": 4733363377,
+        "digest": "8dd30f6b0cb19f555f2c7a7ebda861449ea2cc76bf1f44e262931f45fc81d081",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "llama",
+          "families": [
+            "llama",
+            "clip"
+          ],
+          "parameter_size": "7B",
+          "quantization_level": "Q4_0",
+          "context_length": 32768,
+          "embedding_length": 4096
+        },
+        "capabilities": [
+          "completion",
+          "vision"
+        ]
+      }
+    ]
+  },
+  "inputs_sha256": {
+    "Makefile": "16b462437316f7e64396a9cf212b319c8098344922034498e985dd88f0d6b7ca",
+    "practices/practice_01/Makefile": "d30231478ec84b99e903befcd78700b43e6725603efff7789edb5d3432f3011a",
+    "practices/practice_02/Makefile": "27469adb1ac892b35ca99368e19539546ac7fc49e5ceb47db68dd528d5861f71",
+    "practices/practice_01/TRAINING_PR.diff": "a2e7b12c6df3769a548681fe63031a4bcd30e94b787d4ad04d89b87964bf0872",
+    "practices/practice_01/context.md": "427f070776480c0f92dac945c29dc7c41f340c0216aec636c2f7c356f07dc5c1",
+    "practices/practice_01/adr.md": "7e82a67cdd03bf99b415818e0a16dbb25b3f8a36397f6c5160f20ebdb176cf9c"
+  },
+  "report_original_bytes": 23946,
+  "report_original_sha256": "fde69e93c97f5c2232aca1421154af7935544007a82eae7e2e3e3c87e8c881f7",
+  "only_prompt_changed": true
+}

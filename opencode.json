@@ -1,7 +1,28 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "model": "ollama/qwen3.5:4b",
+  "small_model": "ollama/qwen3.5:4b",
   "default_agent": "build",
+  "enabled_providers": ["ollama"],
   "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (local)",
+      "options": {
+        "baseURL": "http://127.0.0.1:11435/v1"
+      },
+      "models": {
+        "qwen3.5:4b": {
+          "name": "Qwen3.5 4B (local)",
+          "tool_call": true,
+          "options": {"think": false, "seed": 42},
+          "limit": {
+            "context": 65536,
+            "output": 8192
+          }
+        }
+      }
+    },
     "vsellm": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "VseLLM",

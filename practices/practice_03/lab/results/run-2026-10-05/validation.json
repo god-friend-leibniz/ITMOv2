@@ -1,0 +1,14 @@
+{
+  "api_records": 14,
+  "only_system_prompt_changed": true,
+  "only_temperature_changed": true,
+  "fresh_opencode_sessions": 6,
+  "only_allowed_files_read": true,
+  "blocked_reads": 3,
+  "read_tool_confirmed": true,
+  "no_reasoning_events_saved": true,
+  "demo_unchanged": true,
+  "tests_passed": true,
+  "local_provider_only": true,
+  "agent_context": 65536
+}

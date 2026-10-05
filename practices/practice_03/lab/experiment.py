@@ -21,7 +21,7 @@ def main():
     messages.append({"role": "user", "content": context + "\nКакая CI-система запускает тесты проекта?"})
     payload = {"model": args.model, "messages": messages, "stream": False, "think": False,
                "options": {"temperature": args.temperature, "seed": args.seed, "num_ctx": 4096, "num_predict": 512}}
-    request = urllib.request.Request("http://localhost:11434/api/chat",
+    request = urllib.request.Request("http://127.0.0.1:11435/api/chat",
         data=json.dumps(payload).encode(), headers={"Content-Type": "application/json"})
     started = time.perf_counter()
     try:
@@ -41,4 +41,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
