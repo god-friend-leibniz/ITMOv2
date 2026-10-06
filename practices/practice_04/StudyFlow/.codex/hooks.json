@@ -1,0 +1,19 @@
+{
+  "description": "Run StudyFlow's offline tests after relevant edits.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "^(apply_patch|Edit|Write|Bash)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/verify_after_change.py",
+            "timeout": 75,
+            "statusMessage": "Verifying StudyFlow",
+            "async": false
+          }
+        ]
+      }
+    ]
+  }
+}

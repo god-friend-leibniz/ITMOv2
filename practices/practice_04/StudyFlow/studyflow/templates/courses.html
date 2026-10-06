@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Courses · StudyFlow</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <script src="{{ url_for('static', path='courses.js') }}" defer></script>
+  </head>
+  <body>
+    <header><span class="brand">StudyFlow</span><span>Your coursework, organized.</span></header>
+    <main>
+      <section aria-labelledby="courses-heading">
+        <p class="eyebrow">YOUR WORKSPACE</p>
+        <h1 id="courses-heading">Courses</h1>
+        <p class="intro">Start with a course. Build your study routine from here.</p>
+        <div class="course-list">
+          {% for course in courses %}
+          <article class="course">
+            <h2>{{ course.name }}</h2>
+            {% if course.description %}<p>{{ course.description }}</p>{% endif %}
+          </article>
+          {% else %}
+          <p class="empty">No courses yet. Add your first course to get started.</p>
+          {% endfor %}
+        </div>
+      </section>
+      <section class="new-course" aria-labelledby="new-course-heading">
+        <h2 id="new-course-heading">Add a course</h2>
+        <form id="course-form">
+          <label for="name">Course name</label>
+          <input id="name" name="name" required maxlength="200" placeholder="e.g. Algorithms">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" maxlength="5000" rows="4" placeholder="Optional notes about this course"></textarea>
+          <p id="form-error" role="alert" hidden></p>
+          <button type="submit">Add course</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

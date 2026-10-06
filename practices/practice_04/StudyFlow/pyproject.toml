@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "studyflow"
+version = "0.1.0"
+description = "A local university coursework organizer"
+requires-python = ">=3.12,<3.13"
+dependencies = ["fastapi", "uvicorn", "jinja2"]
+
+[dependency-groups]
+dev = ["pytest", "httpx", "pytest-playwright"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["studyflow"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-m 'not browser and not live'"
+markers = ["browser: browser behavior tests", "live: opt-in network tests"]
