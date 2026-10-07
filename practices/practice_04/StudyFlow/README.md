@@ -21,7 +21,7 @@ uv run pytest -q -m browser
 uv build
 ```
 
-The default tests are offline (216 tests); 53 browser tests run separately. If Chrome is already installed, use `uv run pytest -q -m browser --browser-channel chrome` instead of downloading Chromium. Packaging includes both application and MCP packages, templates, JavaScript/CSS, and SQL migrations.
+The default tests are offline (218 tests); 53 browser tests run separately. If Chrome is already installed, use `uv run pytest -q -m browser --browser-channel chrome` instead of downloading Chromium. Packaging includes both application and MCP packages, templates, JavaScript/CSS, and SQL migrations. All seven planned implementation steps are complete; [final-review evidence](docs/evidence/seventh-slice.md) records tests, the isolated installed-wheel check, and actual automatic hook failure/repair.
 
 The application starts `studyflow_mcp.server` over stdio for summary requests. To use its single read-only `get_repository_summary(owner, repo)` tool in Codex, launch Codex from this directory after `uv sync --frozen`; [.codex/config.toml](.codex/config.toml) supplies the project-relative command. Check registration with `codex mcp get studyflow_github --json`; a running session may need to restart to discover the new tool. The standalone command is `uv run python -m studyflow_mcp.server` and expects MCP protocol input on stdin.
 

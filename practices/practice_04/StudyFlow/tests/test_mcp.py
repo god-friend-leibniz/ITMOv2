@@ -6,6 +6,7 @@ import time
 import httpx
 import jsonschema
 from mcp import Client
+from mcp.shared.exceptions import MCPError
 import pytest
 
 
@@ -55,6 +56,26 @@ def test_tool_discovery_and_successful_summary_use_only_repository_and_languages
     ]
     assert all(request.method == "GET" for request in requests)
     assert all(request.headers["X-GitHub-Api-Version"] == "2026-03-10" for request in requests)
+
+
+def test_unadvertised_tool_is_rejected_before_github_access():
+    from studyflow_mcp.server import create_server
+
+    requests = []
+
+    def github(request):
+        requests.append(request)
+        return httpx.Response(200, json={} if request.url.path.endswith("/languages") else METADATA)
+
+    async def scenario():
+        async with Client(create_server(transport=httpx.MockTransport(github))) as client:
+            with pytest.raises(MCPError) as error:
+                await client.call_tool("delete_repository", {"owner": "octocat", "repo": "hello-world"})
+            assert error.value.code == -32602
+            assert error.value.message == "Unknown tool."
+
+    asyncio.run(scenario())
+    assert requests == []
 
 
 @pytest.mark.parametrize("arguments", [

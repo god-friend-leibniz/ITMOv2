@@ -1,8 +1,8 @@
 # StudyFlow specification
 
-Status: first six vertical slices complete, 2026-10-07, including live MCP success/invalid-input/missing-repository evidence. Step 7's final demonstration and review remains planned. Domain vocabulary is in [GLOSSARY.md](GLOSSARY.md).
+Status: all seven implementation steps complete, 2026-10-07, including live MCP success/invalid-input/missing-repository evidence and the final review. Domain vocabulary is in [GLOSSARY.md](GLOSSARY.md).
 
-Implemented now: course and assignment CRUD, checklist task create/list/rename/complete/reopen/delete API and browser flows, optional calendar dates, derived progress, offline repository-reference management, explicit summary loading/refresh through real stdio MCP, recoverable integration errors, cascade deletion, SQLite persistence, packaging, and verification hooks. The routine suite has 216 tests and the browser suite has 53 tests. Actual TDD and verification results are in [first-slice evidence](docs/evidence/first-slice.md), [course-management evidence](docs/evidence/second-slice.md), [assignment evidence](docs/evidence/third-slice.md), [checklist evidence](docs/evidence/fourth-slice.md), [repository-reference evidence](docs/evidence/fifth-slice.md), [MCP-slice evidence](docs/evidence/sixth-slice.md), [MCP runtime evidence](docs/evidence/mcp.md), [fast-hook evidence](docs/evidence/hook.md), and [final-hook evidence](docs/evidence/final-hook.md). Reference CRUD makes no GitHub calls. Live MCP calls succeeded after supplying an optional token; earlier rate-limit outcomes are preserved as historical evidence.
+Implemented now: course and assignment CRUD, checklist task create/list/rename/complete/reopen/delete API and browser flows, optional calendar dates, derived progress, offline repository-reference management, explicit summary loading/refresh through real stdio MCP, recoverable integration errors, cascade deletion, SQLite persistence, packaging, and verification hooks. The routine suite has 218 tests and the browser suite has 53 tests. Actual TDD and verification results are in [first-slice evidence](docs/evidence/first-slice.md), [course-management evidence](docs/evidence/second-slice.md), [assignment evidence](docs/evidence/third-slice.md), [checklist evidence](docs/evidence/fourth-slice.md), [repository-reference evidence](docs/evidence/fifth-slice.md), [MCP-slice evidence](docs/evidence/sixth-slice.md), [MCP runtime evidence](docs/evidence/mcp.md), [fast-hook evidence](docs/evidence/hook.md), [final-hook evidence](docs/evidence/final-hook.md), and [final review](docs/evidence/seventh-slice.md). Reference CRUD makes no GitHub calls. Live MCP calls succeeded after supplying an optional token; earlier rate-limit outcomes are preserved as historical evidence.
 
 ## Goal and scope
 
@@ -117,7 +117,7 @@ Implemented structure:
 | `studyflow_mcp/server.py`, `studyflow_mcp/github.py` | Tool contract/stdio entry point and the only production GitHub HTTP access |
 | `studyflow_mcp/models.py` | Closed input/output schemas and result validation |
 | `tests/` | HTTP, MCP, verification-hook, and browser behavior tests |
-| `scripts/verify_after_change.py`, `.codex/hooks.json` | Automatic local test feedback |
+| `scripts/verify_after_change.py`, `scripts/verify_before_finish.py`, `.codex/hooks.json` | Fast automatic test feedback and final offline/browser/build gate |
 | `docs/evidence/`, `reflection.md` | Actual demonstration records and retrospective, added during implementation |
 
 Use ordinary functions and explicit parameters for the database location and integration callable; no dependency-injection container, abstract service hierarchy, event bus, CQRS, generic CRUD engine, or separate domain persistence models. Pydantic handles public schemas; small pure functions enforce rules shared by entry points.
@@ -167,7 +167,7 @@ HTML routes are `/`, `/courses/{id}`, and `/assignments/{id}`. They call the sam
 
 ## Custom MCP integration
 
-Expose only `get_repository_summary(owner, repo)`, read-only and idempotent. Both the application's MCP client and the development agent call this tool via stdio using the [official Python MCP SDK](https://github.com/modelcontextprotocol/python-sdk). Tool inputs/outputs follow the [MCP tools contract](https://modelcontextprotocol.io/specification/2025-11-25/server/tools): advertise JSON schemas, return normalized structured content and a matching JSON text block, and flag tool failures with `isError`.
+Expose only `get_repository_summary(owner, repo)`, read-only and idempotent. Both the application's MCP client and the development agent call this tool via stdio using the [official Python MCP SDK](https://github.com/modelcontextprotocol/python-sdk). Tool inputs/outputs follow the [MCP tools contract](https://modelcontextprotocol.io/specification/2025-11-25/server/tools): advertise JSON schemas, return normalized structured content and a matching JSON text block, and flag tool failures with `isError`. Reject unknown tool names with protocol error `-32602`, “Unknown tool.”, before any GitHub request; they are not repository-summary tool failures.
 
 For this low-volume MVP, the app starts a server subprocess for each summary request, initializes the MCP session, calls the tool, and closes both session and process in `finally`. Use the current Python interpreter and fixed module arguments, never a shell command containing user input. Enforce a 15-second total call deadline including startup; terminate a timed-out child. An agent connection may keep its own stdio process alive. No database access in the MCP server, no LLM, no network listener, and stdout is protocol-only; diagnostics go to stderr.
 
@@ -248,7 +248,7 @@ Record timestamps, tool name, arguments, sanitized results, and which calls used
 
 ## Error handling
 
-JSON API failures use `{"error":{"code":"...","message":"...","fields":{}}}`; `fields` maps invalid field names to messages and is empty for nonvalidation errors. Normalize FastAPI validation errors into this shape. Missing local resources use `404 NOT_FOUND`; locked SQLite uses `503 DATABASE_BUSY`; unexpected failures use `500 INTERNAL_ERROR`. Never expose SQL, tracebacks, or secrets. Transactions leave no partial mutations. Browser failures preserve entered values; unavailable repository information never prevents creating/editing coursework.
+JSON API failures use `{"error":{"code":"...","message":"...","fields":{}}}`; `fields` maps invalid field names to messages and is empty for nonvalidation errors. Normalize FastAPI validation errors into this shape. Missing local resources use `404 NOT_FOUND`; locked SQLite uses `503 DATABASE_BUSY`; unexpected failures use `500 INTERNAL_ERROR` with the safe message “The request could not be completed.” The fallback covers unexpected exceptions beyond SQLite operational errors. Never expose SQL, tracebacks, or secrets. Transactions leave no partial mutations. Browser failures preserve entered values; unavailable repository information never prevents creating/editing coursework.
 
 ## Automatic verification hook
 
@@ -276,8 +276,8 @@ Use the installed [tdd skill](.agents/skills/tdd/SKILL.md) during implementation
 
 | Boundary | Required coverage |
 | --- | --- |
-| HTTP/HTML interface with a real temporary SQLite database | CRUD, parent existence, invalid/partial updates, progress for 0/1/3 tasks, reopen/add/delete effects, cascade deletion, persistence after reopening the app, escaped text |
-| MCP `tools/list` and `tools/call` with controlled GitHub HTTP responses | Published schemas; success including no languages/null metadata; normalization; invalid input without network access; missing/private/moved repositories; rate limits/auth/timeouts/invalid upstream responses |
+| HTTP/HTML interface with a real temporary SQLite database | CRUD, parent existence, invalid/partial updates, progress for 0/1/3 tasks, reopen/add/delete effects, cascade deletion, persistence after reopening the app, escaped text, safe unexpected errors without partial mutations |
+| MCP `tools/list` and `tools/call` with controlled GitHub HTTP responses | Published schemas; success including no languages/null metadata; normalization; invalid input and unknown tool names without network access; missing/private/moved repositories; rate limits/auth/timeouts/invalid upstream responses |
 | Web repository-summary route through actual stdio MCP | One success and one failure using a local HTTP fixture behind the server's HTTP boundary; initialization, structured results, cleanup, and no GitHub calls during ordinary CRUD |
 | Hook command/event boundary | Changed/new/deleted relevant files, skips, test output feedback, failed verification, retry after repair, timeout and missing environment |
 | Browser | One course → assignment → task completion flow and one repository-error flow; forms, reloads, progress, confirmation, and error visibility |
@@ -292,13 +292,13 @@ Routine `pytest -q` is deterministic, offline, and uses temporary data. Stub onl
 4. **Checklist (complete):** add/rename/complete/reopen/delete tasks; derive assignment-list and detail progress; test edge cases as each behavior is added.
 5. **Repository reference (complete):** save/replace/remove the validated pair offline and show its link on assignment detail.
 6. **Useful MCP slice (complete):** schemas, tool, real app stdio calls, error handling, panel feedback, packaging and agent registration are implemented. Controlled HTTP tests pass; actual agent discovery and live success/invalid-input/missing-repository calls are recorded. Earlier rate-limit attempts remain historical evidence.
-7. **Demonstration and review:** run the offline and browser suites, build/install smoke check, verify hook feedback in the actual agent runtime, and complete `reflection.md` with what worked, failures encountered, design changes, test results, and evidence links. Update this specification and AGENTS.md commands to match reality.
+7. **Demonstration and review (complete):** reviewed implementation against domain rules, scope, and coursework requirements; repaired two error-contract gaps through TDD. The actual runtime demonstrated fast failure/repair and final blocking continuation/repair. Final verification passed 218 offline tests, 53 browser tests, and packaging; an offline wheel installation outside the checkout passed coursework and real stdio MCP checks. [Final-review evidence](docs/evidence/seventh-slice.md) records completion and the updated reflection/instructions.
 
 | Coursework requirement | Deliverable/evidence |
 | --- | --- |
 | Agent instructions | Root `AGENTS.md`, maintained throughout implementation |
 | Meaningful skill | Existing domain-modeling skill used for this glossary/design; existing tdd skill used for implementation, with a documented red/green example |
-| Automatic verification | Hook configuration/script plus `docs/evidence/hook.md` |
+| Automatic verification | Both hook handlers/configuration, `docs/evidence/hook.md`, `docs/evidence/final-hook.md`, and the final runtime failure/repair record |
 | Custom MCP with success and error calls | Narrow server, app integration, automated contracts, and `docs/evidence/mcp.md` |
 | Reflection | `reflection.md` based on actual work, including limitations and evidence links |
 
@@ -306,4 +306,4 @@ Routine `pytest -q` is deterministic, offline, and uses temporary data. Stub onl
 
 No blocking product questions. Single-student local use, public repositories, one reference, and checklist-only progress are deliberate MVP decisions. Current package versions are locked and the local hook registration/trust setup is verified. MCP SDK 2.3.0 is compatible with the app and Codex 0.160.1; live success/error evidence is complete.
 
-Self-review: no stored derived status or GitHub cache; no orphan children or ambiguous empty-checklist behavior; no repository writes; no unnecessary interfaces or services. The extra MCP process has the concrete coursework/integration purpose recorded in ADR 0001. Every coursework deliverable has an implementation step and evidence target. Step 6 implements and demonstrates that boundary without changing domain rules, database schema, or architecture. Step 7 remains a separate final review.
+Self-review: no stored derived status or GitHub cache; no orphan children or ambiguous empty-checklist behavior; no repository writes; no unnecessary interfaces or services. The extra MCP process has the concrete coursework/integration purpose recorded in ADR 0001. Every coursework deliverable has implementation and observed evidence. The final review repaired error contracts without changing domain rules, database schema, dependencies, or architecture; no further planned slice or blocking question remains.

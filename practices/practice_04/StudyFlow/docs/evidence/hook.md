@@ -25,3 +25,9 @@ To run in another workspace: start Codex from the StudyFlow directory, inspect/r
 The definition/trust stayed unchanged. Automatic PostToolUse dispatch was not observed in the editing session; explicit handler calls supplied red → green feedback as documented in [sixth-slice.md](sixth-slice.md). The last source-change check passed 216 routine tests, excluding 53 browser cases. Empty event metadata identifies these as manual invocations. A separate fresh MCP runtime did automatically execute Stop; see [mcp-runtime.json](mcp-runtime.json). Earlier automatic fast failure/repair evidence above remains historical and intact.
 
 The subsequent authenticated live retry changed only environment/evidence/documentation, leaving the fast source fingerprint unchanged. Its fresh runtime again automatically executed Stop with all checks passing, captured in [mcp-authenticated-runtime.json](mcp-authenticated-runtime.json). No additional automatic fast test run is claimed for this documentation-only follow-up.
+
+## Final review update, 2026-10-07
+
+The unchanged trusted hook ran automatically in a fresh Codex 0.160.1 runtime. A temporary course POST status change from 201 to 200 produced **2 failed / 216 passed / 53 deselected**, exit 1, at `15:50:21 UTC`; feedback reached the next fixture request. Exact repair produced **218 passed / 53 deselected**, exit 0, at `15:51:38 UTC`. [Original runtime events](final-review-runtime.json) contain genuine PostToolUse session/turn IDs. The same runtime demonstrated Stop blocking continuation and green repair, then completed; see [seventh-slice.md](seventh-slice.md). The temporary regression was removed.
+
+The two new behavior tests followed observed reds/greens through explicit editing-session handler fallback, preserved separately in [final-review-tdd.json](final-review-tdd.json). They are not claimed as automatic PostToolUse events. All earlier records remain historical evidence; definitions and trust were not changed.

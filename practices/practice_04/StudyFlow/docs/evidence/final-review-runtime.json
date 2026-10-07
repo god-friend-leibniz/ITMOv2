@@ -1,0 +1,115 @@
+{
+  "codex_version": "codex-cli 0.160.1",
+  "source": "Actual Codex tool dispatcher and trusted hooks; fixed local Responses fixture; no model API/delegated work",
+  "regression": "Temporarily change POST /api/courses from 201 to 200, then restore the exact source",
+  "fixture_requests": 4,
+  "fast_failure_received": true,
+  "stop_continuation_received": true,
+  "codex_exit_code": 0,
+  "turn_completed": true,
+  "post_tool_use_runs": [
+    {
+      "timestamp": "2026-10-07T15:50:21.439832+00:00",
+      "fingerprint": "246497cbddfd7b5f06494991a8c752932bf07320589e20f31ab6cba47fe37998",
+      "exit_code": 1,
+      "feedback": {
+        "hookSpecificOutput": {
+          "hookEventName": "PostToolUse",
+          "additionalContext": "StudyFlow tests: exit 1\n.....................................................F..........F....... [ 33%]\n........................................................................ [ 66%]\n........................................................................ [ 99%]\n..                                                                       [100%]\n=================================== FAILURES ===================================\n__________________ test_created_course_appears_in_course_list __________________\n\ntmp_path = PosixPath('/private/var/folders/72/w8hds8y57h55rr1z462m6qx40000gn/T/pytest-of-maxwell/pytest-317/test_created_course_appears_in0')\n\n    def test_created_course_appears_in_course_list(tmp_path):\n        with TestClient(create_app(db_path=tmp_path / \"courses.sqlite3\")) as client:\n            response = client.post(\n                \"/api/courses\",\n                json={\"name\": \"Algorithms\", \"description\": \"University coursework\"},\n            )\n    \n>           assert response.status_code == 201\nE           assert 200 == 201\nE            +  where 200 = <Response [200 OK]>.status_code\n\ntests/test_courses.py:113: AssertionError\n_ test_unexpected_database_failure_returns_safe_json_and_preserves_saved_course _\n\ntmp_path = PosixPath('/private/var/folders/72/w8hds8y57h55rr1z462m6qx40000gn/T/pytest-of-maxwell/pytest-317/test_unexpected_database_failu0')\n\n    def test_unexpected_database_failure_returns_safe_json_and_preserves_saved_course(tmp_path):\n        path = tmp_path / \"courses.sqlite3\"\n        with TestClient(create_app(db_path=path), raise_server_exceptions=False) as client:\n            course = client.post(\"/api/courses\", json={\"name\": \"Algorithms\"}).json()\n            with sqlite3.connect(path) as connection:\n                connection.execute(\n                    \"CREATE TRIGGER reject_edit BEFORE UPDATE ON courses BEGIN \"\n                    \"SELECT RAISE(ABORT, 'Sensitive database details'); END\"\n                )\n            response = client.patch(f\"/api/courses/{course['id']}\", json={\"name\": \"Advanced algorithms\"})\n            assert response.status_code == 500\n            assert response.json() == {\"error\": {\n                \"code\": \"INTERNAL_ERROR\", \"message\": \"The request could not be completed.\", \"fields\": {},\n            }}\n            assert \"Sensitive database details\" not in response.text\n            assert client.get(f\"/api/courses/{course['id']}\").json() == course\n>           assert client.post(\"/api/courses\", json={\"name\": \"Physics\"}).status_code == 201\nE           AssertionError: assert 200 == 201\nE            +  where 200 = <Response [200 OK]>.status_code\nE            +    where <Response [200 OK]> = post('/api/courses', json={'name': 'Physics'})\nE            +      where post = <starlette.testclient.TestClient object at 0x10e7048c0>.post\n\ntests/test_courses.py:189: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_courses.py::test_created_course_appears_in_course_list - as...\nFAILED tests/test_courses.py::test_unexpected_database_failure_returns_safe_json_and_preserves_saved_course\n2 failed, 216 passed, 53 deselected in 20.33s\n"
+        },
+        "decision": "block",
+        "reason": "StudyFlow verification failed. Repair failing tests before unrelated work."
+      },
+      "event": {
+        "session_id": "01a1170e-9d36-7910-98b8-8526c785831f",
+        "turn_id": "01a1170e-a99c-7bf2-a45e-b836d2cd9b87",
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Bash",
+        "tool_use_id": "call_final_review_1"
+      }
+    },
+    {
+      "timestamp": "2026-10-07T15:51:38.963553+00:00",
+      "fingerprint": "469133e27c203d9eaedee1043caa33906f0cdc606259cd82ee93017c4b45030a",
+      "exit_code": 0,
+      "feedback": {
+        "hookSpecificOutput": {
+          "hookEventName": "PostToolUse",
+          "additionalContext": "StudyFlow tests: exit 0\n........................................................................ [ 33%]\n........................................................................ [ 66%]\n........................................................................ [ 99%]\n..                                                                       [100%]\n218 passed, 53 deselected in 22.53s\n"
+        }
+      },
+      "event": {
+        "session_id": "01a1170e-9d36-7910-98b8-8526c785831f",
+        "turn_id": "01a1170e-a99c-7bf2-a45e-b836d2cd9b87",
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Bash",
+        "tool_use_id": "call_final_review_3"
+      }
+    }
+  ],
+  "stop_runs": [
+    {
+      "timestamp": "2026-10-07T15:51:16.031767+00:00",
+      "browser_channel": "chrome",
+      "results": [
+        {
+          "command": "uv run pytest -q",
+          "exit_code": 1,
+          "output": ".....................................................F..........F....... [ 33%]\n........................................................................ [ 66%]\n........................................................................ [ 99%]\n..                                                                       [100%]\n=================================== FAILURES ===================================\n__________________ test_created_course_appears_in_course_list __________________\n\ntmp_path = PosixPath('/private/var/folders/72/w8hds8y57h55rr1z462m6qx40000gn/T/pytest-of-maxwell/pytest-318/test_created_course_appears_in0')\n\n    def test_created_course_appears_in_course_list(tmp_path):\n        with TestClient(create_app(db_path=tmp_path / \"courses.sqlite3\")) as client:\n            response = client.post(\n                \"/api/courses\",\n                json={\"name\": \"Algorithms\", \"description\": \"University coursework\"},\n            )\n    \n>           assert response.status_code == 201\nE           assert 200 == 201\nE            +  where 200 = <Response [200 OK]>.status_code\n\ntests/test_courses.py:113: AssertionError\n_ test_unexpected_database_failure_returns_safe_json_and_preserves_saved_course _\n\ntmp_path = PosixPath('/private/var/folders/72/w8hds8y57h55rr1z462m6qx40000gn/T/pytest-of-maxwell/pytest-318/test_unexpected_database_failu0')\n\n    def test_unexpected_database_failure_returns_safe_json_and_preserves_saved_course(tmp_path):\n        path = tmp_path / \"courses.sqlite3\"\n        with TestClient(create_app(db_path=path), raise_server_exceptions=False) as client:\n            course = client.post(\"/api/courses\", json={\"name\": \"Algorithms\"}).json()\n            with sqlite3.connect(path) as connection:\n                connection.execute(\n                    \"CREATE TRIGGER reject_edit BEFORE UPDATE ON courses BEGIN \"\n                    \"SELECT RAISE(ABORT, 'Sensitive database details'); END\"\n                )\n            response = client.patch(f\"/api/courses/{course['id']}\", json={\"name\": \"Advanced algorithms\"})\n            assert response.status_code == 500\n            assert response.json() == {\"error\": {\n                \"code\": \"INTERNAL_ERROR\", \"message\": \"The request could not be completed.\", \"fields\": {},\n            }}\n            assert \"Sensitive database details\" not in response.text\n            assert client.get(f\"/api/courses/{course['id']}\").json() == course\n>           assert client.post(\"/api/courses\", json={\"name\": \"Physics\"}).status_code == 201\nE           AssertionError: assert 200 == 201\nE            +  where 200 = <Response [200 OK]>.status_code\nE            +    where <Response [200 OK]> = post('/api/courses', json={'name': 'Physics'})\nE            +      where post = <starlette.testclient.TestClient object at 0x10c09c830>.post\n\ntests/test_courses.py:189: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_courses.py::test_created_course_appears_in_course_list - as...\nFAILED tests/test_courses.py::test_unexpected_database_failure_returns_safe_json_and_preserves_saved_course\n2 failed, 216 passed, 53 deselected in 20.32s\n"
+        },
+        {
+          "command": "uv run pytest -q -m browser",
+          "exit_code": 0,
+          "output": ".....................................................                    [100%]\n53 passed, 218 deselected in 33.15s\n"
+        },
+        {
+          "command": "uv build",
+          "exit_code": 0,
+          "output": "warning: The cache directory `.uv-cache` is inside the build source directory `.` and may be included in distributions\nBuilding source distribution...\nBuilding wheel from source distribution...\nSuccessfully built dist/studyflow-0.1.0.tar.gz\nSuccessfully built dist/studyflow-0.1.0-py3-none-any.whl\n"
+        }
+      ],
+      "feedback": {
+        "decision": "block",
+        "reason": "StudyFlow final verification failed. Do not claim completion. Repair the failures, then rerun all final checks.\nuv run pytest -q: exit 1\nuv run pytest -q -m browser: exit 0\nuv build: exit 0\nuv run pytest -q\n_failure_returns_safe_json_and_preserves_saved_course _\n\ntmp_path = PosixPath('/private/var/folders/72/w8hds8y57h55rr1z462m6qx40000gn/T/pytest-of-maxwell/pytest-318/test_unexpected_database_failu0')\n\n    def test_unexpected_database_failure_returns_safe_json_and_preserves_saved_course(tmp_path):\n        path = tmp_path / \"courses.sqlite3\"\n        with TestClient(create_app(db_path=path), raise_server_exceptions=False) as client:\n            course = client.post(\"/api/courses\", json={\"name\": \"Algorithms\"}).json()\n            with sqlite3.connect(path) as connection:\n                connection.execute(\n                    \"CREATE TRIGGER reject_edit BEFORE UPDATE ON courses BEGIN \"\n                    \"SELECT RAISE(ABORT, 'Sensitive database details'); END\"\n                )\n            response = client.patch(f\"/api/courses/{course['id']}\", json={\"name\": \"Advanced algorithms\"})\n            assert response.status_code == 500\n            assert response.json() == {\"error\": {\n                \"code\": \"INTERNAL_ERROR\", \"message\": \"The request could not be completed.\", \"fields\": {},\n            }}\n            assert \"Sensitive database details\" not in response.text\n            assert client.get(f\"/api/courses/{course['id']}\").json() == course\n>           assert client.post(\"/api/courses\", json={\"name\": \"Physics\"}).status_code == 201\nE           AssertionError: assert 200 == 201\nE            +  where 200 = <Response [200 OK]>.status_code\nE            +    where <Response [200 OK]> = post('/api/courses', json={'name': 'Physics'})\nE            +      where post = <starlette.testclient.TestClient object at 0x10c09c830>.post\n\ntests/test_courses.py:189: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_courses.py::test_created_course_appears_in_course_list - as...\nFAILED tests/test_courses.py::test_unexpected_database_failure_returns_safe_json_and_preserves_saved_course\n2 failed, 216 passed, 53 deselected in 20.32s\n",
+        "systemMessage": "StudyFlow final verification failed.\nuv run pytest -q: exit 1\nuv run pytest -q -m browser: exit 0\nuv build: exit 0"
+      },
+      "event": {
+        "session_id": "01a1170e-9d36-7910-98b8-8526c785831f",
+        "turn_id": "01a1170e-a99c-7bf2-a45e-b836d2cd9b87",
+        "hook_event_name": "Stop",
+        "stop_hook_active": false
+      }
+    },
+    {
+      "timestamp": "2026-10-07T15:52:31.680623+00:00",
+      "browser_channel": "chrome",
+      "results": [
+        {
+          "command": "uv run pytest -q",
+          "exit_code": 0,
+          "output": "........................................................................ [ 33%]\n........................................................................ [ 66%]\n........................................................................ [ 99%]\n..                                                                       [100%]\n218 passed, 53 deselected in 19.59s\n"
+        },
+        {
+          "command": "uv run pytest -q -m browser",
+          "exit_code": 0,
+          "output": ".....................................................                    [100%]\n53 passed, 218 deselected in 32.14s\n"
+        },
+        {
+          "command": "uv build",
+          "exit_code": 0,
+          "output": "warning: The cache directory `.uv-cache` is inside the build source directory `.` and may be included in distributions\nBuilding source distribution...\nBuilding wheel from source distribution...\nSuccessfully built dist/studyflow-0.1.0.tar.gz\nSuccessfully built dist/studyflow-0.1.0-py3-none-any.whl\n"
+        }
+      ],
+      "feedback": {
+        "systemMessage": "StudyFlow final verification passed.\nuv run pytest -q: exit 0\nuv run pytest -q -m browser: exit 0\nuv build: exit 0"
+      },
+      "event": {
+        "session_id": "01a1170e-9d36-7910-98b8-8526c785831f",
+        "turn_id": "01a1170e-a99c-7bf2-a45e-b836d2cd9b87",
+        "hook_event_name": "Stop",
+        "stop_hook_active": true
+      }
+    }
+  ],
+  "source_restored": true
+}

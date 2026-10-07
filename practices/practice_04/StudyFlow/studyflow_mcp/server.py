@@ -4,6 +4,7 @@ import logging
 from mcp import types
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
+from mcp.shared.exceptions import MCPError
 from pydantic import ValidationError
 
 from studyflow_mcp.github import GitHubError, fetch_summary
@@ -23,6 +24,8 @@ def create_server(*, transport=None):
         return types.ListToolsResult(tools=[tool])
 
     async def call_tool(context, params):
+        if params.name != tool.name:
+            raise MCPError(types.INVALID_PARAMS, "Unknown tool.")
         try:
             reference = RepositoryInput.model_validate(params.arguments)
         except ValidationError:

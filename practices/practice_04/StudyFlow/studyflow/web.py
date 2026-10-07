@@ -143,9 +143,9 @@ def create_app(*, db_path=None, summary_reader=get_repository_summary):
             "code": "NOT_FOUND", "message": "Assignment not found.", "fields": {},
         }})
 
-    @app.exception_handler(sqlite3.OperationalError)
-    async def database_error(request, error):
-        if error.sqlite_errorcode == sqlite3.SQLITE_BUSY:
+    @app.exception_handler(Exception)
+    async def unexpected_error(request, error):
+        if isinstance(error, sqlite3.OperationalError) and getattr(error, "sqlite_errorcode", None) == sqlite3.SQLITE_BUSY:
             return JSONResponse(status_code=503, content={"error": {
                 "code": "DATABASE_BUSY", "message": "The database is busy. Please try again.", "fields": {},
             }})

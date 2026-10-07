@@ -168,3 +168,22 @@ def test_locked_database_returns_recoverable_error_without_partial_course(tmp_pa
                 "code": "DATABASE_BUSY", "message": "The database is busy. Please try again.", "fields": {},
             }}
         assert client.get("/api/courses").json() == []
+
+
+def test_unexpected_database_failure_returns_safe_json_and_preserves_saved_course(tmp_path):
+    path = tmp_path / "courses.sqlite3"
+    with TestClient(create_app(db_path=path), raise_server_exceptions=False) as client:
+        course = client.post("/api/courses", json={"name": "Algorithms"}).json()
+        with sqlite3.connect(path) as connection:
+            connection.execute(
+                "CREATE TRIGGER reject_edit BEFORE UPDATE ON courses BEGIN "
+                "SELECT RAISE(ABORT, 'Sensitive database details'); END"
+            )
+        response = client.patch(f"/api/courses/{course['id']}", json={"name": "Advanced algorithms"})
+        assert response.status_code == 500
+        assert response.json() == {"error": {
+            "code": "INTERNAL_ERROR", "message": "The request could not be completed.", "fields": {},
+        }}
+        assert "Sensitive database details" not in response.text
+        assert client.get(f"/api/courses/{course['id']}").json() == course
+        assert client.post("/api/courses", json={"name": "Physics"}).status_code == 201
