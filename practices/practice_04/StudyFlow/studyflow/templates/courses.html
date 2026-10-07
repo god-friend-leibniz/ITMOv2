@@ -17,7 +17,7 @@
         <div class="course-list">
           {% for course in courses %}
           <article class="course">
-            <h2>{{ course.name }}</h2>
+            <h2><a href="/courses/{{ course.id }}">{{ course.name }}</a></h2>
             {% if course.description %}<p>{{ course.description }}</p>{% endif %}
           </article>
           {% else %}

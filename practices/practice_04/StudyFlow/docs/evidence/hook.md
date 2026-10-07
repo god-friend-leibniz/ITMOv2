@@ -1,5 +1,7 @@
 # Automatic verification evidence
 
+This document records the original fast PostToolUse demonstration. The later synchronous Stop gate, installed lifecycle schema, trust review, and actual browser-failure → continuation → repair demonstration are in [final-hook.md](final-hook.md). The PostToolUse definition and trusted hash below remain unchanged. The current routine suite has 44 tests and the browser suite has 10 tests.
+
 Runtime: Codex CLI 0.160.1 on macOS; project Python 3.12.15. The project definition is [.codex/hooks.json](../../.codex/hooks.json), with the handler in [verify_after_change.py](../../scripts/verify_after_change.py).
 
 The user explicitly confirmed trust for the hook. The runtime initially still reported `untrusted`; after persisting that approval for the exact returned hash through Codex's configuration API, `hooks/list` returned `enabled: true`, `trustStatus: trusted`, and no configuration errors. The approved definition hash was `sha256:11a11971cdc9b12d1a03cf1249c23a1abed52255bebe0be83b3f301239ea20d0`. Trust is machine-local and is deliberately absent from committed project configuration.
@@ -17,3 +19,9 @@ The runtime supplied `PostToolUse` input with `tool_name: Bash`, session/turn ID
 The regression and probe file were removed. Later behavior tests increased the routine suite to 18 tests. The handler's command tests also cover document-only skip, new/deleted files, repeated failure feedback, missing environment, timeout, no tests, corrupt state, and concurrent events. Full local verification output and its current state are ignored under `data/verification/`.
 
 To run in another workspace: start Codex from the StudyFlow directory, inspect/review this exact definition in `/hooks`, and trust it in that runtime. Check the journal for a genuine runtime event after the next source edit. `python3 scripts/verify_after_change.py --force` verifies manually and updates the stored result; it does not demonstrate automatic invocation.
+
+## MCP slice update, 2026-10-07
+
+The definition/trust stayed unchanged. Automatic PostToolUse dispatch was not observed in the editing session; explicit handler calls supplied red → green feedback as documented in [sixth-slice.md](sixth-slice.md). The last source-change check passed 216 routine tests, excluding 53 browser cases. Empty event metadata identifies these as manual invocations. A separate fresh MCP runtime did automatically execute Stop; see [mcp-runtime.json](mcp-runtime.json). Earlier automatic fast failure/repair evidence above remains historical and intact.
+
+The subsequent authenticated live retry changed only environment/evidence/documentation, leaving the fast source fingerprint unchanged. Its fresh runtime again automatically executed Stop with all checks passing, captured in [mcp-authenticated-runtime.json](mcp-authenticated-runtime.json). No additional automatic fast test run is claimed for this documentation-only follow-up.

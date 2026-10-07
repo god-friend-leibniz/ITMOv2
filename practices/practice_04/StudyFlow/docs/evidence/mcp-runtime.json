@@ -1,0 +1,268 @@
+{
+  "codex_version": "0.160.1",
+  "sdk_version": "2.3.0",
+  "github_api_version": "2026-03-10",
+  "source": "Real Codex MCP dispatcher; live GitHub; local deterministic Responses fixture, no model API",
+  "discovered_tools": [
+    {
+      "namespace": "mcp__studyflow_github",
+      "name": "get_repository_summary",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "string"
+          },
+          "repo": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "owner",
+          "repo"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "fixture_requests_at": [
+    "2026-10-07T11:20:15.680066+00:00",
+    "2026-10-07T11:20:16.587863+00:00",
+    "2026-10-07T11:20:16.604767+00:00",
+    "2026-10-07T11:20:19.355668+00:00"
+  ],
+  "calls": [
+    {
+      "tool": "get_repository_summary",
+      "arguments": {
+        "owner": "octocat",
+        "repo": "Hello-World"
+      }
+    },
+    {
+      "tool": "get_repository_summary",
+      "arguments": {
+        "owner": "bad/owner",
+        "repo": "example"
+      }
+    },
+    {
+      "tool": "get_repository_summary",
+      "arguments": {
+        "owner": "octocat",
+        "repo": "studyflow-missing-617a57d510144250861a74d65731e8ee"
+      }
+    }
+  ],
+  "tool_outputs_received_by_agent": [
+    {
+      "type": "function_call_output",
+      "id": "fco_01a11617-bbba-7b12-bff6-198a5cd8bd3b",
+      "call_id": "call_mcp_probe_0",
+      "output": "Wall time: 0.8848 seconds\nOutput:\n{\"ok\":false,\"summary\":null,\"error\":{\"code\":\"RATE_LIMITED\",\"message\":\"GitHub rate limit reached. Please retry later.\",\"retry_after_seconds\":1661}}"
+    },
+    {
+      "type": "function_call_output",
+      "id": "fco_01a11617-bbd1-7321-a742-6ece97ef1227",
+      "call_id": "call_mcp_probe_1",
+      "output": "Wall time: 0.0026 seconds\nOutput:\n{\"ok\":false,\"summary\":null,\"error\":{\"code\":\"INVALID_INPUT\",\"message\":\"Provide a valid GitHub owner and repository name.\",\"retry_after_seconds\":null}}"
+    },
+    {
+      "type": "function_call_output",
+      "id": "fco_01a11617-c684-7da2-a804-62d3e3fb0c5b",
+      "call_id": "call_mcp_probe_2",
+      "output": "Wall time: 2.7252 seconds\nOutput:\n{\"ok\":false,\"summary\":null,\"error\":{\"code\":\"RATE_LIMITED\",\"message\":\"GitHub rate limit reached. Please retry later.\",\"retry_after_seconds\":1658}}"
+    }
+  ],
+  "mcp_events": [
+    {
+      "type": "item.started",
+      "item": {
+        "id": "item_1",
+        "type": "mcp_tool_call",
+        "server": "studyflow_github",
+        "tool": "get_repository_summary",
+        "arguments": {
+          "owner": "octocat",
+          "repo": "Hello-World"
+        },
+        "result": null,
+        "error": null,
+        "status": "in_progress"
+      }
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_1",
+        "type": "mcp_tool_call",
+        "server": "studyflow_github",
+        "tool": "get_repository_summary",
+        "arguments": {
+          "owner": "octocat",
+          "repo": "Hello-World"
+        },
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"ok\":false,\"summary\":null,\"error\":{\"code\":\"RATE_LIMITED\",\"message\":\"GitHub rate limit reached. Please retry later.\",\"retry_after_seconds\":1661}}"
+            }
+          ],
+          "structured_content": {
+            "ok": false,
+            "summary": null,
+            "error": {
+              "code": "RATE_LIMITED",
+              "message": "GitHub rate limit reached. Please retry later.",
+              "retry_after_seconds": 1661
+            }
+          }
+        },
+        "error": null,
+        "status": "failed"
+      }
+    },
+    {
+      "type": "item.started",
+      "item": {
+        "id": "item_2",
+        "type": "mcp_tool_call",
+        "server": "studyflow_github",
+        "tool": "get_repository_summary",
+        "arguments": {
+          "owner": "bad/owner",
+          "repo": "example"
+        },
+        "result": null,
+        "error": null,
+        "status": "in_progress"
+      }
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_2",
+        "type": "mcp_tool_call",
+        "server": "studyflow_github",
+        "tool": "get_repository_summary",
+        "arguments": {
+          "owner": "bad/owner",
+          "repo": "example"
+        },
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"ok\":false,\"summary\":null,\"error\":{\"code\":\"INVALID_INPUT\",\"message\":\"Provide a valid GitHub owner and repository name.\",\"retry_after_seconds\":null}}"
+            }
+          ],
+          "structured_content": {
+            "ok": false,
+            "summary": null,
+            "error": {
+              "code": "INVALID_INPUT",
+              "message": "Provide a valid GitHub owner and repository name.",
+              "retry_after_seconds": null
+            }
+          }
+        },
+        "error": null,
+        "status": "failed"
+      }
+    },
+    {
+      "type": "item.started",
+      "item": {
+        "id": "item_3",
+        "type": "mcp_tool_call",
+        "server": "studyflow_github",
+        "tool": "get_repository_summary",
+        "arguments": {
+          "owner": "octocat",
+          "repo": "studyflow-missing-617a57d510144250861a74d65731e8ee"
+        },
+        "result": null,
+        "error": null,
+        "status": "in_progress"
+      }
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_3",
+        "type": "mcp_tool_call",
+        "server": "studyflow_github",
+        "tool": "get_repository_summary",
+        "arguments": {
+          "owner": "octocat",
+          "repo": "studyflow-missing-617a57d510144250861a74d65731e8ee"
+        },
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"ok\":false,\"summary\":null,\"error\":{\"code\":\"RATE_LIMITED\",\"message\":\"GitHub rate limit reached. Please retry later.\",\"retry_after_seconds\":1658}}"
+            }
+          ],
+          "structured_content": {
+            "ok": false,
+            "summary": null,
+            "error": {
+              "code": "RATE_LIMITED",
+              "message": "GitHub rate limit reached. Please retry later.",
+              "retry_after_seconds": 1658
+            }
+          }
+        },
+        "error": null,
+        "status": "failed"
+      }
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_4",
+        "type": "agent_message",
+        "text": "MCP verification probe finished."
+      }
+    }
+  ],
+  "stop_runs": [
+    {
+      "timestamp": "2026-10-07T11:21:14.293297+00:00",
+      "browser_channel": "chrome",
+      "results": [
+        {
+          "command": "uv run pytest -q",
+          "exit_code": 0,
+          "output": "........................................................................ [ 33%]\n........................................................................ [ 66%]\n........................................................................ [100%]\n216 passed, 53 deselected in 21.87s\n"
+        },
+        {
+          "command": "uv run pytest -q -m browser",
+          "exit_code": 0,
+          "output": ".....................................................                    [100%]\n53 passed, 216 deselected in 31.96s\n"
+        },
+        {
+          "command": "uv build",
+          "exit_code": 0,
+          "output": "warning: The cache directory `.uv-cache` is inside the build source directory `.` and may be included in distributions\nBuilding source distribution...\nBuilding wheel from source distribution...\nSuccessfully built dist/studyflow-0.1.0.tar.gz\nSuccessfully built dist/studyflow-0.1.0-py3-none-any.whl\n"
+        }
+      ],
+      "feedback": {
+        "systemMessage": "StudyFlow final verification passed.\nuv run pytest -q: exit 0\nuv run pytest -q -m browser: exit 0\nuv build: exit 0"
+      },
+      "event": {
+        "session_id": "01a11617-a5ce-7372-8aaf-b6dec5ecd2ff",
+        "turn_id": "01a11617-b185-75f2-8ec1-772aa7bf847b",
+        "hook_event_name": "Stop",
+        "stop_hook_active": false
+      }
+    }
+  ],
+  "codex_exit_code": 0,
+  "turn_completed": true,
+  "live_success_observed": false,
+  "missing_repository_verified": false,
+  "probe_assertion_failure": "Missing repository not verified: live GitHub returned RATE_LIMITED instead of required success/404."
+}

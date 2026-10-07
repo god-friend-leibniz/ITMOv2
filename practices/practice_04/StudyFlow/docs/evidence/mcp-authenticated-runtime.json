@@ -1,0 +1,274 @@
+{
+  "codex_version": "0.160.1",
+  "sdk_version": "2.3.0",
+  "github_api_version": "2026-03-10",
+  "source": "Real Codex MCP dispatcher; live GitHub; local deterministic Responses fixture, no model API",
+  "discovered_tools": [
+    {
+      "namespace": "mcp__studyflow_github",
+      "name": "get_repository_summary",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "string"
+          },
+          "repo": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "owner",
+          "repo"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "fixture_requests_at": [
+    "2026-10-07T11:38:41.823575+00:00",
+    "2026-10-07T11:38:43.344177+00:00",
+    "2026-10-07T11:38:43.353736+00:00",
+    "2026-10-07T11:38:44.049204+00:00"
+  ],
+  "calls": [
+    {
+      "tool": "get_repository_summary",
+      "arguments": {
+        "owner": "octocat",
+        "repo": "Hello-World"
+      }
+    },
+    {
+      "tool": "get_repository_summary",
+      "arguments": {
+        "owner": "bad/owner",
+        "repo": "example"
+      }
+    },
+    {
+      "tool": "get_repository_summary",
+      "arguments": {
+        "owner": "octocat",
+        "repo": "studyflow-missing-33cce9c543224d3a9623d3bc0a68bc8f"
+      }
+    }
+  ],
+  "tool_outputs_received_by_agent": [
+    {
+      "type": "function_call_output",
+      "id": "fco_01a11628-9f01-7310-b32c-4de215889d67",
+      "call_id": "call_mcp_probe_0",
+      "output": "Wall time: 1.5031 seconds\nOutput:\n{\"ok\":true,\"summary\":{\"owner\":\"octocat\",\"name\":\"Hello-World\",\"url\":\"https://github.com/octocat/Hello-World\",\"description\":\"My first repository on GitHub!\",\"default_branch\":\"master\",\"primary_languages\":[],\"last_push_at\":\"2024-08-20T23:54:42Z\",\"fetched_at\":\"2026-10-07T11:38:43.326239Z\"},\"error\":null}"
+    },
+    {
+      "type": "function_call_output",
+      "id": "fco_01a11628-9f13-7c63-b48f-db1fd762fc93",
+      "call_id": "call_mcp_probe_1",
+      "output": "Wall time: 0.0016 seconds\nOutput:\n{\"ok\":false,\"summary\":null,\"error\":{\"code\":\"INVALID_INPUT\",\"message\":\"Provide a valid GitHub owner and repository name.\",\"retry_after_seconds\":null}}"
+    },
+    {
+      "type": "function_call_output",
+      "id": "fco_01a11628-a1ca-7033-b31f-5fe3866dac7d",
+      "call_id": "call_mcp_probe_2",
+      "output": "Wall time: 0.6872 seconds\nOutput:\n{\"ok\":false,\"summary\":null,\"error\":{\"code\":\"REPOSITORY_NOT_FOUND\",\"message\":\"Repository not found or unavailable.\",\"retry_after_seconds\":null}}"
+    }
+  ],
+  "mcp_events": [
+    {
+      "type": "item.started",
+      "item": {
+        "id": "item_1",
+        "type": "mcp_tool_call",
+        "server": "studyflow_github",
+        "tool": "get_repository_summary",
+        "arguments": {
+          "owner": "octocat",
+          "repo": "Hello-World"
+        },
+        "result": null,
+        "error": null,
+        "status": "in_progress"
+      }
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_1",
+        "type": "mcp_tool_call",
+        "server": "studyflow_github",
+        "tool": "get_repository_summary",
+        "arguments": {
+          "owner": "octocat",
+          "repo": "Hello-World"
+        },
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"ok\":true,\"summary\":{\"owner\":\"octocat\",\"name\":\"Hello-World\",\"url\":\"https://github.com/octocat/Hello-World\",\"description\":\"My first repository on GitHub!\",\"default_branch\":\"master\",\"primary_languages\":[],\"last_push_at\":\"2024-08-20T23:54:42Z\",\"fetched_at\":\"2026-10-07T11:38:43.326239Z\"},\"error\":null}"
+            }
+          ],
+          "structured_content": {
+            "ok": true,
+            "summary": {
+              "owner": "octocat",
+              "name": "Hello-World",
+              "url": "https://github.com/octocat/Hello-World",
+              "description": "My first repository on GitHub!",
+              "default_branch": "master",
+              "primary_languages": [],
+              "last_push_at": "2024-08-20T23:54:42Z",
+              "fetched_at": "2026-10-07T11:38:43.326239Z"
+            },
+            "error": null
+          }
+        },
+        "error": null,
+        "status": "completed"
+      }
+    },
+    {
+      "type": "item.started",
+      "item": {
+        "id": "item_2",
+        "type": "mcp_tool_call",
+        "server": "studyflow_github",
+        "tool": "get_repository_summary",
+        "arguments": {
+          "owner": "bad/owner",
+          "repo": "example"
+        },
+        "result": null,
+        "error": null,
+        "status": "in_progress"
+      }
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_2",
+        "type": "mcp_tool_call",
+        "server": "studyflow_github",
+        "tool": "get_repository_summary",
+        "arguments": {
+          "owner": "bad/owner",
+          "repo": "example"
+        },
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"ok\":false,\"summary\":null,\"error\":{\"code\":\"INVALID_INPUT\",\"message\":\"Provide a valid GitHub owner and repository name.\",\"retry_after_seconds\":null}}"
+            }
+          ],
+          "structured_content": {
+            "ok": false,
+            "summary": null,
+            "error": {
+              "code": "INVALID_INPUT",
+              "message": "Provide a valid GitHub owner and repository name.",
+              "retry_after_seconds": null
+            }
+          }
+        },
+        "error": null,
+        "status": "failed"
+      }
+    },
+    {
+      "type": "item.started",
+      "item": {
+        "id": "item_3",
+        "type": "mcp_tool_call",
+        "server": "studyflow_github",
+        "tool": "get_repository_summary",
+        "arguments": {
+          "owner": "octocat",
+          "repo": "studyflow-missing-33cce9c543224d3a9623d3bc0a68bc8f"
+        },
+        "result": null,
+        "error": null,
+        "status": "in_progress"
+      }
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_3",
+        "type": "mcp_tool_call",
+        "server": "studyflow_github",
+        "tool": "get_repository_summary",
+        "arguments": {
+          "owner": "octocat",
+          "repo": "studyflow-missing-33cce9c543224d3a9623d3bc0a68bc8f"
+        },
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"ok\":false,\"summary\":null,\"error\":{\"code\":\"REPOSITORY_NOT_FOUND\",\"message\":\"Repository not found or unavailable.\",\"retry_after_seconds\":null}}"
+            }
+          ],
+          "structured_content": {
+            "ok": false,
+            "summary": null,
+            "error": {
+              "code": "REPOSITORY_NOT_FOUND",
+              "message": "Repository not found or unavailable.",
+              "retry_after_seconds": null
+            }
+          }
+        },
+        "error": null,
+        "status": "failed"
+      }
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_4",
+        "type": "agent_message",
+        "text": "MCP verification probe finished."
+      }
+    }
+  ],
+  "stop_runs": [
+    {
+      "timestamp": "2026-10-07T11:39:39.289119+00:00",
+      "browser_channel": "chrome",
+      "results": [
+        {
+          "command": "uv run pytest -q",
+          "exit_code": 0,
+          "output": "........................................................................ [ 33%]\n........................................................................ [ 66%]\n........................................................................ [100%]\n216 passed, 53 deselected in 21.92s\n"
+        },
+        {
+          "command": "uv run pytest -q -m browser",
+          "exit_code": 0,
+          "output": ".....................................................                    [100%]\n53 passed, 216 deselected in 32.17s\n"
+        },
+        {
+          "command": "uv build",
+          "exit_code": 0,
+          "output": "warning: The cache directory `.uv-cache` is inside the build source directory `.` and may be included in distributions\nBuilding source distribution...\nBuilding wheel from source distribution...\nSuccessfully built dist/studyflow-0.1.0.tar.gz\nSuccessfully built dist/studyflow-0.1.0-py3-none-any.whl\n"
+        }
+      ],
+      "feedback": {
+        "systemMessage": "StudyFlow final verification passed.\nuv run pytest -q: exit 0\nuv run pytest -q -m browser: exit 0\nuv build: exit 0"
+      },
+      "event": {
+        "session_id": "01a11628-8741-7fe0-b578-9fc5023e0ba9",
+        "turn_id": "01a11628-939a-75d0-b6d0-c3616b673be3",
+        "hook_event_name": "Stop",
+        "stop_hook_active": false
+      }
+    }
+  ],
+  "codex_exit_code": 0,
+  "token_source": "Ignored .env; loaded only into this process environment; token value not recorded",
+  "turn_completed": true,
+  "live_success_observed": true,
+  "missing_repository_verified": true,
+  "probe_exit_code": 0
+}
