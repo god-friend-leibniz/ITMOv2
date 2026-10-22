@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ assignment.title }} · StudyFlow</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <script src="{{ url_for('static', path='assignments.js') }}" defer></script>
+    <script src="{{ url_for('static', path='tasks.js') }}" defer></script>
+    <script src="{{ url_for('static', path='repository.js') }}" defer></script>
+  </head>
+  <body>
+    <header><span class="brand">StudyFlow</span><span>Your coursework, organized.</span></header>
+    <main>
+      <section aria-labelledby="assignment-heading">
+        <a href="/courses/{{ assignment.course_id }}">Back to course</a>
+        <p class="eyebrow">ASSIGNMENT</p>
+        <article class="course">
+          <h1 id="assignment-heading">{{ assignment.title }}</h1>
+          {% if assignment.description %}<p>{{ assignment.description }}</p>{% endif %}
+          {% if assignment.due_date %}<p>Due <time datetime="{{ assignment.due_date }}">{{ assignment.due_date }}</time></p>{% endif %}
+          <p>{{ assignment.progress.completed }} / {{ assignment.progress.total }} · {{ assignment.progress.percent }}%</p>
+          {% if assignment.repository %}
+          <p>GitHub repository: <a href="https://github.com/{{ assignment.repository.owner }}/{{ assignment.repository.repo }}">{{ assignment.repository.owner }}/{{ assignment.repository.repo }}</a></p>
+          {% else %}
+          <p>No repository linked.</p>
+          {% endif %}
+        </article>
+        {% if assignment.repository %}
+        <section id="repository-panel" aria-labelledby="repository-heading" data-url="/api/assignments/{{ assignment.id }}/repository-summary" data-owner="{{ assignment.repository.owner }}" data-repo="{{ assignment.repository.repo }}">
+          <h2 id="repository-heading">Repository summary</h2>
+          <p id="repository-status" role="status">Repository summary has not been loaded.</p>
+          <p id="repository-error" role="alert" hidden></p>
+          <div id="repository-summary" hidden></div>
+          <button id="load-repository" type="button">Load repository summary</button>
+        </section>
+        {% endif %}
+        <section aria-labelledby="checklist-heading">
+          <h2 id="checklist-heading">Checklist</h2>
+          <ul id="checklist">
+            {% for task in tasks %}
+            <li>
+              <label><input type="checkbox" data-url="/api/tasks/{{ task.id }}" {% if task.is_completed %}checked{% endif %}> {{ task.title }}</label>
+              <form class="task-edit" data-url="/api/tasks/{{ task.id }}">
+                <input name="title" aria-label="Rename {{ task.title }}" required maxlength="200" value="{{ task.title }}">
+                <p class="task-error" role="alert" hidden></p>
+                <button type="submit">Rename task</button>
+                <button class="task-delete danger" type="button" aria-label="Delete task {{ task.title }}" data-title="{{ task.title }}">Delete task</button>
+              </form>
+            </li>
+            {% else %}
+            <li class="empty">No tasks</li>
+            {% endfor %}
+          </ul>
+          <form id="task-form" data-url="/api/assignments/{{ assignment.id }}/tasks">
+            <label for="task-title">Task title</label>
+            <input id="task-title" name="title" required maxlength="200">
+            <p id="task-error" role="alert" hidden></p>
+            <button type="submit">Add task</button>
+          </form>
+        </section>
+      </section>
+      <section class="new-course" aria-labelledby="edit-assignment-heading">
+        <h2 id="edit-assignment-heading">Edit assignment</h2>
+        <form id="assignment-form" data-url="/api/assignments/{{ assignment.id }}" data-method="PATCH" data-course-url="/courses/{{ assignment.course_id }}">
+          <label for="assignment-title">Assignment title</label>
+          <input id="assignment-title" name="title" required maxlength="200" value="{{ assignment.title }}">
+          <label for="assignment-description">Assignment description</label>
+          <textarea id="assignment-description" name="description" maxlength="5000" rows="4">{{ assignment.description }}</textarea>
+          <label for="assignment-due-date">Due date</label>
+          <input id="assignment-due-date" name="due_date" type="date" value="{{ assignment.due_date or '' }}">
+          <label for="github-owner">GitHub owner</label>
+          <input id="github-owner" name="github_owner" maxlength="39" value="{{ assignment.repository.owner if assignment.repository else '' }}">
+          <label for="github-repo">GitHub repository name</label>
+          <input id="github-repo" name="github_repo" maxlength="100" value="{{ assignment.repository.repo if assignment.repository else '' }}">
+          <p>Optional: enter both fields, or leave both blank.</p>
+          <p id="assignment-error" role="alert" hidden></p>
+          <button type="submit">Save changes</button>
+          <button id="delete-assignment" class="danger" type="button">Delete assignment</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ course.name }} · StudyFlow</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <script src="{{ url_for('static', path='courses.js') }}" defer></script>
+    <script src="{{ url_for('static', path='assignments.js') }}" defer></script>
+  </head>
+  <body>
+    <header><span class="brand">StudyFlow</span><span>Your coursework, organized.</span></header>
+    <main>
+      <section aria-labelledby="course-heading">
+        <a href="/">All courses</a>
+        <p class="eyebrow">COURSE</p>
+        <article class="course">
+          <h1 id="course-heading">{{ course.name }}</h1>
+          {% if course.description %}<p>{{ course.description }}</p>{% endif %}
+        </article>
+        <section aria-labelledby="assignments-heading">
+          <h2 id="assignments-heading">Assignments</h2>
+          {% for assignment in assignments %}
+          <article class="course">
+            <h3><a href="/assignments/{{ assignment.id }}">{{ assignment.title }}</a></h3>
+            {% if assignment.description %}<p>{{ assignment.description }}</p>{% endif %}
+            {% if assignment.due_date %}<p>Due <time datetime="{{ assignment.due_date }}">{{ assignment.due_date }}</time></p>{% endif %}
+            <p>{{ assignment.progress.completed }} / {{ assignment.progress.total }} · {{ assignment.progress.percent }}%</p>
+            {% if assignment.progress.total == 0 %}<p>No tasks</p>{% endif %}
+          </article>
+          {% else %}
+          <p class="empty">No assignments yet.</p>
+          {% endfor %}
+        </section>
+      </section>
+      <aside class="sidebar">
+      <section class="new-course" aria-labelledby="edit-course-heading">
+        <h2 id="edit-course-heading">Edit course</h2>
+        <form id="course-form" data-url="/api/courses/{{ course.id }}" data-method="PATCH">
+          <label for="name">Course name</label>
+          <input id="name" name="name" required maxlength="200" value="{{ course.name }}">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" maxlength="5000" rows="4">{{ course.description }}</textarea>
+          <p id="form-error" role="alert" hidden></p>
+          <button type="submit">Save changes</button>
+          <button id="delete-course" class="danger" type="button">Delete course</button>
+        </form>
+      </section>
+      <section class="new-course" aria-labelledby="add-assignment-heading">
+        <h2 id="add-assignment-heading">Add assignment</h2>
+        <form id="assignment-form" data-url="/api/courses/{{ course.id }}/assignments">
+          <label for="assignment-title">Assignment title</label>
+          <input id="assignment-title" name="title" required maxlength="200">
+          <label for="assignment-description">Assignment description</label>
+          <textarea id="assignment-description" name="description" maxlength="5000" rows="4"></textarea>
+          <label for="assignment-due-date">Due date</label>
+          <input id="assignment-due-date" name="due_date" type="date">
+          <label for="github-owner">GitHub owner</label>
+          <input id="github-owner" name="github_owner" maxlength="39">
+          <label for="github-repo">GitHub repository name</label>
+          <input id="github-repo" name="github_repo" maxlength="100">
+          <p>Optional: enter both fields, or leave both blank.</p>
+          <p id="assignment-error" role="alert" hidden></p>
+          <button type="submit">Add assignment</button>
+        </form>
+      </section>
+      </aside>
+    </main>
+  </body>
+</html>

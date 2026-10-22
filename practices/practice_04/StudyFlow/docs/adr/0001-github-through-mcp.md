@@ -1,0 +1,3 @@
+# Route repository summaries through the custom MCP server
+
+StudyFlow's coursework requires MCP to be an explicit boundary between the application and GitHub, so both the web app and development agent will use `get_repository_summary` over local stdio. Direct GitHub calls from the web app with an agent-only MCP wrapper would avoid subprocess management, but would leave the demonstrated protocol outside the actual product path and create two integration entry points. We accept bounded subprocess startup and error handling in exchange for one exercised contract; the server owns GitHub access, has no coursework database access, and exposes no general GitHub client.
