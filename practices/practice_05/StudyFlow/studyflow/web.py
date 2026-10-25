@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from datetime import date
 from pathlib import Path
 import sqlite3
 
@@ -99,7 +100,7 @@ class TaskPatch(TaskCreate):
         return self
 
 
-def create_app(*, db_path=None, summary_reader=get_repository_summary):
+def create_app(*, db_path=None, summary_reader=get_repository_summary, local_date_provider=date.today):
     path = db_path if db_path is not None else db.database_path()
 
     @asynccontextmanager
@@ -182,19 +183,12 @@ def create_app(*, db_path=None, summary_reader=get_repository_summary):
 
     @app.get("/courses/{course_id}")
     def course_detail(request: Request, course_id: int, completion: str = "all"):
-        completion = completion if completion in ("incomplete", "completed") else "all"
+        completion = domain.normalize_completion(completion)
         assignments = coursework.list_assignments(path, course_id)
         has_assignments = bool(assignments)
-        if completion in ("completed", "incomplete"):
-            filtered = []
-            for assignment in assignments:
-                progress = assignment["progress"]
-                is_completed = progress["total"] > 0 and progress["completed"] == progress["total"]
-                if is_completed == (completion == "completed"):
-                    filtered.append(assignment)
-            assignments = filtered
+        assignments = domain.select_course_assignments(assignments, completion, local_date_provider())
         return templates.TemplateResponse(
-            request=request, name="course.html", context={
+            request=request, name="course.html", headers={"Cache-Control": "no-store"}, context={
                 "course": coursework.get_course(path, course_id),
                 "assignments": assignments,
                 "completion": completion,
@@ -240,7 +234,7 @@ def create_app(*, db_path=None, summary_reader=get_repository_summary):
     @app.get("/assignments/{assignment_id}")
     def assignment_detail(request: Request, assignment_id: int, completion: str = "all"):
         assignment = coursework.get_assignment(path, assignment_id)
-        completion = completion if completion in ("incomplete", "completed") else "all"
+        completion = domain.normalize_completion(completion)
         course_url = f"/courses/{assignment['course_id']}"
         if completion != "all":
             course_url += f"?completion={completion}"
