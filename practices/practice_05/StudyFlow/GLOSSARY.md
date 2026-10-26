@@ -24,6 +24,10 @@ _Avoid_: Separate task list, workflow
 The proportion of an assignment's tasks that are complete; an empty checklist has zero progress. It measures checklist completion, not submission, grading, or GitHub activity.
 _Avoid_: Grade, submission status
 
+**Overdue assignment**:
+An assignment with an incomplete checklist, including an empty checklist, and a due date earlier than today's local calendar date on the computer running StudyFlow. It remains part of all assignments and incomplete assignments; being overdue is not a submission or grading status.
+_Avoid_: Failed assignment, overdue task, submission status
+
 **Repository reference**:
 The GitHub owner and repository name identifying an assignment's optional supporting repository. An assignment has at most one reference, and the same repository may support several assignments.
 _Avoid_: Owned repository, coursework entity

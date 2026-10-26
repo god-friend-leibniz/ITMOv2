@@ -1,4 +1,5 @@
 from datetime import date
+from html.parser import HTMLParser
 import re
 import sqlite3
 from urllib.parse import urlsplit
@@ -570,3 +571,208 @@ def test_course_reads_with_repository_reference_work_without_summary_service(tmp
         assert assignment_links(page.text) == [f"/assignments/{saved['id']}"]
         assert client.get(f"/assignments/{saved['id']}?completion=overdue").status_code == 200
         assert client.get(f"/api/assignments/{saved['id']}").json() == saved
+
+
+class CourseListHTML(HTMLParser):
+    """Read the public result section from the actual rendered document."""
+
+    def __init__(self):
+        super().__init__()
+        self.sections = []
+        self.card_ids = []
+        self.id_markers = []
+        self.links = []
+        self.empty_count = 0
+        self.forbidden_tags = []
+        self.forms = []
+        self.depth = 0
+
+    def handle_starttag(self, tag, attributes):
+        attributes = dict(attributes)
+        if tag == "section":
+            if self.depth:
+                self.depth += 1
+            if attributes.get("id") == "course-assignment-list":
+                self.sections.append(attributes)
+                if not self.depth:
+                    self.depth = 1
+        if tag == "form":
+            self.forms.append(attributes.get("id"))
+        if not self.depth:
+            return
+        if "data-assignment-id" in attributes:
+            self.id_markers.append(attributes["data-assignment-id"])
+        if tag == "article" and "course" in attributes.get("class", "").split():
+            self.card_ids.append(attributes.get("data-assignment-id"))
+        if tag == "a":
+            self.links.append(attributes)
+        if attributes.get("id") == "assignments-empty":
+            self.empty_count += 1
+        if tag in ("form", "script"):
+            self.forbidden_tags.append(tag)
+        if attributes.get("role") in ("status", "alert"):
+            self.forbidden_tags.append(attributes["role"])
+
+    def handle_endtag(self, tag):
+        if tag == "section" and self.depth:
+            self.depth -= 1
+
+
+def course_list_html(response):
+    assert response.status_code == 200
+    assert response.headers["content-type"].split(";")[0] == "text/html"
+    parsed = CourseListHTML()
+    parsed.feed(response.text)
+    parsed.close()
+    assert len(parsed.sections) == 1
+    return parsed
+
+
+@pytest.mark.parametrize("mode, indices", [
+    ("all", [4, 2, 3, 5, 1, 0, 6]),
+    ("incomplete", [2, 3, 5, 1, 0]),
+    ("completed", [4, 6]),
+])
+def test_real_course_html_exposes_ordered_ids_and_keeps_forms_outside_result(dated_course, mode, indices):
+    client, course, assignments = dated_course
+    page = client.get(f"/courses/{course['id']}?completion={mode}")
+    result = course_list_html(page)
+    assert result.sections[0]["data-course-id"] == str(course["id"])
+    assert result.sections[0]["data-completion"] == mode
+    assert result.sections[0]["data-has-assignments"] == "true"
+    assert result.card_ids == [str(assignments[index]["id"]) for index in indices]
+    assert result.id_markers == result.card_ids
+    assert result.empty_count == 0
+    assert result.forbidden_tags == []
+    assert result.forms.count("course-form") == 1
+    assert result.forms.count("assignment-form") == 1
+
+
+def test_real_overdue_html_has_normalized_mode_presence_and_return_links(dated_course):
+    client, course, assignments = dated_course
+    url = f"/courses/{course['id']}"
+    result = course_list_html(client.get(url + "?completion=overdue"))
+    assert result.sections[0]["data-course-id"] == str(course["id"])
+    assert result.sections[0]["data-completion"] == "overdue"
+    assert result.sections[0]["data-has-assignments"] == "true"
+    assert result.card_ids == [str(assignments[index]["id"]) for index in [2, 3]]
+    assert result.id_markers == result.card_ids
+    assert [link["href"] for link in result.links if link["href"].startswith("/assignments/")] == [
+        f"/assignments/{assignments[index]['id']}?completion=overdue" for index in [2, 3]
+    ]
+    assert [link["href"] for link in result.links if link.get("aria-current") == "page"] == [
+        url + "?completion=overdue",
+    ]
+    assert {link["href"] for link in result.links if link["href"].startswith("/courses/")} == {
+        url, url + "?completion=incomplete", url + "?completion=completed", url + "?completion=overdue",
+    }
+
+
+@pytest.mark.parametrize("save_after_midnight", [False, True])
+def test_real_html_after_creation_uses_fresh_date_and_exposes_created_id(tmp_path, save_after_midnight):
+    current_day = date(2026, 10, 25)
+    with TestClient(create_app(
+        db_path=tmp_path / "coursework.sqlite3", local_date_provider=lambda: current_day,
+    )) as client:
+        course = client.post("/api/courses", json={"name": "Across midnight"}).json()
+        url = f"/courses/{course['id']}?completion=overdue"
+        opened = course_list_html(client.get(url))
+        assert opened.sections[0]["data-has-assignments"] == "false"
+        assert opened.card_ids == []
+        assert opened.empty_count == 1
+        if save_after_midnight:
+            current_day = date(2026, 10, 26)
+        created = client.post(f"/api/courses/{course['id']}/assignments", json={
+            "title": "Saved lab", "due_date": "2026-10-25",
+        })
+        assert created.status_code == 201
+        current_day = date(2026, 10, 26)
+        refreshed = course_list_html(client.get(url))
+        assert refreshed.sections[0]["data-course-id"] == str(course["id"])
+        assert refreshed.sections[0]["data-completion"] == "overdue"
+        assert refreshed.sections[0]["data-has-assignments"] == "true"
+        assert refreshed.card_ids == [str(created.json()["id"])]
+        assert refreshed.id_markers == refreshed.card_ids
+        assert refreshed.empty_count == 0
+
+
+@pytest.mark.parametrize("mode", ["completed", "overdue"])
+def test_real_html_distinguishes_empty_course_from_first_hidden_creation(tmp_path, mode):
+    with TestClient(create_app(
+        db_path=tmp_path / "coursework.sqlite3", local_date_provider=lambda: date(2026, 10, 25),
+    )) as client:
+        course = client.post("/api/courses", json={"name": "Hidden creation"}).json()
+        url = f"/courses/{course['id']}?completion={mode}"
+        empty_response = client.get(url)
+        empty = course_list_html(empty_response)
+        assert empty.sections[0]["data-has-assignments"] == "false"
+        assert empty.empty_count == 1
+        assert empty.card_ids == []
+        assert "No assignments yet." in empty_response.text
+        created = client.post(f"/api/courses/{course['id']}/assignments", json={
+            "title": "Hidden lab", "due_date": "2026-10-25",
+        })
+        assert created.status_code == 201
+        refreshed_response = client.get(url)
+        refreshed = course_list_html(refreshed_response)
+        assert refreshed.sections[0]["data-course-id"] == str(course["id"])
+        assert refreshed.sections[0]["data-completion"] == mode
+        assert refreshed.sections[0]["data-has-assignments"] == "true"
+        assert refreshed.card_ids == []
+        assert refreshed.empty_count == 1
+        assert refreshed.forbidden_tags == []
+        assert "No assignments match this filter." in refreshed_response.text
+        assert "No assignments yet." not in refreshed_response.text
+
+
+@pytest.mark.parametrize("failure, due_date, visible, status, code", [
+    ("busy", "2026-10-24", True, 503, "DATABASE_BUSY"),
+    ("internal", "2026-10-25", False, 500, "INTERNAL_ERROR"),
+])
+def test_real_html_retry_after_read_failure_keeps_one_saved_assignment(
+    tmp_path, failure, due_date, visible, status, code,
+):
+    path = tmp_path / "coursework.sqlite3"
+    backup = tmp_path / "saved.sqlite3"
+    with TestClient(create_app(
+        db_path=path, local_date_provider=lambda: date(2026, 10, 25),
+    ), raise_server_exceptions=False) as client:
+        course = client.post("/api/courses", json={"name": "Recovery"}).json()
+        listing = f"/api/courses/{course['id']}/assignments"
+        url = f"/courses/{course['id']}?completion=overdue"
+        assert course_list_html(client.get(url)).sections[0]["data-has-assignments"] == "false"
+        created = client.post(listing, json={"title": "Saved lab", "due_date": due_date})
+        assert created.status_code == 201
+        saved = created.json()
+        lock = sqlite3.connect(path) if failure == "busy" else None
+        if lock:
+            lock.execute("BEGIN EXCLUSIVE")
+        else:
+            path.rename(backup)
+            path.mkdir()
+        try:
+            failed = client.get(url)
+            assert failed.status_code == status
+            assert failed.json()["error"]["code"] == code
+            assert "course-assignment-list" not in failed.text
+        finally:
+            if lock:
+                lock.rollback()
+                lock.close()
+            else:
+                path.rmdir()
+                backup.rename(path)
+        refreshed_response = client.get(url)
+        refreshed = course_list_html(refreshed_response)
+        expected_ids = [str(saved["id"])] if visible else []
+        assert refreshed.sections[0]["data-course-id"] == str(course["id"])
+        assert refreshed.sections[0]["data-completion"] == "overdue"
+        assert refreshed.sections[0]["data-has-assignments"] == "true"
+        assert refreshed.card_ids == expected_ids
+        assert refreshed.id_markers == expected_ids
+        assert refreshed.empty_count == (0 if visible else 1)
+        assert refreshed.forbidden_tags == []
+        if not visible:
+            assert "No assignments match this filter." in refreshed_response.text
+        assert course_list_html(client.get(url)).card_ids == expected_ids
+        assert client.get(listing).json() == [saved]
