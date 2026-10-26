@@ -18,15 +18,16 @@
           <h1 id="course-heading">{{ course.name }}</h1>
           {% if course.description %}<p>{{ course.description }}</p>{% endif %}
         </article>
-        <section aria-labelledby="assignments-heading">
+        <section id="course-assignment-list" aria-labelledby="assignments-heading" data-course-id="{{ course.id }}" data-completion="{{ completion }}" data-has-assignments="{{ 'true' if has_assignments else 'false' }}">
           <h2 id="assignments-heading">Assignments</h2>
           <nav class="assignment-filters" aria-label="Assignment completion">
             <a href="/courses/{{ course.id }}"{% if completion == 'all' %} aria-current="page"{% endif %}>All</a>
             <a href="/courses/{{ course.id }}?completion=incomplete"{% if completion == 'incomplete' %} aria-current="page"{% endif %}>Incomplete</a>
             <a href="/courses/{{ course.id }}?completion=completed"{% if completion == 'completed' %} aria-current="page"{% endif %}>Completed</a>
+            <a href="/courses/{{ course.id }}?completion=overdue"{% if completion == 'overdue' %} aria-current="page"{% endif %}>Overdue</a>
           </nav>
           {% for assignment in assignments %}
-          <article class="course">
+          <article class="course" data-assignment-id="{{ assignment.id }}">
             <h3><a href="/assignments/{{ assignment.id }}{% if completion != 'all' %}?completion={{ completion }}{% endif %}">{{ assignment.title }}</a></h3>
             {% if assignment.description %}<p>{{ assignment.description }}</p>{% endif %}
             {% if assignment.due_date %}<p>Due <time datetime="{{ assignment.due_date }}">{{ assignment.due_date }}</time></p>{% endif %}
@@ -66,7 +67,11 @@
           <input id="github-repo" name="github_repo" maxlength="100">
           <p>Optional: enter both fields, or leave both blank.</p>
           <p id="assignment-error" role="alert" hidden></p>
-          <p id="assignment-success" role="status" hidden><span></span> <a href="/courses/{{ course.id }}">All</a> to see it.</p>
+          <p id="assignment-success" role="status" hidden><span></span> <span id="assignment-hidden-confirmation"><a href="/courses/{{ course.id }}">All</a> to see it.</span></p>
+          <p id="assignment-refresh-status" role="status" hidden>Updating assignment list…</p>
+          <p id="assignment-list-stale-note" hidden>This assignment list is out of date.</p>
+          <p id="assignment-refresh-error" role="alert" hidden>Задание сохранено, но список обновить не удалось</p>
+          <button id="assignment-refresh-retry" type="button" hidden>Обновить список</button>
           <button type="submit">Add assignment</button>
         </form>
       </section>

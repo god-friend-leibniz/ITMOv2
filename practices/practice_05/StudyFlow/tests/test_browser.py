@@ -1,4 +1,6 @@
 import socket
+import re
+from datetime import date, datetime, timezone
 from functools import partial
 from pathlib import Path
 import sys
@@ -15,8 +17,13 @@ from studyflow.web import create_app
 
 
 @pytest.fixture
-def course_server(tmp_path, request):
-    options = {}
+def server_day():
+    return {"value": date(2026, 10, 25)}
+
+
+@pytest.fixture
+def course_server(tmp_path, request, server_day):
+    options = {"local_date_provider": lambda: server_day["value"]}
     if getattr(request, "param", None) == "mcp":
         options["summary_reader"] = partial(get_repository_summary, server_parameters=StdioServerParameters(
             command=sys.executable, args=[str(Path(__file__).parent / "fixtures/github_server.py")],
@@ -73,10 +80,10 @@ def test_course_completion_filter_is_keyboard_operable_and_survives_reload_and_s
 
 
 @pytest.mark.browser
-@pytest.mark.parametrize("completion", ["incomplete", "completed"])
+@pytest.mark.parametrize("completion", ["incomplete", "completed", "overdue"])
 def test_return_to_course_keeps_completion_after_checklist_changes(page, course_server, completion):
     course = page.request.post(f"{course_server}/api/courses", data={"name": "Algorithms"}).json()
-    assignment = page.request.post(f"{course_server}/api/courses/{course['id']}/assignments", data={"title": "Lab"}).json()
+    assignment = page.request.post(f"{course_server}/api/courses/{course['id']}/assignments", data={"title": "Lab", "due_date": "2026-10-24"}).json()
     task = page.request.post(f"{course_server}/api/assignments/{assignment['id']}/tasks", data={"title": "Write report"}).json()
     if completion == "completed":
         page.request.patch(f"{course_server}/api/tasks/{task['id']}", data={"is_completed": True})
@@ -85,8 +92,8 @@ def test_return_to_course_keeps_completion_after_checklist_changes(page, course_
     page.goto(course_url)
     page.get_by_role("link", name="Lab", exact=True).click()
     expect(page).to_have_url(assignment_url)
-    page.get_by_role("checkbox", name="Write report", exact=True).set_checked(completion == "incomplete")
-    expect(page.get_by_text("1 / 1 · 100%" if completion == "incomplete" else "0 / 1 · 0%", exact=True)).to_be_visible()
+    page.get_by_role("checkbox", name="Write report", exact=True).set_checked(completion != "completed")
+    expect(page.get_by_text("1 / 1 · 100%" if completion != "completed" else "0 / 1 · 0%", exact=True)).to_be_visible()
     expect(page).to_have_url(assignment_url)
     page.get_by_role("link", name="Back to course", exact=True).click()
     expect(page).to_have_url(course_url)
@@ -100,15 +107,20 @@ def test_return_to_course_keeps_completion_after_checklist_changes(page, course_
 
 
 @pytest.mark.browser
-def test_filtered_assignment_deletion_returns_to_the_same_completion_mode(page, course_server):
+@pytest.mark.parametrize("completion", ["all", "incomplete", "completed", "overdue"])
+def test_filtered_assignment_deletion_returns_to_the_same_completion_mode(page, course_server, completion):
     course = page.request.post(f"{course_server}/api/courses", data={"name": "Algorithms"}).json()
-    assignment = page.request.post(f"{course_server}/api/courses/{course['id']}/assignments", data={"title": "Lab"}).json()
-    course_url = f"{course_server}/courses/{course['id']}?completion=incomplete"
+    assignment = page.request.post(f"{course_server}/api/courses/{course['id']}/assignments", data={"title": "Lab", "due_date": "2026-10-24"}).json()
+    if completion == "completed":
+        task = page.request.post(f"{course_server}/api/assignments/{assignment['id']}/tasks", data={"title": "Done"}).json()
+        page.request.patch(f"{course_server}/api/tasks/{task['id']}", data={"is_completed": True})
+    query = "" if completion == "all" else f"?completion={completion}"
+    course_url = f"{course_server}/courses/{course['id']}{query}"
     page.goto(course_url)
     page.get_by_role("link", name="Lab", exact=True).click()
     page.once("dialog", lambda dialog: dialog.dismiss())
     page.get_by_role("button", name="Delete assignment", exact=True).click()
-    expect(page).to_have_url(f"{course_server}/assignments/{assignment['id']}?completion=incomplete")
+    expect(page).to_have_url(f"{course_server}/assignments/{assignment['id']}{query}")
     page.once("dialog", lambda dialog: dialog.accept())
     page.get_by_role("button", name="Delete assignment", exact=True).click()
     expect(page).to_have_url(course_url)
@@ -238,7 +250,7 @@ def test_course_can_still_be_edited_when_completion_filter_has_no_matches(page, 
 
 @pytest.mark.browser
 @pytest.mark.parametrize("completion", ["all", "incomplete"])
-def test_visible_assignment_creation_and_edit_keep_the_existing_reload_flow(page, course_server, completion):
+def test_visible_creation_and_detail_edit_keep_course_filter(page, course_server, completion):
     course = page.request.post(f"{course_server}/api/courses", data={"name": "Algorithms"}).json()
     course_url = f"{course_server}/courses/{course['id']}"
     if completion != "all":
@@ -1122,3 +1134,583 @@ def test_course_form_prevents_repeat_submissions_and_recovers_from_network_failu
     expect(page.get_by_role("alert")).to_contain_text("Could not save the course. Please try again.")
     expect(page.get_by_label("Course name", exact=True)).to_have_value("Algorithms")
     expect(submit).to_be_enabled()
+
+
+@pytest.mark.browser
+def test_course_list_keeps_server_deadline_order_and_card_details(page, course_server):
+    course = page.request.post(f"{course_server}/api/courses", data={"name": "Deadlines"}).json()
+    listing = f"{course_server}/api/courses/{course['id']}/assignments"
+    assignments = [page.request.post(listing, data={
+        "title": title, "due_date": due, "description": "Saved notes <b>plain</b>",
+    }).json() for title, due in [
+        ("Z undated", None), ("Later", "2026-10-27"), ("Z same", "2026-10-24"),
+        ("A same", "2026-10-24"), ("A undated", None),
+    ]]
+    page.goto(f"{course_server}/courses/{course['id']}")
+    section = page.locator("#course-assignment-list")
+    expect(section).to_be_visible(timeout=2000)
+    expect(section).to_have_attribute("data-course-id", str(course["id"]))
+    expect(section).to_have_attribute("data-completion", "all")
+    expect(section).to_have_attribute("data-has-assignments", "true")
+    cards = section.locator("[data-assignment-id]")
+    assert cards.evaluate_all("cards => cards.map(card => card.dataset.assignmentId)") == [
+        str(assignments[i]["id"]) for i in [2, 3, 1, 0, 4]
+    ]
+    expect(cards.first.get_by_text("Saved notes <b>plain</b>", exact=True)).to_be_visible()
+    expect(cards.first.locator("b")).to_have_count(0)
+    expect(cards.first.locator("time")).to_have_attribute("datetime", "2026-10-24")
+    expect(cards.first.get_by_text("0 / 0 · 0%", exact=True)).to_be_visible()
+    expect(cards.first.get_by_text("No tasks", exact=True)).to_be_visible()
+    expect(section.locator("form, script, #assignment-success")).to_have_count(0)
+    expect(page.get_by_label("Assignment title", exact=True)).to_be_visible()
+
+
+@pytest.mark.browser
+def test_course_deadline_order_survives_filters_and_saved_edits(page, course_server):
+    course = page.request.post(f"{course_server}/api/courses", data={"name": "Sorted filters"}).json()
+    listing = f"{course_server}/api/courses/{course['id']}/assignments"
+    assignments = [page.request.post(listing, data={"title": f"Lab {i}", "due_date": due}).json()
+                   for i, due in enumerate([None, "2026-10-27", "2026-10-24", "2026-10-24", None])]
+    for i in [0, 2]:
+        task = page.request.post(f"{course_server}/api/assignments/{assignments[i]['id']}/tasks", data={"title": "Done"}).json()
+        page.request.patch(f"{course_server}/api/tasks/{task['id']}", data={"is_completed": True})
+    for mode, indices in [("incomplete", [3, 1, 4]), ("completed", [2, 0])]:
+        url = f"{course_server}/courses/{course['id']}?completion={mode}"
+        page.goto(url)
+        cards = page.locator("#course-assignment-list [data-assignment-id]")
+        expect(cards).to_have_count(len(indices))
+        assert cards.evaluate_all("cards => cards.map(card => card.dataset.assignmentId)") == [
+            str(assignments[i]["id"]) for i in indices
+        ]
+    url = f"{course_server}/courses/{course['id']}?completion=incomplete"
+    page.goto(url)
+    page.get_by_role("link", name="Lab 1", exact=True).click()
+    page.get_by_label("Due date", exact=True).fill("2026-10-20")
+    with page.expect_navigation():
+        page.get_by_role("button", name="Save changes", exact=True).click()
+    expect(page.get_by_label("Due date", exact=True)).to_have_value("2026-10-20")
+    page.get_by_role("link", name="Back to course", exact=True).click()
+    expect(page.locator("[data-assignment-id]").first).to_have_attribute("data-assignment-id", str(assignments[1]["id"]))
+    page.get_by_role("link", name="Lab 1", exact=True).click()
+    page.get_by_label("Due date", exact=True).fill("")
+    with page.expect_navigation():
+        page.get_by_role("button", name="Save changes", exact=True).click()
+    expect(page.get_by_label("Due date", exact=True)).to_have_value("")
+    page.get_by_role("link", name="Back to course", exact=True).click()
+    assert page.locator("[data-assignment-id]").evaluate_all("cards => cards.map(card => card.dataset.assignmentId)") == [
+        str(assignments[i]["id"]) for i in [3, 1, 4]
+    ]
+
+
+@pytest.mark.browser
+def test_overdue_link_shows_server_membership_and_checklist_changes(page, course_server):
+    course = page.request.post(f"{course_server}/api/courses", data={"name": "Overdue"}).json()
+    listing = f"{course_server}/api/courses/{course['id']}/assignments"
+    assignments = []
+    tasks = []
+    for title, due, total, completed in [
+        ("Empty past", "2026-10-24", 0, 0), ("Completed past", "2026-10-24", 1, 1),
+        ("Partial past", "2026-10-23", 2, 1), ("Today", "2026-10-25", 1, 0),
+        ("Future", "2026-10-26", 1, 0), ("Undated", None, 1, 0),
+    ]:
+        assignment = page.request.post(listing, data={"title": title, "due_date": due}).json()
+        assignments.append(assignment)
+        checklist = []
+        for i in range(total):
+            task = page.request.post(f"{course_server}/api/assignments/{assignment['id']}/tasks", data={"title": f"Step {i}"}).json()
+            checklist.append(task)
+            if i < completed:
+                page.request.patch(f"{course_server}/api/tasks/{task['id']}", data={"is_completed": True})
+        tasks.append(checklist)
+    other = page.request.post(f"{course_server}/api/courses", data={"name": "Other"}).json()
+    page.request.post(f"{course_server}/api/courses/{other['id']}/assignments", data={"title": "Foreign", "due_date": "2026-10-01"})
+    url = f"{course_server}/courses/{course['id']}"
+    page.goto(url)
+    page.get_by_role("navigation", name="Assignment completion").get_by_role("link", name="Overdue", exact=True).click(timeout=2000)
+    overdue_url = url + "?completion=overdue"
+    expect(page).to_have_url(overdue_url)
+    expect(page.get_by_role("link", name="Overdue", exact=True)).to_have_attribute("aria-current", "page")
+    cards = page.locator("#course-assignment-list [data-assignment-id]")
+    assert cards.evaluate_all("cards => cards.map(card => card.dataset.assignmentId)") == [str(assignments[i]["id"]) for i in [2, 0]]
+    expect(cards.last.get_by_text("No tasks", exact=True)).to_be_visible()
+    for mode in ["all", "incomplete"]:
+        page.get_by_role("link", name=mode.capitalize(), exact=True).click()
+        for i in [0, 2]:
+            expect(page.locator(f'[data-assignment-id="{assignments[i]["id"]}"]')).to_have_count(1)
+    page.goto(overdue_url)
+    page.get_by_role("link", name="Partial past", exact=True).click()
+    page.get_by_role("checkbox", name="Step 1", exact=True).check()
+    expect(page.get_by_text("2 / 2 · 100%", exact=True)).to_be_visible()
+    page.get_by_role("link", name="Back to course", exact=True).click()
+    expect(page.get_by_role("link", name="Partial past", exact=True)).to_have_count(0)
+    page.goto(f"{course_server}/assignments/{assignments[2]['id']}?completion=overdue")
+    page.get_by_role("checkbox", name="Step 1", exact=True).uncheck()
+    expect(page.get_by_text("1 / 2 · 50%", exact=True)).to_be_visible()
+    page.get_by_role("link", name="Back to course", exact=True).click()
+    expect(page.get_by_role("link", name="Partial past", exact=True)).to_be_visible()
+    page.request.delete(f"{course_server}/api/tasks/{tasks[2][1]['id']}")
+    page.reload()
+    expect(page.get_by_role("link", name="Partial past", exact=True)).to_have_count(0)
+    page.request.delete(f"{course_server}/api/tasks/{tasks[2][0]['id']}")
+    page.reload()
+    expect(page.get_by_role("link", name="Partial past", exact=True)).to_be_visible()
+    expect(page.locator(f'[data-assignment-id="{assignments[2]["id"]}"]').get_by_text("No tasks", exact=True)).to_be_visible()
+
+
+@pytest.mark.browser
+def test_four_modes_keep_keyboard_navigation_shared_urls_and_fallback(page, course_server):
+    course = page.request.post(f"{course_server}/api/courses", data={"name": "Navigation"}).json()
+    assignment = page.request.post(f"{course_server}/api/courses/{course['id']}/assignments", data={
+        "title": "Past lab", "due_date": "2026-10-24",
+    }).json()
+    task = page.request.post(f"{course_server}/api/assignments/{assignment['id']}/tasks", data={"title": "Solve"}).json()
+    base = f"{course_server}/courses/{course['id']}"
+    page.set_viewport_size({"width": 360, "height": 900})
+    page.goto(base)
+    for mode in ["all", "incomplete", "completed", "overdue"]:
+        page.request.patch(f"{course_server}/api/tasks/{task['id']}", data={"is_completed": mode == "completed"})
+        filters = page.get_by_role("navigation", name="Assignment completion", exact=True)
+        link = filters.get_by_role("link", name=mode.capitalize(), exact=True)
+        link.focus()
+        expect(link).to_be_focused()
+        assert link.evaluate("el => getComputedStyle(el).outlineStyle") != "none"
+        page.keyboard.press("Enter")
+        url = base + ("" if mode == "all" else f"?completion={mode}")
+        expect(page).to_have_url(url)
+        expect(filters.locator('[aria-current="page"]')).to_have_count(1)
+        expect(link).to_have_attribute("aria-current", "page")
+        assert filters.evaluate("el => el.scrollWidth <= el.clientWidth")
+        page.reload()
+        expect(page.locator("#course-assignment-list")).to_have_attribute("data-completion", mode)
+        with page.context.new_page() as shared:
+            shared.goto(url)
+            expect(shared.locator("#course-assignment-list")).to_have_attribute("data-completion", mode)
+        filters.get_by_role("link", name="Overdue", exact=True).focus()
+        page.keyboard.press("Tab")
+        expect(page.get_by_role("link", name="Past lab", exact=True)).to_be_focused()
+        with page.expect_navigation():
+            page.keyboard.press("Enter")
+        detail = page.url
+        page.get_by_label("Assignment description", exact=True).fill(f"Edited in {mode}")
+        with page.expect_navigation():
+            page.get_by_role("button", name="Save changes", exact=True).click()
+        expect(page).to_have_url(detail)
+        page.get_by_role("link", name="Back to course", exact=True).click()
+        expect(page).to_have_url(url)
+    for query in ["", "?completion=", "?completion=unknown", "?completion"]:
+        page.goto(base + query)
+        expect(page.get_by_role("navigation", name="Assignment completion").get_by_role("link", name="All", exact=True)).to_have_attribute("aria-current", "page")
+        page.goto(f"{course_server}/assignments/{assignment['id']}{query}")
+        expect(page.get_by_role("link", name="Back to course", exact=True)).to_have_attribute("href", f"/courses/{course['id']}")
+    for path in ["/courses/999999", "/assignments/999999"]:
+        response = page.goto(course_server + path + "?completion=overdue")
+        assert response.status == 404
+        expect(page.locator("#assignments-empty")).to_have_count(0)
+
+
+@pytest.mark.browser
+def test_created_assignment_refreshes_only_server_list_and_keeps_forms(page, course_server):
+    course = page.request.post(f"{course_server}/api/courses", data={"name": "Fresh list"}).json()
+    listing = f"{course_server}/api/courses/{course['id']}/assignments"
+    later = page.request.post(listing, data={"title": "Later", "due_date": "2026-10-27"}).json()
+    url = f"{course_server}/courses/{course['id']}"
+    page.goto(url)
+    page.get_by_label("Course name", exact=True).fill("Unsaved course name")
+    reads, writes = [], []
+    page.on("request", lambda request: writes.append(request) if request.method == "POST" and request.url == listing else None)
+    page.route(url, lambda route: reads.append(route))
+    title = page.get_by_label("Assignment title", exact=True)
+    title.fill("New earlier lab")
+    page.get_by_label("Due date", exact=True).fill("2026-10-24")
+    page.get_by_role("button", name="Add assignment", exact=True).click(no_wait_after=True)
+    expect(title).to_have_value("", timeout=2000)
+    section = page.locator("#course-assignment-list")
+    expect(section).to_have_attribute("aria-busy", "true")
+    expect(page.locator("#assignment-refresh-status")).to_be_visible()
+    expect(page.locator("#assignment-list-stale-note")).to_be_visible()
+    expect(page.get_by_role("link", name="New earlier lab", exact=True)).to_have_count(0)
+    expect(page.get_by_role("button", name="Add assignment", exact=True)).to_be_disabled()
+    assert len(reads) == len(writes) == 1
+    assert reads[0].request.resource_type == "fetch"
+    assert reads[0].request.headers["accept"] == "text/html"
+    title.fill("Next draft")
+    title.press("Enter")
+    assert len(writes) == len(reads) == 1
+    reads[0].continue_()
+    expect(page.get_by_role("link", name="New earlier lab", exact=True)).to_be_visible()
+    created = page.request.get(listing).json()[-1]
+    assert page.locator("[data-assignment-id]").evaluate_all("cards => cards.map(card => card.dataset.assignmentId)") == [str(created["id"]), str(later["id"])]
+    expect(title).to_have_value("Next draft")
+    expect(title).to_be_focused()
+    expect(page.get_by_label("Course name", exact=True)).to_have_value("Unsaved course name")
+    expect(page.locator("#assignment-form")).to_have_attribute("data-completion", "all")
+    expect(page.locator("#assignment-refresh-status")).to_be_hidden()
+    expect(page.locator("#assignment-list-stale-note")).to_be_hidden()
+    expect(page.get_by_role("button", name="Add assignment", exact=True)).to_be_enabled()
+
+
+@pytest.mark.browser
+def test_creation_in_each_mode_uses_fresh_html_for_every_due_date(page, course_server):
+    expected = {"all": [True] * 4, "incomplete": [True] * 4,
+                "completed": [False] * 4, "overdue": [True, False, False, False]}
+    for mode in expected:
+        course = page.request.post(f"{course_server}/api/courses", data={"name": mode}).json()
+        listing = f"{course_server}/api/courses/{course['id']}/assignments"
+        url = f"{course_server}/courses/{course['id']}" + ("" if mode == "all" else f"?completion={mode}")
+        page.goto(url)
+        expect(page.get_by_text("No assignments yet.", exact=True)).to_be_visible()
+        for i, due in enumerate(["2026-10-24", "2026-10-25", "2026-10-26", None]):
+            title = f'{mode}-{i} <b>lab</b><script>window.unsafeTitle = true</script>'
+            page.get_by_label("Assignment title", exact=True).fill(title)
+            page.get_by_label("Due date", exact=True).fill(due or "")
+            with page.expect_response(lambda response: response.request.method == "GET" and response.url == url and response.request.resource_type == "fetch") as refreshed:
+                page.get_by_role("button", name="Add assignment", exact=True).click()
+            assert refreshed.value.status == 200
+            expect(page.locator("#assignment-success")).to_contain_text(f'Assignment “{title}” created.')
+            saved = page.request.get(listing).json()[-1]
+            card = page.locator(f'[data-assignment-id="{saved["id"]}"]')
+            expect(card).to_have_count(1 if expected[mode][i] else 0)
+            expect(page).to_have_url(url)
+            expect(page.locator("#assignment-form")).to_have_attribute("data-completion", mode)
+            expect(page.get_by_label("Assignment title", exact=True)).to_have_value("")
+            expect(page.get_by_role("button", name="Add assignment", exact=True)).to_be_enabled()
+            expect(page.locator("#assignment-success b, #assignment-success script")).to_have_count(0)
+            assert page.evaluate("window.unsafeTitle === undefined")
+            all_link = page.locator("#assignment-success").get_by_role("link", name="All", exact=True)
+            if expected[mode][i]:
+                expect(all_link).to_be_hidden()
+                expect(card.locator("b, script")).to_have_count(0)
+            else:
+                expect(page.locator("#assignment-success")).to_contain_text("hidden by the current filter")
+                expect(all_link).to_be_visible()
+                expect(all_link).to_have_attribute("href", f"/courses/{course['id']}")
+            expect(page.locator("#course-assignment-list")).to_have_attribute("data-has-assignments", "true")
+            expect(page.get_by_text("No assignments yet.", exact=True)).to_have_count(0)
+        if mode == "completed":
+            expect(page.get_by_text("No assignments match this filter.", exact=True)).to_be_visible()
+            page.locator("#assignment-success").get_by_role("link", name="All", exact=True).focus()
+            page.keyboard.press("Enter")
+            expect(page).to_have_url(f"{course_server}/courses/{course['id']}")
+            expect(page.get_by_role("link", name=title, exact=True)).to_be_visible()
+            page.reload()
+            expect(page.locator("#assignment-success")).to_be_hidden()
+
+
+@pytest.mark.browser
+def test_saved_assignment_read_failure_keeps_stale_list_and_write_success(page, course_server):
+    course = page.request.post(f"{course_server}/api/courses", data={"name": "Saved but stale"}).json()
+    listing = f"{course_server}/api/courses/{course['id']}/assignments"
+    url = f"{course_server}/courses/{course['id']}?completion=overdue"
+    page.goto(url)
+    reads = []
+    def fail_read(route):
+        reads.append(route.request)
+        route.abort()
+    page.route(url, fail_read)
+    page.get_by_label("Assignment title", exact=True).fill("Saved once")
+    page.get_by_label("Due date", exact=True).fill("2026-10-24")
+    page.get_by_role("button", name="Add assignment", exact=True).click()
+    error = page.locator("#assignment-refresh-error")
+    expect(error).to_have_text("Задание сохранено, но список обновить не удалось", timeout=2000)
+    expect(error).to_be_visible()
+    expect(error).to_have_attribute("role", "alert")
+    expect(page.locator("#assignment-error")).to_be_hidden()
+    expect(page.locator("#assignment-success")).to_be_hidden()
+    expect(page.locator("#assignment-refresh-status")).to_be_hidden()
+    expect(page.locator("#assignment-list-stale-note")).to_be_visible()
+    section = page.locator("#course-assignment-list")
+    expect(section).to_have_attribute("aria-busy", "false")
+    expect(section).to_have_attribute("aria-describedby", "assignment-list-stale-note")
+    expect(section).to_have_attribute("data-has-assignments", "false")
+    expect(page.get_by_text("No assignments yet.", exact=True)).to_be_visible()
+    expect(page.get_by_text("No assignments match this filter.", exact=True)).to_have_count(0)
+    expect(section.locator("[data-assignment-id]")).to_have_count(0)
+    retry = page.get_by_role("button", name="Обновить список", exact=True)
+    expect(retry).to_be_visible()
+    expect(retry).to_have_attribute("type", "button")
+    expect(section.locator("#assignment-refresh-retry, #assignment-refresh-error")).to_have_count(0)
+    expect(page.get_by_label("Assignment title", exact=True)).to_have_value("")
+    expect(page.get_by_role("button", name="Add assignment", exact=True)).to_be_enabled()
+    assert len(reads) == len(page.request.get(listing).json()) == 1
+    expect(page).to_have_url(url)
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("failure", ["network", "not_found", "busy", "internal", "body"])
+def test_refresh_retry_reads_only_and_recovers_after_repeated_failures(page, course_server, failure):
+    course = page.request.post(f"{course_server}/api/courses", data={"name": "Read-only retry"}).json()
+    listing = f"{course_server}/api/courses/{course['id']}/assignments"
+    url = f"{course_server}/courses/{course['id']}?completion=overdue"
+    page.goto(url)
+    reads, writes = [], []
+    page.route(url, lambda route: reads.append(route))
+    page.on("request", lambda request: writes.append(request) if request.url == listing and request.method == "POST" else None)
+    def fail(route):
+        if failure == "network":
+            route.abort()
+        elif failure == "not_found":
+            route.fulfill(status=404, content_type="text/html", body="<h1>Course not found</h1>")
+        elif failure == "body":
+            route.fulfill(status=200, headers={"Content-Type": "text/html", "Content-Encoding": "gzip"}, body="not a gzip body")
+        else:
+            route.fulfill(status=503 if failure == "busy" else 500, json={"error": {
+                "code": "DATABASE_BUSY" if failure == "busy" else "INTERNAL_ERROR", "message": "Safe read failure", "fields": {},
+            }})
+    page.get_by_label("Assignment title", exact=True).fill("Saved once")
+    page.get_by_label("Due date", exact=True).fill("2026-10-24")
+    save = page.get_by_role("button", name="Add assignment", exact=True)
+    save.click()
+    section = page.locator("#course-assignment-list")
+    expect(section).to_have_attribute("aria-busy", "true")
+    fail(reads[0])
+    error = page.locator("#assignment-refresh-error")
+    expect(error).to_be_visible()
+    expect(page.locator("#assignment-error")).to_be_hidden()
+    expect(page.locator("#assignment-success")).to_be_hidden()
+    retry = page.get_by_role("button", name="Обновить список", exact=True)
+    expect(retry).to_be_enabled()
+    retry.click()
+    expect(section).to_have_attribute("aria-busy", "true", timeout=2000)
+    expect(page.locator("#assignment-refresh-status")).to_be_visible()
+    expect(error).to_be_visible()
+    expect(retry).to_be_disabled()
+    expect(save).to_be_disabled()
+    page.get_by_label("Assignment title", exact=True).press("Enter")
+    retry.press("Enter")
+    assert len(reads) == 2 and len(writes) == 1
+    fail(reads[1])
+    expect(retry).to_be_enabled()
+    expect(error).to_be_visible()
+    retry.click()
+    expect(section).to_have_attribute("aria-busy", "true")
+    assert len(reads) == 3
+    reads[2].continue_()
+    expect(page.get_by_role("link", name="Saved once", exact=True)).to_be_visible()
+    expect(error).to_be_hidden()
+    expect(retry).to_be_hidden()
+    expect(page.locator("#assignment-list-stale-note")).to_be_hidden()
+    expect(page.locator("#assignment-refresh-status")).to_be_hidden()
+    expect(save).to_be_enabled()
+    assert len(writes) == 1
+    saved = page.request.get(listing).json()
+    assert len(saved) == 1 and saved[0]["title"] == "Saved once"
+    expect(section).to_have_attribute("data-has-assignments", "true")
+    expect(page).to_have_url(url)
+
+
+@pytest.mark.browser
+def test_refresh_rejects_incompatible_html_before_replacing_list(page, course_server):
+    course = page.request.post(f"{course_server}/api/courses", data={"name": "Validate list"}).json()
+    listing = f"{course_server}/api/courses/{course['id']}/assignments"
+    page.request.post(listing, data={"title": "Existing", "due_date": "2026-10-23"})
+    url = f"{course_server}/courses/{course['id']}?completion=overdue"
+    for corruption in ["media", "status", "missing_container", "duplicate_container", "course", "course_zero",
+                       "mode", "boolean", "missing_id", "bad_id", "duplicate_id", "nonempty_false",
+                       "empty_extra", "empty_missing", "empty_duplicate", "form", "script"]:
+        mode = "completed" if corruption in ["empty_missing", "empty_duplicate"] else "overdue"
+        url = f"{course_server}/courses/{course['id']}?completion={mode}"
+        page.goto(url)
+        section = page.locator("#course-assignment-list")
+        before = section.locator("[data-assignment-id]").evaluate_all("cards => cards.map(card => card.dataset.assignmentId)")
+        def corrupt_read(route):
+            upstream = route.fetch()
+            body = upstream.text()
+            headers = dict(upstream.headers)
+            headers.pop("content-length", None)
+            fragment = re.search(r'<section id="course-assignment-list"[\s\S]*?</section>', body).group()
+            changed = fragment
+            if corruption == "media":
+                headers["content-type"] = "application/json"
+            elif corruption == "missing_container":
+                changed = fragment.replace('id="course-assignment-list"', 'id="missing-list"', 1)
+            elif corruption == "duplicate_container":
+                changed = fragment + fragment
+            elif corruption in ["course", "course_zero"]:
+                changed = re.sub(r'data-course-id="[^"]*"', 'data-course-id="999999"' if corruption == "course" else 'data-course-id="0"', fragment, count=1)
+            elif corruption == "mode":
+                changed = fragment.replace('data-completion="overdue"', 'data-completion="completed"', 1)
+            elif corruption == "boolean":
+                changed = fragment.replace('data-has-assignments="true"', 'data-has-assignments="yes"', 1)
+            elif corruption == "missing_id":
+                changed = re.sub(r' data-assignment-id="[^"]*"', '', fragment, count=1)
+            elif corruption == "bad_id":
+                changed = re.sub(r'data-assignment-id="[^"]*"', 'data-assignment-id="0"', fragment, count=1)
+            elif corruption == "duplicate_id":
+                ids = re.findall(r'data-assignment-id="([^"]*)"', fragment)
+                changed = fragment.replace(f'data-assignment-id="{ids[1]}"', f'data-assignment-id="{ids[0]}"', 1)
+            elif corruption == "nonempty_false":
+                changed = fragment.replace('data-has-assignments="true"', 'data-has-assignments="false"', 1)
+            elif corruption == "empty_extra":
+                changed = fragment.replace('</section>', '<p id="assignments-empty">Wrong empty</p></section>', 1)
+            elif corruption in ["empty_missing", "empty_duplicate"]:
+                empty = re.search(r'<p class="empty" id="assignments-empty">.*?</p>', fragment).group()
+                changed = fragment.replace(empty, '' if corruption == "empty_missing" else empty + empty, 1)
+            elif corruption == "form":
+                changed = fragment.replace('<h2 ', '<form></form><h2 ', 1)
+            elif corruption == "script":
+                changed = fragment.replace('<h2 ', '<script>window.unsafeFragment = true</script><h2 ', 1)
+            body = body.replace(fragment, changed, 1)
+            route.fulfill(response=upstream, headers=headers, body=body, status=201 if corruption == "status" else 200)
+        page.route(url, corrupt_read)
+        title = f"Saved {corruption}"
+        page.get_by_label("Assignment title", exact=True).fill(title)
+        page.get_by_label("Due date", exact=True).fill("2026-10-24")
+        page.get_by_role("button", name="Add assignment", exact=True).click()
+        expect(page.locator("#assignment-refresh-error")).to_be_visible(timeout=2000)
+        expect(page.locator("#assignment-success")).to_be_hidden()
+        assert section.locator("[data-assignment-id]").evaluate_all("cards => cards.map(card => card.dataset.assignmentId)") == before
+        expect(page.get_by_role("link", name=title, exact=True)).to_have_count(0)
+        expect(page.locator("#assignment-list-stale-note")).to_be_visible()
+        expect(page.locator("#assignment-error")).to_be_hidden()
+        expect(page.get_by_label("Assignment title", exact=True)).to_have_value("")
+        page.unroute(url, corrupt_read)
+        page.get_by_role("button", name="Обновить список", exact=True).click()
+        if mode == "completed":
+            expect(page.locator("#assignment-success")).to_contain_text(title)
+            expect(page.get_by_text("No assignments match this filter.", exact=True)).to_be_visible()
+        else:
+            expect(page.get_by_role("link", name=title, exact=True)).to_be_visible()
+        expect(page.locator("#assignment-refresh-error")).to_be_hidden()
+        assert page.evaluate("window.unsafeFragment === undefined")
+        assert len([item for item in page.request.get(listing).json() if item["title"] == title]) == 1
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("save_after_midnight", [False, True])
+def test_creation_uses_new_server_date_when_form_and_browser_are_still_yesterday(page, course_server, server_day, save_after_midnight):
+    page.clock.set_fixed_time(datetime(2026, 10, 25, 12, tzinfo=timezone.utc))
+    course = page.request.post(f"{course_server}/api/courses", data={"name": "Across midnight"}).json()
+    listing = f"{course_server}/api/courses/{course['id']}/assignments"
+    earlier = page.request.post(listing, data={"title": "Earlier", "due_date": "2026-10-24"}).json()
+    url = f"{course_server}/courses/{course['id']}?completion=overdue"
+    page.goto(url)
+    page.get_by_label("Assignment title", exact=True).fill("Yesterday at fresh read")
+    page.get_by_label("Due date", exact=True).fill("2026-10-25")
+    reads = []
+    page.route(url, lambda route: reads.append(route))
+    if save_after_midnight:
+        server_day["value"] = date(2026, 10, 26)
+    page.get_by_role("button", name="Add assignment", exact=True).click()
+    expect(page.get_by_label("Assignment title", exact=True)).to_have_value("")
+    expect(page.locator("#course-assignment-list")).to_have_attribute("aria-busy", "true")
+    server_day["value"] = date(2026, 10, 26)
+    assert len(reads) == 1
+    reads[0].continue_()
+    expect(page.get_by_role("link", name="Yesterday at fresh read", exact=True)).to_be_visible()
+    expect(page.locator("#assignment-success")).not_to_contain_text("hidden")
+    saved = page.request.get(listing).json()[-1]
+    assert saved["due_date"] == "2026-10-25"
+    assert page.locator("[data-assignment-id]").evaluate_all("cards => cards.map(card => card.dataset.assignmentId)") == [str(earlier["id"]), str(saved["id"])]
+    assert page.evaluate("new Date().toISOString().slice(0, 10)") == "2026-10-25"
+    expect(page).to_have_url(url)
+
+
+@pytest.mark.browser
+def test_refresh_feedback_and_retry_keep_keyboard_focus_and_plain_text(page, course_server):
+    course = page.request.post(f"{course_server}/api/courses", data={"name": "Accessible refresh"}).json()
+    url = f"{course_server}/courses/{course['id']}?completion=completed"
+    page.goto(url)
+    scripts, reads = [], []
+    page.on("request", lambda request: scripts.append(request.url) if request.resource_type == "script" else None)
+    page.route(url, lambda route: reads.append(route))
+    success = page.locator("#assignment-success")
+    success.evaluate("el => el.dataset.liveIdentity = 'same-region'")
+    expect(success).to_have_attribute("role", "status")
+    expect(page.locator("#assignment-refresh-status")).to_have_attribute("role", "status")
+    expect(page.locator("#assignment-refresh-error")).to_have_attribute("role", "alert")
+    expect(page.locator("#course-assignment-list [role=status], #course-assignment-list [role=alert], #course-assignment-list button")).to_have_count(0)
+    title = '<img src=x onerror="window.unsafeTitle = true">'
+    page.get_by_label("Assignment title", exact=True).fill(title)
+    save = page.get_by_role("button", name="Add assignment", exact=True)
+    save.click()
+    expect(page.locator("#assignment-refresh-status")).to_be_visible()
+    expect(success).to_be_hidden()
+    reads[0].abort()
+    error = page.locator("#assignment-refresh-error")
+    expect(error).to_be_visible()
+    retry = page.get_by_role("button", name="Обновить список", exact=True)
+    page.get_by_label("GitHub repository name", exact=True).focus()
+    page.keyboard.press("Tab")
+    expect(retry).to_be_focused()
+    assert retry.evaluate("el => getComputedStyle(el).outlineStyle") != "none"
+    page.keyboard.press("Enter")
+    expect(page.locator("#course-assignment-list")).to_have_attribute("aria-busy", "true")
+    reads[1].abort()
+    expect(retry).to_be_enabled()
+    expect(retry).to_be_focused(timeout=2000)
+    page.keyboard.press("Enter")
+    expect(page.locator("#assignment-refresh-status")).to_be_visible()
+    reads[2].continue_()
+    expect(success).to_be_visible()
+    expect(success).to_contain_text(title)
+    expect(success).to_have_attribute("data-live-identity", "same-region")
+    expect(success.locator("img")).to_have_count(0)
+    expect(retry).to_be_hidden()
+    expect(error).to_be_hidden()
+    expect(save).to_be_focused(timeout=2000)
+    assert scripts == []
+    assert page.evaluate("window.unsafeTitle === undefined")
+    success.get_by_role("link", name="All", exact=True).focus()
+    page.keyboard.press("Enter")
+    expect(page).to_have_url(f"{course_server}/courses/{course['id']}")
+    expect(page.get_by_role("link", name=title, exact=True)).to_be_visible()
+    expect(page.locator("#course-assignment-list img")).to_have_count(0)
+
+
+@pytest.mark.browser
+def test_failed_new_write_preserves_previous_saved_context_and_stale_error(page, course_server):
+    course = page.request.post(f"{course_server}/api/courses", data={"name": "Independent outcomes"}).json()
+    listing = f"{course_server}/api/courses/{course['id']}/assignments"
+    url = f"{course_server}/courses/{course['id']}?completion=overdue"
+    page.goto(url)
+    reads, writes = [], []
+    page.route(url, lambda route: reads.append(route))
+    page.on("request", lambda request: writes.append(request) if request.url == listing and request.method == "POST" else None)
+    title = page.get_by_label("Assignment title", exact=True)
+    description = page.get_by_label("Assignment description", exact=True)
+    save = page.get_by_role("button", name="Add assignment", exact=True)
+    title.fill("First saved")
+    page.get_by_label("Due date", exact=True).fill("2026-10-24")
+    save.click()
+    expect(page.locator("#course-assignment-list")).to_have_attribute("aria-busy", "true")
+    reads[0].abort()
+    refresh_error = page.locator("#assignment-refresh-error")
+    expect(refresh_error).to_be_visible()
+    title.fill("   ")
+    description.fill("Keep invalid draft")
+    save.click()
+    write_error = page.locator("#assignment-error")
+    expect(write_error).to_contain_text("Assignment title must contain 1 to 200 characters.")
+    expect(refresh_error).to_be_visible()
+    expect(title).to_have_value("   ")
+    expect(description).to_have_value("Keep invalid draft")
+    expect(page.locator("#assignment-success")).to_be_hidden()
+    retry = page.get_by_role("button", name="Обновить список", exact=True)
+    retry.click()
+    expect(page.locator("#course-assignment-list")).to_have_attribute("aria-busy", "true")
+    assert len(reads) == 2 and len(writes) == 2
+    reads[1].continue_()
+    expect(page.locator("#assignment-success")).to_contain_text("First saved")
+    expect(refresh_error).to_be_hidden()
+    expect(write_error).to_be_visible()
+    expect(title).to_have_value("   ")
+    expect(description).to_have_value("Keep invalid draft")
+    assert [item["title"] for item in page.request.get(listing).json()] == ["First saved"]
+    title.fill("Second saved")
+    page.get_by_label("Due date", exact=True).fill("")
+    save.click()
+    expect(page.locator("#course-assignment-list")).to_have_attribute("aria-busy", "true")
+    expect(title).to_have_value("")
+    reads[2].abort()
+    expect(refresh_error).to_be_visible()
+    expect(write_error).to_be_hidden()
+    retry.click()
+    expect(page.locator("#course-assignment-list")).to_have_attribute("aria-busy", "true")
+    reads[3].continue_()
+    expect(page.locator("#assignment-success")).to_contain_text("Second saved")
+    expect(page.locator("#assignment-success")).to_contain_text("hidden by the current filter")
+    expect(page.locator("#assignment-success")).not_to_contain_text("First saved")
+    assert len(writes) == 3
+    assert [item["title"] for item in page.request.get(listing).json()] == ["First saved", "Second saved"]
+    expect(page.get_by_role("link", name="First saved", exact=True)).to_be_visible()
+    expect(page.get_by_role("link", name="Second saved", exact=True)).to_have_count(0)

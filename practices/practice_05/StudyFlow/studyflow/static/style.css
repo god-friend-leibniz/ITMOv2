@@ -16,6 +16,8 @@ h2 { font-size: 1.15rem; margin-top: 0; }
 .sidebar { display: grid; gap: 1.5rem; align-self: start; }
 .assignment-filters { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem; }
 .assignment-filters [aria-current="page"] { font-weight: 750; text-decoration-thickness: 3px; }
+.assignment-list-stale { border-left: 3px solid #aa6b19; padding-left: 1rem; }
+#assignment-list-stale-note { font-weight: 600; }
 label { display: block; margin: 1.25rem 0 .5rem; font-weight: 600; font-size: .9rem; }
 input, textarea, button { font: inherit; width: 100%; border-radius: 6px; padding: .75rem; }
 input, textarea { border: 1px solid #8b9d91; background: #fff; }
