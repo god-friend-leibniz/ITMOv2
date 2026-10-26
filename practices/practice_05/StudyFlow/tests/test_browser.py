@@ -1728,3 +1728,50 @@ def test_failed_new_write_preserves_previous_saved_context_and_stale_error(page,
     assert [item["title"] for item in page.request.get(listing).json()] == ["First saved", "Second saved"]
     expect(page.get_by_role("link", name="First saved", exact=True)).to_be_visible()
     expect(page.get_by_role("link", name="Second saved", exact=True)).to_have_count(0)
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("completion", ["completed", "all"])
+def test_long_creation_confirmation_keeps_narrow_layout_and_keyboard_link(page, course_server, completion):
+    page.set_viewport_size({"width": 360, "height": 900})
+    course = page.request.post(f"{course_server}/api/courses", data={"name": "Long confirmation"}).json()
+    url = f"{course_server}/courses/{course['id']}" + ("?completion=completed" if completion == "completed" else "")
+    page.goto(url)
+    title = "A" * 200
+    page.get_by_label("Assignment title", exact=True).fill(title)
+    save = page.get_by_role("button", name="Add assignment", exact=True)
+    save.click()
+    success = page.locator("#assignment-success")
+    expect(success).to_be_visible()
+    expect(success).to_contain_text(f"Assignment “{title}” created.")
+    expect(page.get_by_label("Assignment title", exact=True)).to_have_value("")
+    assert page.evaluate("document.documentElement.clientWidth") == 360
+    assert page.evaluate("document.documentElement.scrollWidth") == 360
+    success.scroll_into_view_if_needed()
+    text_rects = success.locator("span").first.evaluate("""el => {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        return [...range.getClientRects()].map(rect => ({left: rect.left, right: rect.right, width: rect.width}));
+    }""")
+    assert text_rects and all(0 <= rect["left"] < rect["right"] <= 360 for rect in text_rects)
+    for control in [page.get_by_label("Assignment title", exact=True), save]:
+        expect(control).to_be_visible()
+        box = control.bounding_box()
+        assert box is not None and 0 <= box["x"] < box["x"] + box["width"] <= 360
+    expect(save).to_be_enabled()
+    all_link = success.get_by_role("link", name="All", exact=True)
+    page.get_by_label("GitHub repository name", exact=True).focus()
+    page.keyboard.press("Tab")
+    if completion == "completed":
+        expect(all_link).to_be_visible()
+        expect(all_link).to_be_focused()
+        expect(all_link).to_be_in_viewport()
+        assert all_link.evaluate("el => getComputedStyle(el).outlineStyle") != "none"
+        page.keyboard.press("Enter")
+    else:
+        expect(all_link).to_be_hidden()
+        expect(save).to_be_focused()
+        assert save.evaluate("el => getComputedStyle(el).outlineStyle") != "none"
+    expect(page).to_have_url(f"{course_server}/courses/{course['id']}")
+    expect(page.get_by_role("link", name=title, exact=True)).to_be_visible()
+    assert page.evaluate("document.documentElement.scrollWidth") == 360
