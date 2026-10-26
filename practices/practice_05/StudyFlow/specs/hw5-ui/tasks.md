@@ -4,7 +4,7 @@
 
 **Input**: принятые [spec.md](spec.md), [plan.md](plan.md), [общий контракт 1.0](contracts/course-list.md), [потребление технического интерфейса 0.1](contracts/ui-course-list.md), [research.md](research.md), [data-model.md](data-model.md), [quickstart.md](quickstart.md), конституция 1.0.0.
 
-**Статус**: T001–T037 выполнены и проверены в UI-worktree 2026-10-26. T038–T040 открыты: ожидаются дополнительные HTTP/HTML-проверки команды логики на настоящем UI-шаблоне и финальная совместная приёмка. Полная фича не объявляется завершённой. Указания о запрете реализации в прежних артефактах относятся к этапу их подготовки; текущее выполнение разрешено пользователем. Фактические результаты — в [implementation.md](implementation.md).
+**Статус**: T001–T040 выполнены и проверены в codex/hw5-ui 2026-10-26. G-server и G-integrated подтверждены собственными проверками UI после fast-forward до 9c728b9. Фактические результаты T038–T040 и ограничения — в [quickstart.md](quickstart.md); история T001–T037 — в [implementation.md](implementation.md). В practice_05 изменения не переносились.
 
 **Tests**: браузерные проверки и последовательный TDD обязательны по поручению пользователя. Граница уже принята: публичное поведение Playwright → настоящий FastAPI/HTML → временная SQLite; существующий JSON API используется для подготовки данных и проверки сохранённых записей. Не добавлять тесты приватных JS-функций, подмены domain/db или альтернативный test-only шаблон.
 
@@ -124,9 +124,9 @@ G-server — зависимость от другой стороны, **не з�
 
 ## Phase 7: Polish — совместная проверка и фактические результаты
 
-- [ ] T038 Выполнить G-integrated на настоящем studyflow/templates/course.html: полный browser-набор tests/test_browser.py (включая course edit, PATCH/reload, checklist, DELETE/cascade confirm и repository load/error) и предоставленные логикой tests/test_assignment_filtering.py без их изменения. Проверить JSON-регрессию общим offline-набором; новый UI-поток не вызывает GitHub. Все отсутствующие серверные предпосылки и реальные сбои считать блокировками, не скрывать skip/фальшивым шаблоном.
-- [ ] T039 [P] Сверить итоговые studyflow/templates/course.html, studyflow/static/assignments.js, studyflow/static/style.css и tests/test_browser.py с specs/hw5-ui/contracts/ui-course-list.md и матрицей ниже: нет клиентского отбора/даты/нового endpoint, формы и сообщения вне секции, PATCH/delete сохранены; проверить неизменность spec.initial.md/общего контракта и отсутствие правок серверных/общих файлов. Если найдена недостающая UI-часть, вернуться к одному browser RED → минимальному GREEN, не добавлять непроверенную правку.
-- [ ] T040 После T038/T039 выполнить scripts/verify_before_finish.py и ручные keyboard/360px сценарии из specs/hw5-ui/quickstart.md на отдельной временной БД; проверить offline/browser/build exits и decision, дополнить quickstart.md фактическими результатами и ограничениями. Отличать новые проверки от baseline, ручной запуск от автоматического hook; не объявлять реализацию готовой при блокировке G-server/G-integrated. Общие документы и hooks не менять.
+- [X] T038 Выполнить G-integrated на настоящем studyflow/templates/course.html: полный browser-набор tests/test_browser.py (включая course edit, PATCH/reload, checklist, DELETE/cascade confirm и repository load/error) и предоставленные логикой tests/test_assignment_filtering.py без их изменения. Проверить JSON-регрессию общим offline-набором; новый UI-поток не вызывает GitHub. Все отсутствующие серверные предпосылки и реальные сбои считать блокировками, не скрывать skip/фальшивым шаблоном.
+- [X] T039 [P] Сверить итоговые studyflow/templates/course.html, studyflow/static/assignments.js, studyflow/static/style.css и tests/test_browser.py с specs/hw5-ui/contracts/ui-course-list.md и матрицей ниже: нет клиентского отбора/даты/нового endpoint, формы и сообщения вне секции, PATCH/delete сохранены; проверить неизменность spec.initial.md/общего контракта и отсутствие правок серверных/общих файлов. Если найдена недостающая UI-часть, вернуться к одному browser RED → минимальному GREEN, не добавлять непроверенную правку.
+- [X] T040 После T038/T039 выполнить scripts/verify_before_finish.py и ручные keyboard/360px сценарии из specs/hw5-ui/quickstart.md на отдельной временной БД; проверить offline/browser/build exits и decision, дополнить quickstart.md фактическими результатами и ограничениями. Отличать новые проверки от baseline, ручной запуск от автоматического hook; не объявлять реализацию готовой при блокировке G-server/G-integrated. Общие документы и hooks не менять.
 
 ## Dependencies & Execution Order
 
@@ -191,4 +191,4 @@ T040
 
 **Завершение будущей реализации**: все 40 задач и пять SC выполнены; G-server/G-integrated закрыты фактическими результатами, штатный final gate прошёл. Не закрывать задачи только потому, что старый baseline зелёный. Если нужно изменить принятое распределение файлов или общую документацию, описать конкретную необходимость отдельно; текущий список этого не разрешает.
 
-**Проверка формата этого документа**: 40 задач; US1 — 4, US2 — 4, US3 — 6, US4 — 20; Setup/Foundational/Polish — 6. Все имеют checkbox, последовательный ID и путь; story-label есть только в фазах историй. T001–T037 отмечены [X] по подтверждённым результатам; T038–T040 оставлены [ ].
+**Проверка формата этого документа**: 40 задач; US1 — 4, US2 — 4, US3 — 6, US4 — 20; Setup/Foundational/Polish — 6. Все имеют checkbox, последовательный ID и путь; story-label есть только в фазах историй. Все 40 задач отмечены [X] по подтверждённым результатам.
