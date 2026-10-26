@@ -27,6 +27,28 @@ def assignment_progress(completed: int, total: int) -> dict:
     return {"completed": completed, "total": total, "percent": 100 * completed // total if total else 0}
 
 
+def normalize_completion(value):
+    return value if value in ("all", "incomplete", "completed", "overdue") else "all"
+
+
+def select_course_assignments(assignments, completion, today):
+    selected = []
+    cutoff = today.isoformat()
+    for assignment in assignments:
+        progress = assignment["progress"]
+        is_completed = progress["total"] > 0 and progress["completed"] == progress["total"]
+        if completion == "completed" and not is_completed:
+            continue
+        if completion in ("incomplete", "overdue") and is_completed:
+            continue
+        if completion == "overdue" and (assignment["due_date"] is None or assignment["due_date"] >= cutoff):
+            continue
+        selected.append(assignment)
+    return sorted(selected, key=lambda assignment: (
+        assignment["due_date"] is None, assignment["due_date"] or "", assignment["id"],
+    ))
+
+
 def repository_owner(value: str) -> str:
     if not 1 <= len(value) <= 39 or re.fullmatch(r"[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*", value) is None:
         raise ValueError("GitHub owner must contain 1 to 39 letters or digits, with single internal hyphens.")
