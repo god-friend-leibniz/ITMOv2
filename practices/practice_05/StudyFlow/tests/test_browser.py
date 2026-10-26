@@ -21,30 +21,44 @@ def server_day():
     return {"value": date(2026, 10, 25)}
 
 
+@pytest.fixture(scope="session")
+def browser_server_threads():
+    servers = []
+    yield servers
+    for thread, listener in servers:
+        try:
+            thread.join(timeout=5)
+            assert not thread.is_alive(), "Course server did not stop gracefully"
+        finally:
+            listener.close()
+
+
 @pytest.fixture
-def course_server(tmp_path, request, server_day):
+def course_server(tmp_path, request, server_day, browser_server_threads):
     options = {"local_date_provider": lambda: server_day["value"]}
     if getattr(request, "param", None) == "mcp":
         options["summary_reader"] = partial(get_repository_summary, server_parameters=StdioServerParameters(
             command=sys.executable, args=[str(Path(__file__).parent / "fixtures/github_server.py")],
         ))
     app = create_app(db_path=tmp_path / "browser.sqlite3", **options)
-    with socket.socket() as listener:
-        listener.bind(("127.0.0.1", 0))
-        port = listener.getsockname()[1]
-        server = uvicorn.Server(uvicorn.Config(app, log_level="warning"))
-        thread = threading.Thread(target=server.run, kwargs={"sockets": [listener]}, daemon=True)
-        thread.start()
-        try:
-            deadline = time.monotonic() + 5
-            while not server.started:
-                if not thread.is_alive() or time.monotonic() > deadline:
-                    pytest.fail("Course server did not start")
-                time.sleep(0.01)
-            yield f"http://127.0.0.1:{port}"
-        finally:
-            server.should_exit = True
-            thread.join(timeout=5)
+    listener = socket.socket()
+    listener.bind(("127.0.0.1", 0))
+    port = listener.getsockname()[1]
+    server = uvicorn.Server(uvicorn.Config(app, log_level="warning"))
+    thread = threading.Thread(target=server.run, kwargs={"sockets": [listener]}, daemon=True)
+    thread.start()
+    browser_server_threads.append((thread, listener))
+    try:
+        deadline = time.monotonic() + 5
+        while not server.started:
+            if not thread.is_alive() or time.monotonic() > deadline:
+                pytest.fail("Course server did not start")
+            time.sleep(0.01)
+        yield f"http://127.0.0.1:{port}"
+    finally:
+        # Each test still has its own server/database. Let graceful shutdown
+        # overlap the next test; join every thread before the session ends.
+        server.should_exit = True
 
 
 @pytest.mark.browser
