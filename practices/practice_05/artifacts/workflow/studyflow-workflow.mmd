@@ -1,0 +1,120 @@
+---
+title: StudyFlow — OpenSpec, две команды Spec Kit и синхронизация worktree
+---
+flowchart TB
+  subgraph OPEN["Практика · OpenSpec"]
+    direction TB
+    O0["openspec init --profile core<br/>OpenSpec в существующем StudyFlow<br/>"]
+    O1["$openspec-explore<br/>Код, тесты и baseline<br/>Выбран фильтр завершённости"]
+    O2["$openspec-propose<br/>Proposal, specs, design и tasks<br/>Условия приёмки и границы"]
+    O3["$openspec-update-change<br/>Учесть независимое review<br/>Уточнить URL и скрытое создание"]
+    O4["$openspec-apply-change<br/>Реализовать фильтр и проверить<br/>Все / Незавершённые / Завершённые"]
+    O5["$openspec-sync-specs<br/>После проверки и приёмки<br/>Обновить текущую main spec"]
+    O6["$openspec-archive-change<br/>Сохранить завершённый change<br/>История требований в archive"]
+    O7["$openspec-propose<br/>Сортировка + вкладка Overdue<br/>Только план; сохранить design «до»"]
+    O8["openspec instructions design<br/>Добавить rules.design: Mermaid<br/>Получить свежие инструкции"]
+    O9["$openspec-update-change<br/>Предложить diff и принять правку<br/>Текстовая схема → Mermaid"]
+    O10["openspec validate … --strict<br/>Проверить документ и диаграмму<br/>Сохранены design до / после и diff"]
+  end
+  subgraph SETUP["Общая база Spec Kit"]
+    direction TB
+    S0["specify init<br/>Подготовить GitHub Spec Kit<br/>Существующие правила сохранены"]
+    S1["$speckit-constitution<br/>Общие принципы StudyFlow<br/>Архитектура, доменные правила и TDD"]
+    S2["git commit<br/>Зафиксировать исходную базу<br/>32ffa22 · код + документы + инструменты"]
+  end
+  subgraph UI["UI · ITMOv2-ui · codex/hw5-ui"]
+    direction TB
+    U0["git worktree add -b …<br/>codex/hw5-ui · ITMOv2-ui<br/>Отдельный чат и состояние .specify"]
+    U1["$speckit-specify<br/>Экраны, действия, состояния и ошибки<br/>Сохранить UI spec.initial.md"]
+    U2["$speckit-clarify<br/>Прочитать исходную спеку логики<br/>Обновить UI-spec и проект контракта"]
+    U3["$speckit-plan<br/>Принять техническую границу<br/>План UI и распределение файлов"]
+    U4["$speckit-tasks<br/>40 задач UI<br/>Сервер обозначен внешней зависимостью"]
+    U5["$speckit-analyze<br/>I1 / D1: порядок и дубль задач<br/>Правка tasks.md → повтор: замечаний нет"]
+    U6["git commit<br/>Сохранить UI-документы до кода<br/>c4cf22b"]
+    U7["git merge codex/hw5-logic<br/>Передать серверное ядро в UI<br/>03ce694 · сервер доступен в UI-worktree"]
+    U8["$speckit-implement<br/>T001–T037: шаблон, JS и browser-тесты<br/>ae22a86 · UI работает с настоящим сервером"]
+    U9["git merge --ff-only codex/hw5-logic<br/>Получить интеграционные проверки<br/>Fast-forward до 9c728b9"]
+    U10["$speckit-implement<br/>T038–T040: общий gate и ручной проход<br/>4bd71f6 · 40 / 40 задач UI"]
+    U11["$speckit-converge<br/>F1: длинное название при 360 px<br/>tasks_appended → добавить T041"]
+    U12["$speckit-implement<br/>T041: RED → локальный CSS → GREEN<br/>7d43b94 · 2 регрессии для узкого экрана"]
+    U13["$speckit-converge<br/>Повторная сверка после исправления<br/>Converged · 41 / 41 задач UI"]
+  end
+  subgraph LOGIC["Логика · ITMOv2-logic · codex/hw5-logic"]
+    direction TB
+    L0["git worktree add -b …<br/>codex/hw5-logic · ITMOv2-logic<br/>Отдельный чат и состояние .specify"]
+    L1["$speckit-specify<br/>Данные, правила отбора и даты<br/>Сохранить logic spec.initial.md"]
+    L2["$speckit-clarify<br/>Прочитать исходную спеку UI<br/>Обновить logic-spec и проект контракта"]
+    L3["$speckit-plan<br/>Сначала технический план логики<br/>Предложить HTML-интерфейс 0.1"]
+    L4["$speckit-tasks<br/>24 задачи логики<br/>Ядро отдельно от интеграции с UI"]
+    L5["$speckit-analyze<br/>Проверить покрытие и зависимости<br/>Замечаний нет; ядро можно выполнять"]
+    L6["git commit<br/>Сохранить logic-документы до кода<br/>1d4e3ee"]
+    L7["$speckit-implement<br/>Серверное ядро: 17 / 24 задач<br/>c8f4e78 · domain + web + HTTP-тесты"]
+    L8["git merge --ff-only codex/hw5-ui<br/>Передать настоящий шаблон логике<br/>Fast-forward до ae22a86"]
+    L9["$speckit-implement<br/>Интеграционные проверки и финал<br/>9c728b9 · 24 / 24; общая spec обновлена"]
+    L10["git merge --ff-only codex/hw5-ui<br/>Получить финальный UI<br/>Fast-forward до 4bd71f6"]
+    L11["$speckit-converge<br/>Спека ↔ план ↔ задачи ↔ код<br/>Converged"]
+  end
+  P0["git merge --ff-only codex/hw5-ui<br/>Перенести общий результат в practice_05<br/>Будущий шаг: на момент запроса не выполнен"]
+  O0 --> O1
+  O1 --> O2
+  O2 --> O3
+  O3 --> O4
+  O4 --> O5
+  O5 --> O6
+  O6 --> O7
+  O7 --> O8
+  O8 --> O9
+  O9 --> O10
+  O10 --> S0
+  S0 --> S1
+  S1 --> S2
+  S2 --> U0
+  S2 --> L0
+  U0 --> U1
+  U1 --> U2
+  L0 --> L1
+  L1 --> L2
+  U2 -. "исходная UI-spec" .-> L2
+  L2 -. "исходная logic-spec" .-> U2
+  U2 --> U3
+  L2 --> L3
+  L3 -. "Технический интерфейс 0.1" .-> U3
+  U3 --> U4
+  L3 --> L4
+  U4 --> U5
+  U5 --> U6
+  L4 --> L5
+  L5 --> L6
+  U5 -->|"I1 / D1 → правка tasks.md"| U5
+  L6 --> L7
+  U6 -.-> U7
+  L7 --> U7
+  U7 --> U8
+  L7 -.-> L8
+  U8 --> L8
+  L8 --> L9
+  U8 -.-> U9
+  L9 --> U9
+  U9 --> U10
+  L9 -.-> L10
+  U10 --> L10
+  L10 --> L11
+  U10 --> U11
+  U11 --> U12
+  U12 --> U13
+  U13 -.-> P0
+  classDef open fill:#eefbf7,stroke:#0f766e,color:#172a3a,stroke-width:1.5px
+  class O0,O1,O2,O3,O4,O5,O6,O7,O8,O9,O10 open
+  classDef ui fill:#f5f0fc,stroke:#7145b8,color:#172a3a,stroke-width:1.5px
+  class U0,U1,U2,U3,U4,U5,U8,U10,U11,U12 ui
+  classDef logic fill:#edf5fc,stroke:#2563a6,color:#172a3a,stroke-width:1.5px
+  class L0,L1,L2,L3,L4,L5,L7,L9 logic
+  classDef git fill:#fff8e9,stroke:#996417,color:#172a3a,stroke-width:1.5px
+  class S2,U6,L6,U7,L8,U9,L10 git
+  classDef common fill:#f1f5f9,stroke:#475569,color:#172a3a,stroke-width:1.5px
+  class S0,S1 common
+  classDef done fill:#effaf2,stroke:#21754b,color:#172a3a,stroke-width:1.5px
+  class L11,U13 done
+  classDef pending fill:#f8fafc,stroke:#64748b,color:#172a3a,stroke-width:1.5px
+  class P0 pending
+  style P0 stroke-dasharray: 6 5
