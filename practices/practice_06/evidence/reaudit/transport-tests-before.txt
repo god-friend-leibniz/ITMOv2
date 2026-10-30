@@ -1,0 +1,471 @@
+test_completed_request_cancels_deadline_timer (test_audit_transport.AuditTransportTest.test_completed_request_cancels_deadline_timer) ... FAIL
+test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) ... 
+  test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='http://evil.invalid') ... FAIL
+  test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='null') ... FAIL
+  test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='https://localhost') ... FAIL
+  test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='file://localhost') ... FAIL
+  test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='http://127.0.0.1') ... FAIL
+  test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='http://[::1]') ... FAIL
+  test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='http://127.0.0.1:53717') ... FAIL
+  test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='http://localhost') ... FAIL
+  test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='http://localhost:53718') ... FAIL
+test_exact_same_origin_and_default_port_normalization (test_audit_transport.AuditTransportTest.test_exact_same_origin_and_default_port_normalization) ... ok
+test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) ... 
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='rebinding.example.invalid') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost.evil.invalid') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='127.0.0.2') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='127.1') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='2130706433') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost@evil.invalid') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='evil.invalid@localhost') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost/') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost.') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='[::ffff:127.0.0.1]') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost:abc') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='[::1]evil.invalid') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='[::1]localhost:53717') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='local\thost') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost:0') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost:') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost:65536') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost:53718') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='127.0.0.1:53718') ... FAIL
+  test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='[::1]:53718') ... FAIL
+test_http10_legacy_hostless_client_is_allowed (test_audit_transport.AuditTransportTest.test_http10_legacy_hostless_client_is_allowed) ... FAIL
+test_http11_requires_exactly_one_host (test_audit_transport.AuditTransportTest.test_http11_requires_exactly_one_host) ... FAIL
+test_loopback_host_aliases_and_actual_port_are_allowed (test_audit_transport.AuditTransportTest.test_loopback_host_aliases_and_actual_port_are_allowed) ... ok
+test_native_client_without_origin_and_same_origin_login_work (test_audit_transport.AuditTransportTest.test_native_client_without_origin_and_same_origin_login_work) ... ok
+test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) ... 
+  test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:53717/') ... FAIL
+  test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:53717/path') ... FAIL
+  test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:53717?q=x') ... FAIL
+  test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:53717#fragment') ... FAIL
+  test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:53717?') ... FAIL
+  test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:53717#') ... FAIL
+  test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://user@localhost:53717') ... FAIL
+  test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://user:password@localhost:53717') ... FAIL
+  test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:53717, http://evil.invalid') ... FAIL
+  test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:bad') ... FAIL
+test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) ... FAIL
+test_origin_validation_runs_before_mutation_or_authentication (test_audit_transport.AuditTransportTest.test_origin_validation_runs_before_mutation_or_authentication) ... FAIL
+test_total_deadline_stops_slow_body_with_408_and_server_recovers (test_audit_transport.AuditTransportTest.test_total_deadline_stops_slow_body_with_408_and_server_recovers) ... FAIL
+test_total_deadline_stops_slow_headers_and_server_recovers (test_audit_transport.AuditTransportTest.test_total_deadline_stops_slow_headers_and_server_recovers) ... FAIL
+
+======================================================================
+FAIL: test_completed_request_cancels_deadline_timer (test_audit_transport.AuditTransportTest.test_completed_request_cancels_deadline_timer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 190, in test_completed_request_cancels_deadline_timer
+    self.assertTrue(timers, "Request must have an absolute deadline timer")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [] is not true : Request must have an absolute deadline timer
+
+======================================================================
+FAIL: test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='http://evil.invalid')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 110, in test_cross_origin_is_rejected_including_other_loopback_aliases
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='null')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 110, in test_cross_origin_is_rejected_including_other_loopback_aliases
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='https://localhost')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 110, in test_cross_origin_is_rejected_including_other_loopback_aliases
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='file://localhost')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 110, in test_cross_origin_is_rejected_including_other_loopback_aliases
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='http://127.0.0.1')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 110, in test_cross_origin_is_rejected_including_other_loopback_aliases
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='http://[::1]')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 110, in test_cross_origin_is_rejected_including_other_loopback_aliases
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='http://127.0.0.1:53717')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 110, in test_cross_origin_is_rejected_including_other_loopback_aliases
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='http://localhost')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 110, in test_cross_origin_is_rejected_including_other_loopback_aliases
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) (origin='http://localhost:53718')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 110, in test_cross_origin_is_rejected_including_other_loopback_aliases
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='rebinding.example.invalid')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost.evil.invalid')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='127.0.0.2')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='127.1')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='2130706433')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost@evil.invalid')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='evil.invalid@localhost')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost/')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost.')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='[::ffff:127.0.0.1]')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost:abc')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='[::1]evil.invalid')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='[::1]localhost:53717')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='local\thost')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost:0')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost:')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost:65536')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='localhost:53718')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='127.0.0.1:53718')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) (host='[::1]:53718')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 82, in test_foreign_malformed_and_wrong_port_hosts_are_rejected
+    self.assertEqual(self.request(host=host)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_http10_legacy_hostless_client_is_allowed (test_audit_transport.AuditTransportTest.test_http10_legacy_hostless_client_is_allowed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 91, in test_http10_legacy_hostless_client_is_allowed
+    self.assertEqual(self.request(host="evil.invalid", version="HTTP/1.0")[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_http11_requires_exactly_one_host (test_audit_transport.AuditTransportTest.test_http11_requires_exactly_one_host)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 85, in test_http11_requires_exactly_one_host
+    self.assertEqual(self.request(host=None)[0], 400)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 400
+
+======================================================================
+FAIL: test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:53717/')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 119, in test_origin_cannot_contain_url_components_or_credentials
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:53717/path')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 119, in test_origin_cannot_contain_url_components_or_credentials
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:53717?q=x')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 119, in test_origin_cannot_contain_url_components_or_credentials
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:53717#fragment')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 119, in test_origin_cannot_contain_url_components_or_credentials
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:53717?')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 119, in test_origin_cannot_contain_url_components_or_credentials
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:53717#')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 119, in test_origin_cannot_contain_url_components_or_credentials
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://user@localhost:53717')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 119, in test_origin_cannot_contain_url_components_or_credentials
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://user:password@localhost:53717')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 119, in test_origin_cannot_contain_url_components_or_credentials
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:53717, http://evil.invalid')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 119, in test_origin_cannot_contain_url_components_or_credentials
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) (origin='http://localhost:bad')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 119, in test_origin_cannot_contain_url_components_or_credentials
+    self.assertEqual(self.request(origin=origin)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 121, in test_origin_cannot_contain_url_components_or_credentials
+    self.assertEqual(self.request(host="[::1]", origin="http://[::1]evil.invalid")[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_origin_validation_runs_before_mutation_or_authentication (test_audit_transport.AuditTransportTest.test_origin_validation_runs_before_mutation_or_authentication)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 126, in test_origin_validation_runs_before_mutation_or_authentication
+    self.assertEqual(self.request(origin="http://evil.invalid", method="POST", path="/login", body=body)[0], 403)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_total_deadline_stops_slow_body_with_408_and_server_recovers (test_audit_transport.AuditTransportTest.test_total_deadline_stops_slow_body_with_408_and_server_recovers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 172, in test_total_deadline_stops_slow_body_with_408_and_server_recovers
+    self.assertEqual(status, 408)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: 400 != 408
+
+======================================================================
+FAIL: test_total_deadline_stops_slow_headers_and_server_recovers (test_audit_transport.AuditTransportTest.test_total_deadline_stops_slow_headers_and_server_recovers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-30/new-chat/work/reaudit/baseline/lab/test_audit_transport.py", line 164, in test_total_deadline_stops_slow_headers_and_server_recovers
+    self.assertIn(status, (None, 400, 408))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 not found in (None, 400, 408)
+
+----------------------------------------------------------------------
+Ran 12 tests in 1.860s
+
+FAILED (failures=46)

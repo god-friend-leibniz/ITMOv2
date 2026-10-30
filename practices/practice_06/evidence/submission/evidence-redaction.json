@@ -1,0 +1,9 @@
+{
+  "reason": "Publication copy removes credential and session-token values from saved HTTP exchanges and failed-test logs. Raw evidence retained only in local workspace, outside repository.",
+  "changed_files": [
+    "before/http-probes.json",
+    "after/security-before.txt"
+  ],
+  "redaction": "Passwords/token-bearing values replaced; original model input/final answers and SHA256 fields preserved. Synthetic usernames, test markers, source/test fixture code remain as required for the public lab.",
+  "raw_archive_in_pr": false
+}

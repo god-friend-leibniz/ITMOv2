@@ -1,0 +1,19 @@
+{
+  "scope": "practices/practice_06 only",
+  "date": "2026-10-30",
+  "tested_service_sha256": "fcd9ded2758864ff943389a3af2fa5e52c06d8ae6b5f853b01458fb297926965",
+  "sandbox_sha256": "dcd6b6630d3dec67e7185c1017e4999a3faa5998ff091419dade31b64132ddcf",
+  "excluded": [
+    "/opencode.json (unrelated local provider configuration)"
+  ],
+  "model_runner": "Codex collaboration subagents; exact backend ID not exposed",
+  "external_opencode_vs_vsellm": "not executed; denied by automatic approval review",
+  "checks": {
+    "make_step6": "passed, 55 tests; evidence/reaudit/make-step6.txt",
+    "make_test": "passed; evidence/reaudit/make-test.txt",
+    "files_ai_shop": 281,
+    "files_ai_http": 47,
+    "planner_trials": 4
+  },
+  "note": "Test logs predate documentation-only submission additions; tested service is unchanged."
+}

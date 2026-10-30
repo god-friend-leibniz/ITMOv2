@@ -1,0 +1,62 @@
+[
+  {
+    "id": "cl-comma",
+    "status": 400,
+    "response_count": 1,
+    "unsafe_error": false
+  },
+  {
+    "id": "cl-plus",
+    "status": 400,
+    "response_count": 1,
+    "unsafe_error": false
+  },
+  {
+    "id": "cl-folded",
+    "status": 400,
+    "response_count": 1,
+    "unsafe_error": false
+  },
+  {
+    "id": "te-cl",
+    "status": 400,
+    "response_count": 1,
+    "unsafe_error": false
+  },
+  {
+    "id": "absolute-target",
+    "status": 400,
+    "response_count": 1,
+    "unsafe_error": false
+  },
+  {
+    "id": "nul-target",
+    "status": 400,
+    "response_count": 1,
+    "unsafe_error": false
+  },
+  {
+    "id": "duplicate-query",
+    "status": 400,
+    "response_count": 1,
+    "unsafe_error": false
+  },
+  {
+    "id": "duplicate-token-case",
+    "status": 400,
+    "response_count": 1,
+    "unsafe_error": false
+  },
+  {
+    "id": "json-infinity",
+    "status": 400,
+    "response_count": 1,
+    "unsafe_error": false
+  },
+  {
+    "id": "pipeline",
+    "status": 200,
+    "response_count": 1,
+    "unsafe_error": false
+  }
+]

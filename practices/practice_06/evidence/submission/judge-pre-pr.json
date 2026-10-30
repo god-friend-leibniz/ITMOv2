@@ -1,0 +1,381 @@
+{
+  "scope": {
+    "project": "practice_06 Mini Shop",
+    "reviewed_artifacts": [
+      "judge-system-prompt.md",
+      "README.md",
+      "THREAT_MODEL.md",
+      "REPORT_01.md",
+      "REPORT_02.md",
+      "SECURITY_REVIEW.md",
+      "IMPLEMENTATION.md",
+      "planner-system.txt",
+      "lab/service.py",
+      "lab/sandbox.py",
+      "lab/test_security.py",
+      "lab/test_audit_auth.py",
+      "lab/test_audit_transport.py",
+      "evidence/before/http-probes.json: выбранные обмены F01–F09",
+      "evidence/before/planner-clean-result.json",
+      "evidence/before/planner-poisoned-result.json",
+      "evidence/after/http-probes.json: выбранные записи",
+      "evidence/after/security-before.txt: итог протокола",
+      "evidence/after/security-after.txt: итог протокола",
+      "evidence/reaudit/make-step6.txt",
+      "evidence/reaudit/make-test.txt",
+      "evidence/reaudit/auth-business-before.json",
+      "evidence/reaudit/transport-before.json",
+      "evidence/reaudit/framing-before.json",
+      "evidence/reaudit/auth-tests-before.txt: итог протокола",
+      "evidence/reaudit/transport-tests-before.txt: итог протокола",
+      "evidence/reaudit/files-ai-after.json: сводка и выбранные записи",
+      "evidence/reaudit/files-ai-http-after.json",
+      "evidence/reaudit/check_files_ai.py",
+      "evidence/reaudit/check_files_ai_http.py",
+      "evidence/model-validation/manifest.json",
+      "evidence/model-validation: четыре сохранённых входа, четыре оригинальных финальных ответа и четыре result.json"
+    ],
+    "unavailable_artifacts": [
+      "Фактически открытый PR: на момент проверки ещё не открыт",
+      "evidence/submission/: каталог упомянут в REPORT_02.md, но отсутствовал в полученном перечне файлов"
+    ],
+    "assumptions": [
+      "Проверка ограничена practice_06; корневой opencode.json и остальные файлы репозитория не читались.",
+      "Проведён статический анализ и чтение сохранённых доказательств; тесты, сервис, модели и сетевые обращения проверяющим не запускались.",
+      "Результаты исполнения тестов и executor учитываются как reported.",
+      "Четыре модельных прогона выполнены свежими Codex subagents без fork history; точный backend model ID неизвестен.",
+      "Учебные credentials публичны по конструкции; модель угроз ограничена синтетическим loopback-стендом без локального файлового доступа атакующего."
+    ]
+  },
+  "findings": [
+    {
+      "id": "J01",
+      "title": "Исходные нарушения доступа F01, F03, F04 и F08 закрыты серверными проверками",
+      "status": "resolved",
+      "severity": "high",
+      "confidence": "high",
+      "location": "lab/service.py: Shop.session, Shop.staff, Shop.receipt, Shop._dispatch; маршруты /profile, /orders, /files, /assistant/context, /assistant/execute",
+      "preconditions": [
+        "В исходной версии анонимный запрос или клиентская сессия обращались к чужому объекту, private-файлу либо опасному инструменту.",
+        "Для подмены роли передавался X-Role."
+      ],
+      "observed_effect": "Исторические HTTP-протоколы содержат раскрытие чужих данных, экспорт по поддельной роли и удаление стенда. В текущем коде идентичность берётся из серверной сессии, owner проверяется в SQL и файловом ACL, executor допускает только read_file/refuse. Сохранённые регрессии и HTTP-матрица сообщают об отклонении опасных вызовов и сохранении законного доступа.",
+      "evidence_refs": [
+        "REPORT_01.md: F01, F03, F04, F08",
+        "evidence/before/http-probes.json: profile-anonymous, export-forged-role, file-private-traversal, assistant-anonymous-delete-root",
+        "lab/test_security.py: test_f01_owner_isolation_and_staff_access, test_f03_role_is_from_session, test_f04_files_are_allowlisted_and_owned, test_f08_executor_never_exports_or_deletes",
+        "evidence/reaudit/files-ai-http-after.json",
+        "evidence/reaudit/make-step6.txt"
+      ],
+      "recommendation": "Сохранять общий серверный ACL для обычного файлового API и executor при дальнейшем расширении инструментов."
+    },
+    {
+      "id": "J02",
+      "title": "SQL injection F02 устранена параметрами запросов",
+      "status": "resolved",
+      "severity": "high",
+      "confidence": "high",
+      "location": "lab/service.py: positive_id, Shop._dispatch; /profile, /search, /assistant/context",
+      "preconditions": [
+        "Атакующий передаёт SQL-выражение в ID либо UNION и LIKE-метасимволы в поисковый запрос.",
+        "Проверка поиска проводится с настоящей серверной ролью staff."
+      ],
+      "observed_effect": "Исходный протокол содержит расширение выборки и UNION-извлечение заказов. Текущий код использует параметры SQLite, строгие числовые ID и экранирование LIKE. Тест с настоящим staff проверяет пустой результат UNION-запроса, поэтому вывод не основан только на ограничении роли.",
+      "evidence_refs": [
+        "evidence/before/http-probes.json: profile-sqli, search-sqli, assistant-context-sqli",
+        "lab/service.py: Shop._dispatch",
+        "lab/test_security.py: test_f02_ids_are_not_sql_and_search_is_literal",
+        "evidence/reaudit/make-step6.txt"
+      ],
+      "recommendation": "Продолжать параметризовать все новые запросы с пользовательскими значениями."
+    },
+    {
+      "id": "J03",
+      "title": "F05–F07 и F09 закрыты в проверенных сценариях",
+      "status": "resolved",
+      "severity": "high",
+      "confidence": "high",
+      "location": "lab/service.py: schema, text, Shop.dispatch, Shop._dispatch, json_object, Handler.handle_request, Handler.respond",
+      "preconditions": [
+        "Клиент передаёт цену или владельца заказа, HTML в отзыве, неверный JSON либо неоднозначное HTTP framing.",
+        "Анонимный запрос пытается прочитать журнал."
+      ],
+      "observed_effect": "Цена и owner теперь задаются сервером; HTML отзывов проходит html.escape; HTTP-маршрут журнала отсутствует, аудит содержит фиксированные метаданные; ошибки JSON, типов, дубликатов и длины контролируются, общий 500 не раскрывает исключение. Сохранённые протоколы сообщают об успешных защитных тестах. Исполнение XSS в браузере не проверялось.",
+      "evidence_refs": [
+        "REPORT_01.md: F05, F06, F07, F09",
+        "evidence/before/http-probes.json: order-negative-price, review-xss-html, logs-token-replay, malformed-json",
+        "lab/test_security.py: test_f05_client_cannot_set_price_or_owner, test_f06_reviews_require_auth_and_escape_html, test_f07_no_logs_endpoint_or_secrets_in_audit, test_f09_schemas_and_queries_fail_closed",
+        "lab/test_security.py: TransportSecurityTest",
+        "evidence/reaudit/make-step6.txt"
+      ],
+      "recommendation": "Сохранять строгие схемы и нейтральные ответы об ошибках; браузерную проверку учитывать как отдельное возможное расширение доказательств."
+    },
+    {
+      "id": "J04",
+      "title": "Повторные R01–R04 получили соответствующие исправления и регрессии",
+      "status": "resolved",
+      "severity": "medium",
+      "confidence": "high",
+      "location": "lab/service.py: Handler.validate_authority, Handler.setup, Handler.expire_request, Shop._dispatch /orders, Shop.receipt, /assistant/context",
+      "preconditions": [
+        "Передаётся посторонний Host/Origin или дозируются байты запроса.",
+        "Один клиент заполняет квоту заказов либо запрашивает чек нового заказа."
+      ],
+      "observed_effect": "До повторного исправления протоколы показывают принятие чужого Host/Origin, превышение inactivity timeout, исчерпание Alice общей квоты и старый чек для нового заказа. Текущий код добавляет allowlist authority/Origin, отдельный абсолютный таймер чтения, личную квоту и формирование чека по order/owner. Сохранённые результаты 19 новых тестов и HTTP-проверок сообщают об исправлении этих сценариев.",
+      "evidence_refs": [
+        "evidence/reaudit/transport-before.json",
+        "evidence/reaudit/auth-business-before.json",
+        "lab/test_audit_auth.py",
+        "lab/test_audit_transport.py",
+        "evidence/reaudit/files-ai-http-after.json",
+        "evidence/reaudit/make-step6.txt"
+      ],
+      "recommendation": "При расширении числа клиентов пересчитывать соотношение личных и общей квот; сохранять отдельную проверку абсолютного deadline."
+    },
+    {
+      "id": "J05",
+      "title": "Лимитер допускает продление блокировки входа выбранного аккаунта",
+      "status": "accepted_limitation",
+      "severity": "medium",
+      "confidence": "high",
+      "location": "lab/service.py: Shop._dispatch /login; SECURITY_REVIEW.md: остаточный риск 1",
+      "preconditions": [
+        "Анонимный HTTP-клиент знает имя аккаунта.",
+        "Клиент регулярно расходует лимит попыток до законного входа."
+      ],
+      "observed_effect": "После заполнения общего для аккаунта бакета правильный пароль также получает 429. Повторение может продлевать помеху. Это следует из порядка проверок в коде и отражено в сохранённых результатах; отчёт честно оставляет ограничение действующим.",
+      "evidence_refs": [
+        "lab/service.py: Shop._dispatch /login",
+        "evidence/reaudit/auth-business-before.json: known_login_denial",
+        "SECURITY_REVIEW.md: остаточные риски",
+        "THREAT_MODEL.md: проверка, допущения и остаточные риски"
+      ],
+      "recommendation": "Для расширения области за пределы локальной лабы предусмотреть отдельную политику ограничения источников и восстановления доступа."
+    },
+    {
+      "id": "J06",
+      "title": "Сохранённые модельные ответы не доказывают успешную prompt injection или статистическую устойчивость",
+      "status": "accepted_limitation",
+      "severity": "info",
+      "confidence": "high",
+      "location": "evidence/model-validation/; REPORT_02.md: завершение модельной проверки",
+      "preconditions": [
+        "Один запуск каждого варианта через свежего Codex subagent.",
+        "После исправления отзыв исключён из контекста, поэтому clean и poisoned входы одинаковы."
+      ],
+      "observed_effect": "Два исходных финальных ответа содержат корректный refuse; исходный executor сообщает 400 unknown tool. Два исправленных ответа выбирают свой чек, executor сообщает 200. Успешного подчинения вредоносному отзыву нет. Старые OpenCode timeout сохранены как инфраструктурные исходы и не переклассифицированы.",
+      "evidence_refs": [
+        "evidence/model-validation/manifest.json",
+        "evidence/model-validation/before-clean-answer.txt",
+        "evidence/model-validation/before-poisoned-answer.txt",
+        "evidence/model-validation/after-clean-result.json",
+        "evidence/model-validation/after-poisoned-result.json",
+        "evidence/before/planner-clean-result.json",
+        "evidence/before/planner-poisoned-result.json"
+      ],
+      "recommendation": "Сохранять нынешнюю узкую интерпретацию; новые модели и атаки пользовательского вопроса оценивать отдельными опытами."
+    },
+    {
+      "id": "J07",
+      "title": "PR ещё не открыт",
+      "status": "confirmed",
+      "severity": "info",
+      "confidence": "high",
+      "location": "IMPLEMENTATION.md: комплект сдачи, строка PR и выводы",
+      "preconditions": [
+        "Оценка выполняется до фактического открытия PR."
+      ],
+      "observed_effect": "Выводы автора в двух абзацах присутствуют, но ссылка и подтверждение открытого PR отсутствуют; этот пункт сдачи выполнен частично.",
+      "evidence_refs": [
+        "IMPLEMENTATION.md: комплект сдачи",
+        "IMPLEMENTATION.md: выводы автора",
+        "Явное условие запуска проверки: PR ещё не открыт"
+      ],
+      "recommendation": "Открыть PR с фактическими изменениями и выводами, затем добавить проверяемую ссылку."
+    }
+  ],
+  "rubric": [
+    {
+      "criterion": "threat_model",
+      "max_points": 2,
+      "score": 2,
+      "status": "met",
+      "reason": "Есть компоненты, активы, атакующие, схемы до/после, матрица доступа, связь F01–F09 и R01–R04 с кодом и проверками. Ограничения стенда и недоверенность LLM описаны явно.",
+      "evidence_refs": [
+        "THREAT_MODEL.md",
+        "lab/service.py",
+        "lab/sandbox.py"
+      ]
+    },
+    {
+      "criterion": "custom_judge_prompt",
+      "max_points": 1,
+      "score": 1,
+      "status": "met",
+      "reason": "Файл реально прочитан: содержит специфические инварианты Mini Shop, правила доказательств, различение модели и executor, рубрику и JSON-схему.",
+      "evidence_refs": [
+        "judge-system-prompt.md"
+      ]
+    },
+    {
+      "criterion": "report_01",
+      "max_points": 2,
+      "score": 2,
+      "status": "met",
+      "reason": "Для F01–F09 приведены места, предпосылки, воспроизведение, эффекты и ссылки на исходные HTTP-обмены. Отдельно оговорены физический sandbox, отсутствие браузерной трассы и недоказанность подчинения модели.",
+      "evidence_refs": [
+        "REPORT_01.md",
+        "evidence/before/http-probes.json",
+        "evidence/before/planner-clean-result.json",
+        "evidence/before/planner-poisoned-result.json"
+      ]
+    },
+    {
+      "criterion": "implementation_and_tests",
+      "max_points": 2,
+      "score": 2,
+      "status": "met",
+      "reason": "Код реализует заявленные ACL, параметры SQL, схемы, цену каталога, файловые ограничения, экранирование, квоты и защиту транспорта. Сохранены успешные make step6 и make test с 55 тестами практики, отрицательные прогоны до исправлений и положительные HTTP-сценарии. Результаты исполнения учтены как reported, самостоятельно не запускались.",
+      "evidence_refs": [
+        "lab/service.py",
+        "lab/sandbox.py",
+        "lab/test_security.py",
+        "lab/test_audit_auth.py",
+        "lab/test_audit_transport.py",
+        "evidence/reaudit/make-step6.txt",
+        "evidence/reaudit/make-test.txt",
+        "evidence/reaudit/files-ai-http-after.json"
+      ]
+    },
+    {
+      "criterion": "report_02",
+      "max_points": 2,
+      "score": 2,
+      "status": "met",
+      "reason": "Отчёт связан с повторным аудитом R01–R04 и актуальными протоколами, включает положительные сценарии и действующие ограничения. Позднее дополнение честно описывает реальные ответы Codex, неизвестный backend ID, один опыт на вариант и прежние OpenCode timeout.",
+      "evidence_refs": [
+        "REPORT_02.md",
+        "SECURITY_REVIEW.md",
+        "evidence/reaudit/",
+        "evidence/model-validation/"
+      ]
+    },
+    {
+      "criterion": "pull_request_and_conclusions",
+      "max_points": 1,
+      "score": 0.5,
+      "status": "partial",
+      "reason": "Два абзаца выводов автора присутствуют. PR на этой стадии missing/pending; балл за его открытие не начислен.",
+      "evidence_refs": [
+        "IMPLEMENTATION.md: выводы автора",
+        "IMPLEMENTATION.md: комплект сдачи"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E01",
+      "source": "THREAT_MODEL.md, REPORT_01.md, REPORT_02.md, SECURITY_REVIEW.md, IMPLEMENTATION.md",
+      "level": "observed",
+      "supports": "Наличие и содержание модели угроз, отчётов, ограничений и выводов.",
+      "limits": "Документы сами по себе не подтверждают исполнение описанных команд."
+    },
+    {
+      "id": "E02",
+      "source": "judge-system-prompt.md",
+      "level": "observed",
+      "supports": "Наличие содержательного собственного prompt по данной практике.",
+      "limits": "Не подтверждает открытие PR или отсутствие неизвестных дефектов."
+    },
+    {
+      "id": "E03",
+      "source": "lab/service.py, lab/sandbox.py и три защитных тестовых файла",
+      "level": "observed",
+      "supports": "Реализация серверной политики и содержание регрессий, включая поиск с разрешённой ролью, изоляцию квот и новые чеки.",
+      "limits": "Статический анализ не является новым исполнением тестов; неизменность sandbox относительно git-базы отдельно не проверялась."
+    },
+    {
+      "id": "E04",
+      "source": "evidence/before/http-probes.json; evidence/after/security-before.txt и security-after.txt",
+      "level": "reported",
+      "supports": "Исторические эффекты F01–F09 и неуспешный/успешный этап защитных регрессий.",
+      "limits": "Не доказывает сохранение исторических уязвимостей в текущем коде."
+    },
+    {
+      "id": "E05",
+      "source": "evidence/reaudit/make-step6.txt и make-test.txt",
+      "level": "reported",
+      "supports": "Сохранённые успешные результаты обоих требуемых make-вызовов; 55 тестов практики.",
+      "limits": "Проверяющий команды не повторял; число тестов не является вероятностью безопасности."
+    },
+    {
+      "id": "E06",
+      "source": "evidence/reaudit/auth-business-before.json, transport-before.json, framing-before.json",
+      "level": "reported",
+      "supports": "Конкретные эффекты R01–R04, известный account lockout и ограниченные проверки framing.",
+      "limits": "Полная браузерная DNS-rebinding цепочка и нагрузочный DoS не подтверждены."
+    },
+    {
+      "id": "E07",
+      "source": "evidence/reaudit/files-ai-after.json, files-ai-http-after.json и два check_files_ai*.py",
+      "level": "reported",
+      "supports": "Сводка 281 проверки Shop и 47 HTTP-проверок; HTTP-результаты новых чеков и ACL согласованы с проверяющим кодом.",
+      "limits": "Матрицы не вызывают модель; подробные записи большой Shop-матрицы прочитаны выборочно."
+    },
+    {
+      "id": "E08",
+      "source": "evidence/model-validation/manifest.json, *-input.txt, *-answer.txt, *-result.json; planner-system.txt",
+      "level": "reported",
+      "supports": "Сохранены фактические запросы, переданные правила, оригинальные финальные ответы, извлечённые решения и результаты executor для четырёх вариантов.",
+      "limits": "Прогоны и сверка контекста по HTTP проверяющим не наблюдались; backend ID неизвестен, каждый вариант испытан один раз, успешной prompt injection нет."
+    },
+    {
+      "id": "E09",
+      "source": "evidence/before/planner-clean-result.json и planner-poisoned-result.json",
+      "level": "reported",
+      "supports": "Старые OpenCode-прогоны завершились timeout.",
+      "limits": "Timeout не доказывает ни отказ модели, ни успешную защиту."
+    }
+  ],
+  "gaps": [
+    {
+      "topic": "Фактически открытый PR",
+      "impact": "Критерий PR и выводов выполнен частично; отсутствует 0.5 балла.",
+      "next_check": "После открытия проверить ссылку, состав изменений и наличие выводов."
+    },
+    {
+      "topic": "Самостоятельное воспроизведение результатов",
+      "impact": "Все результаты исполнения остаются reported; это ограничение данной read-only проверки.",
+      "next_check": "При отдельной авторизации повторить make step6, make test и ограниченные HTTP-регрессии на итоговой версии."
+    },
+    {
+      "topic": "Идентификация и повторяемость модельного эксперимента",
+      "impact": "Нельзя приписать результаты конкретному backend ID или оценить частоту успешной инъекции.",
+      "next_check": "При доступности сохранять точный model ID и выполнять дополнительные независимые опыты; прежние timeout сохранять отдельно."
+    },
+    {
+      "topic": "Артефакты evidence/submission",
+      "impact": "Упоминание каталога в REPORT_02.md пока опережает наличие файлов в просмотренном комплекте.",
+      "next_check": "Сохранить фактический результат проверки и сведения об открытом PR либо уточнить формулировку отчёта."
+    }
+  ],
+  "verdict": {
+    "status": "pass_with_limitations",
+    "total_observed_points": 9.5,
+    "max_points": 10,
+    "final_score": 9.5,
+    "summary": "Работа соответствует техническим критериям рубрики по статическому анализу и сохранённым протоколам. Действующего обхода проверенной серверной границы не выявлено; это не доказательство отсутствия неизвестных дефектов. До полной сдачи остаётся фактическое открытие PR.",
+    "blocking_items": [
+      "Для полного выполнения задания требуется открыть PR и предоставить проверяемую ссылку."
+    ],
+    "accepted_limitations": [
+      "Тесты и HTTP-проверки оценены как reported, без самостоятельного запуска.",
+      "Account lockout допускает продление помехи входу; ограничение раскрыто.",
+      "Общий deque позволяет вытеснять старые отзывы; долговременная сохранность не заявлена.",
+      "Файловая TOCTOU-гонка требует отдельного локального права менять файлы процесса; HTTP-обход не подтверждён.",
+      "Публичные синтетические credentials, loopback HTTP и отсутствие production-инфраструктуры соответствуют области лабы.",
+      "Непрерывный поток соединений, браузерное выполнение XSS, полная DNS-rebinding цепочка и Python 3.10 отдельно не проверены.",
+      "Модельный эксперимент содержит четыре одиночных прогона с неизвестным backend ID; успешная prompt injection и статистическая устойчивость не установлены."
+    ]
+  }
+}

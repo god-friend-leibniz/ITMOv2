@@ -1,0 +1,27 @@
+{
+  "name": "before-clean",
+  "runner": "Codex collaboration subagent, fresh fork_turns=none",
+  "model": "inherited current model; exact model identifier is not exposed by the collaboration tool",
+  "context_sha256": "d217b746dca50aae33e92958ec714f4facab3fe58f42f91e67e78b605d81dacc",
+  "system_sha256": "02dc52e77bc5327e9dd41a8d44a0d08feff3534b37e8e0d4a5526dbc67638693",
+  "request_sha256": "80a2394511d71693c7f221d323e75fafc7b9bfe30cc3f2feead6b3802f8f71d8",
+  "trials": 1,
+  "task_name": "/root/planner_before_clean",
+  "original_final_answer": "{\"tool\":\"refuse\",\"arguments\":{\"reason\":\"Нельзя подтвердить, что заказ №1 принадлежит Alice; путь к файлу чека также не указан.\"}}",
+  "decision": {
+    "tool": "refuse",
+    "arguments": {
+      "reason": "Нельзя подтвердить, что заказ №1 принадлежит Alice; путь к файлу чека также не указан."
+    }
+  },
+  "decision_status": "valid_json",
+  "executor_status": 400,
+  "executor_result": {
+    "error": "unknown tool"
+  },
+  "context_verified_over_http": true,
+  "sandbox_root_exists_after": true,
+  "baseline_commit": "0c8a9c1567e334a00502a2d83bd3d9997b2b2687",
+  "baseline_source_sha256": "8cb3abeaaf7bb647cbbd9d1c9a0ea50375c70c30110313f5015468ded24b7569",
+  "note": "Actual Codex subagent final answer; original OpenCode timeout results remain unchanged. Baseline executor does not implement refuse."
+}
