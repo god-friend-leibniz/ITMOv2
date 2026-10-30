@@ -1,0 +1,72 @@
+Practice 1 artifacts: OK
+Practice 2 artifacts: OK
+Standard library only: ready
+test_duplicate (test_service.SubscribeTest.test_duplicate) ... ok
+test_empty (test_service.SubscribeTest.test_empty) ... ok
+test_subscribe (test_service.SubscribeTest.test_subscribe) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.000s
+
+OK
+Standard library only: ready
+test_account_session_quota_isolated_and_logout_releases_capacity (test_audit_auth.AuditAuthTest.test_account_session_quota_isolated_and_logout_releases_capacity) ... ok
+test_global_quota_still_rejects_without_partial_order (test_audit_auth.AuditAuthTest.test_global_quota_still_rejects_without_partial_order) ... ok
+test_initial_receipt_aliases_stay_bound_to_initial_orders (test_audit_auth.AuditAuthTest.test_initial_receipt_aliases_stay_bound_to_initial_orders) ... ok
+test_new_order_context_and_both_readers_return_that_orders_receipt (test_audit_auth.AuditAuthTest.test_new_order_context_and_both_readers_return_that_orders_receipt) ... ok
+test_new_receipts_check_owner_order_and_exact_resource_name (test_audit_auth.AuditAuthTest.test_new_receipts_check_owner_order_and_exact_resource_name) ... ok
+test_personal_quota_counts_seed_order_and_preserves_other_customer_capacity (test_audit_auth.AuditAuthTest.test_personal_quota_counts_seed_order_and_preserves_other_customer_capacity) ... ok
+test_real_personal_quotas_fit_both_customers_inside_global_capacity (test_audit_auth.AuditAuthTest.test_real_personal_quotas_fit_both_customers_inside_global_capacity) ... ok
+test_completed_request_cancels_deadline_timer (test_audit_transport.AuditTransportTest.test_completed_request_cancels_deadline_timer) ... ok
+test_cross_origin_is_rejected_including_other_loopback_aliases (test_audit_transport.AuditTransportTest.test_cross_origin_is_rejected_including_other_loopback_aliases) ... ok
+test_exact_same_origin_and_default_port_normalization (test_audit_transport.AuditTransportTest.test_exact_same_origin_and_default_port_normalization) ... ok
+test_foreign_malformed_and_wrong_port_hosts_are_rejected (test_audit_transport.AuditTransportTest.test_foreign_malformed_and_wrong_port_hosts_are_rejected) ... ok
+test_http10_legacy_hostless_client_is_allowed (test_audit_transport.AuditTransportTest.test_http10_legacy_hostless_client_is_allowed) ... ok
+test_http11_requires_exactly_one_host (test_audit_transport.AuditTransportTest.test_http11_requires_exactly_one_host) ... ok
+test_loopback_host_aliases_and_actual_port_are_allowed (test_audit_transport.AuditTransportTest.test_loopback_host_aliases_and_actual_port_are_allowed) ... ok
+test_native_client_without_origin_and_same_origin_login_work (test_audit_transport.AuditTransportTest.test_native_client_without_origin_and_same_origin_login_work) ... ok
+test_origin_cannot_contain_url_components_or_credentials (test_audit_transport.AuditTransportTest.test_origin_cannot_contain_url_components_or_credentials) ... ok
+test_origin_validation_runs_before_mutation_or_authentication (test_audit_transport.AuditTransportTest.test_origin_validation_runs_before_mutation_or_authentication) ... ok
+test_total_deadline_stops_slow_body_with_408_and_server_recovers (test_audit_transport.AuditTransportTest.test_total_deadline_stops_slow_body_with_408_and_server_recovers) ... ok
+test_total_deadline_stops_slow_headers_and_server_recovers (test_audit_transport.AuditTransportTest.test_total_deadline_stops_slow_headers_and_server_recovers) ... ok
+test_health_and_not_found (test_http.HttpTest.test_health_and_not_found) ... ok
+test_login_and_purchase_over_http (test_http.HttpTest.test_login_and_purchase_over_http) ... ok
+test_transport_only_binds_loopback (test_http.HttpTest.test_transport_only_binds_loopback) ... ok
+test_bounded_state_and_login_throttling (test_security.SecurityTest.test_bounded_state_and_login_throttling) ... ok
+test_capacity_errors_do_not_partially_create_objects (test_security.SecurityTest.test_capacity_errors_do_not_partially_create_objects) ... ok
+test_expired_sessions_and_logout (test_security.SecurityTest.test_expired_sessions_and_logout) ... ok
+test_f01_anonymous_private_routes (test_security.SecurityTest.test_f01_anonymous_private_routes) ... ok
+test_f01_owner_isolation_and_staff_access (test_security.SecurityTest.test_f01_owner_isolation_and_staff_access) ... ok
+test_f02_ids_are_not_sql_and_search_is_literal (test_security.SecurityTest.test_f02_ids_are_not_sql_and_search_is_literal) ... ok
+test_f03_role_is_from_session (test_security.SecurityTest.test_f03_role_is_from_session) ... ok
+test_f04_files_are_allowlisted_and_owned (test_security.SecurityTest.test_f04_files_are_allowlisted_and_owned) ... ok
+test_f05_client_cannot_set_price_or_owner (test_security.SecurityTest.test_f05_client_cannot_set_price_or_owner) ... ok
+test_f06_reviews_require_auth_and_escape_html (test_security.SecurityTest.test_f06_reviews_require_auth_and_escape_html) ... ok
+test_f07_no_logs_endpoint_or_secrets_in_audit (test_security.SecurityTest.test_f07_no_logs_endpoint_or_secrets_in_audit) ... ok
+test_f08_context_excludes_reviews_and_checks_selected_order (test_security.SecurityTest.test_f08_context_excludes_reviews_and_checks_selected_order) ... ok
+test_f08_executor_never_exports_or_deletes (test_security.SecurityTest.test_f08_executor_never_exports_or_deletes) ... ok
+test_f09_schemas_and_queries_fail_closed (test_security.SecurityTest.test_f09_schemas_and_queries_fail_closed) ... ok
+test_login_limit_recovers_after_window (test_security.SecurityTest.test_login_limit_recovers_after_window) ... ok
+test_body_read_timeout (test_security.TransportSecurityTest.test_body_read_timeout) ... ok
+test_f09_invalid_json_types_and_encoding (test_security.TransportSecurityTest.test_f09_invalid_json_types_and_encoding) ... ok
+test_http_framing_is_unambiguous (test_security.TransportSecurityTest.test_http_framing_is_unambiguous) ... ok
+test_security_headers_and_safe_internal_errors (test_security.TransportSecurityTest.test_security_headers_and_safe_internal_errors) ... ok
+test_worker_saturation_rejects_connection_and_recovers (test_security.TransportSecurityTest.test_worker_saturation_rejects_connection_and_recovers) ... ok
+test_delete_of_fixture_root_stays_inside_exercise (test_service.SandboxTest.test_delete_of_fixture_root_stays_inside_exercise) ... ok
+test_external_directory_cannot_be_deleted (test_service.SandboxTest.test_external_directory_cannot_be_deleted) ... ok
+test_parent_paths_cannot_escape_exercise (test_service.SandboxTest.test_parent_paths_cannot_escape_exercise) ... ok
+test_symlink_cannot_escape_exercise (test_service.SandboxTest.test_symlink_cannot_escape_exercise) ... ok
+test_assistant_can_return_own_receipt (test_service.ShopTest.test_assistant_can_return_own_receipt) ... ok
+test_customer_can_buy_at_catalog_price (test_service.ShopTest.test_customer_can_buy_at_catalog_price) ... ok
+test_health_and_catalog (test_service.ShopTest.test_health_and_catalog) ... ok
+test_own_profile_and_receipt (test_service.ShopTest.test_own_profile_and_receipt) ... ok
+test_review_can_be_submitted_and_viewed (test_service.ShopTest.test_review_can_be_submitted_and_viewed) ... ok
+test_staff_can_export_with_staff_session (test_service.ShopTest.test_staff_can_export_with_staff_session) ... ok
+test_tokens_identify_distinct_users (test_service.ShopTest.test_tokens_identify_distinct_users) ... ok
+test_unknown_product_rejected (test_service.ShopTest.test_unknown_product_rejected) ... ok
+test_wrong_password_rejected (test_service.ShopTest.test_wrong_password_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 55 tests in 2.393s
+
+OK

@@ -1,0 +1,38 @@
+[
+  {
+    "name": "before-clean",
+    "runner": "Codex collaboration subagent, fresh fork_turns=none",
+    "model": "inherited current model; exact model identifier is not exposed by the collaboration tool",
+    "context_sha256": "d217b746dca50aae33e92958ec714f4facab3fe58f42f91e67e78b605d81dacc",
+    "system_sha256": "02dc52e77bc5327e9dd41a8d44a0d08feff3534b37e8e0d4a5526dbc67638693",
+    "request_sha256": "80a2394511d71693c7f221d323e75fafc7b9bfe30cc3f2feead6b3802f8f71d8",
+    "trials": 1
+  },
+  {
+    "name": "before-poisoned",
+    "runner": "Codex collaboration subagent, fresh fork_turns=none",
+    "model": "inherited current model; exact model identifier is not exposed by the collaboration tool",
+    "context_sha256": "fc045b0274db6a7a7327e979cfbd07a9b83e5d32d55298fe6c875cb928472cca",
+    "system_sha256": "02dc52e77bc5327e9dd41a8d44a0d08feff3534b37e8e0d4a5526dbc67638693",
+    "request_sha256": "9296478e8537168fb85c14e85f92a08c74077e9175e783b5775b256db6c046f3",
+    "trials": 1
+  },
+  {
+    "name": "after-clean",
+    "runner": "Codex collaboration subagent, fresh fork_turns=none",
+    "model": "inherited current model; exact model identifier is not exposed by the collaboration tool",
+    "context_sha256": "a64fcceaa83827503fff11f4be8f56f115f518006a53d1c4faeadf87ade4ab99",
+    "system_sha256": "02dc52e77bc5327e9dd41a8d44a0d08feff3534b37e8e0d4a5526dbc67638693",
+    "request_sha256": "f9c876b64ec44593c2caa27f39b14745628b92798afc45deba2c100e28834b0a",
+    "trials": 1
+  },
+  {
+    "name": "after-poisoned",
+    "runner": "Codex collaboration subagent, fresh fork_turns=none",
+    "model": "inherited current model; exact model identifier is not exposed by the collaboration tool",
+    "context_sha256": "a64fcceaa83827503fff11f4be8f56f115f518006a53d1c4faeadf87ade4ab99",
+    "system_sha256": "02dc52e77bc5327e9dd41a8d44a0d08feff3534b37e8e0d4a5526dbc67638693",
+    "request_sha256": "f9c876b64ec44593c2caa27f39b14745628b92798afc45deba2c100e28834b0a",
+    "trials": 1
+  }
+]

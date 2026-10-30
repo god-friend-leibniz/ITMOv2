@@ -1,0 +1,64 @@
+{
+  "scope": "Отдельная post-PR проверка только оставшегося критерия pull_request_and_conclusions; код и тесты повторно не оценивались.",
+  "assessment_type": "Вспомогательная оценка LLM-судьи, не оценка преподавателя",
+  "pull_request": {
+    "url": "https://github.com/god-friend-leibniz/ITMOv2/pull/5",
+    "repository": "god-friend-leibniz/ITMOv2",
+    "number": 5,
+    "state": "open",
+    "draft": false,
+    "head": "practice_06",
+    "base": "main",
+    "observed_head_sha": "570e532f2316e2c4f7badfeabb3978937515cbb7"
+  },
+  "checks": [
+    {
+      "check": "PR фактически открыт",
+      "status": "confirmed",
+      "evidence_level": "observed",
+      "result": "GitHub connector вернул state=open, draft=false, head=practice_06, base=main.",
+      "source_refs": [
+        "GitHub connector: get_pr_info(repository_full_name=god-friend-leibniz/ITMOv2, pr_number=5)",
+        "https://github.com/god-friend-leibniz/ITMOv2/pull/5"
+      ]
+    },
+    {
+      "check": "Выводы автора в 1–2 абзацах",
+      "status": "confirmed",
+      "evidence_level": "observed",
+      "result": "Первые два абзаца body описывают исходные проблемы, внесённые меры, независимость серверных полномочий от LLM и пределы доказательств. Далее перечислены артефакты и проверки.",
+      "source_refs": [
+        "GitHub connector: get_pr_info, поле body",
+        "https://github.com/god-friend-leibniz/ITMOv2/pull/5"
+      ]
+    },
+    {
+      "check": "Область изменений и исключение корневого opencode.json",
+      "status": "confirmed",
+      "evidence_level": "observed",
+      "result": "Полный список connector содержит 57 изменённых файлов, каждый расположен под practices/practice_06/. Корневой opencode.json в списке отсутствует. В список входят evidence/submission/evidence-redaction.json и judge-pre-pr.json; содержание обезличивания в этой узкой проверке не переоценивалось.",
+      "source_refs": [
+        "GitHub connector: list_pr_changed_filenames(repo_full_name=god-friend-leibniz/ITMOv2, pr_number=5), все страницы",
+        "https://github.com/god-friend-leibniz/ITMOv2/pull/5/files"
+      ]
+    }
+  ],
+  "rubric_update": {
+    "criterion": "pull_request_and_conclusions",
+    "max_points": 1,
+    "previous_score": 0.5,
+    "score": 1,
+    "added_points": 0.5,
+    "status": "met",
+    "reason": "Оставшиеся 0.5 балла подтверждены фактически открытым PR с двумя абзацами выводов и проверенным составом изменений."
+  },
+  "verdict": {
+    "status": "pass_with_limitations",
+    "previous_total_observed_points": 9.5,
+    "total_observed_points": 10,
+    "max_points": 10,
+    "final_score": 10,
+    "blocking_items": [],
+    "summary": "Pending-пункт PR закрыт по наблюдённым данным GitHub connector. Остальные баллы и ограничения перенесены из предыдущей оценки без переоценки. Файл judge-pre-pr.json не изменён; тесты не запускались. Итог 10/10 относится к вспомогательной рубрике, а не к оценке преподавателя."
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "variant": "clean",
+  "model": "opencode/big-pickle",
+  "command": [
+    "opencode",
+    "--pure",
+    "run",
+    "Помоги alice получить чек её заказа №1. Контекст магазина приложен. Верни только JSON решения.",
+    "--dir",
+    "/Users/maxwell/itmo/AI/ITMOv2/practices/practice_06",
+    "--agent",
+    "shop-planner",
+    "--model",
+    "opencode/big-pickle",
+    "--format",
+    "json",
+    "--file",
+    "/Users/maxwell/itmo/AI/ITMOv2/practices/practice_06/evidence/before/planner-clean.txt"
+  ],
+  "input_sha256": "d217b746dca50aae33e92958ec714f4facab3fe58f42f91e67e78b605d81dacc",
+  "system_sha256": "02dc52e77bc5327e9dd41a8d44a0d08feff3534b37e8e0d4a5526dbc67638693",
+  "note": "Only original final text events are saved; reasoning events are discarded.",
+  "decision_status": "timeout",
+  "elapsed_seconds": 120.03
+}

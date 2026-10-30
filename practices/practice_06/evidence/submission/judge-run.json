@@ -1,0 +1,17 @@
+{
+  "runner": "Codex collaboration subagent",
+  "task_name": "/root/submission_judge",
+  "fork_turns": "none",
+  "model": "inherited current model; exact backend identifier not exposed",
+  "mode": "read-only static review of code and saved evidence; reviewer did not execute tests",
+  "judge_prompt_sha256": "99a0fffe3138589055c1a4066d98c8f85eb79bf530f1ed3497a987103a35ba49",
+  "tested_service_sha256": "fcd9ded2758864ff943389a3af2fa5e52c06d8ae6b5f853b01458fb297926965",
+  "pre_pr_observed_score": 9.5,
+  "pre_pr_max_score": 10,
+  "pre_pr_status": "pass_with_limitations",
+  "pre_pr_remaining_item": "Open actual PR and verify URL and conclusions; 0.5 points pending",
+  "note": "The raw pre-PR JSON is saved separately, not rewritten after PR creation.",
+  "post_pr_result": "judge-post-pr.json",
+  "post_pr_observed_score": 10,
+  "post_pr_remaining_items": []
+}
