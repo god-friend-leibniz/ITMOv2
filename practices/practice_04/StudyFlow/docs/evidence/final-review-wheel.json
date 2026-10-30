@@ -1,0 +1,12 @@
+{
+  "source": "Offline installed-wheel smoke outside checkout",
+  "python": "3.12.15",
+  "wheel": "studyflow-0.1.0-py3-none-any.whl",
+  "lockfile_constraints": true,
+  "installed_module_paths_checked": true,
+  "github": "Controlled HTTP responses behind real stdio MCP",
+  "credentials_loaded": false,
+  "exit_code": 0,
+  "output": "Installed wheel passed: CRUD/progress/restart/cascade/assets; safe rollback error; real stdio summaries and failures; MCP discovery/invalid/unknown tool.",
+  "env_excluded_from_wheel_and_sdist": true
+}

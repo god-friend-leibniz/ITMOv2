@@ -1,0 +1,57 @@
+{
+  "source": "Explicit fast-handler fallback at confirmed public boundaries; empty event metadata",
+  "runs": [
+    {
+      "timestamp": "2026-10-07T15:41:33.961516+00:00",
+      "fingerprint": "39e37ca0d521f9d9393cf6d07fed52c427823a4316f8620533cc9d36c596ee0e",
+      "exit_code": 1,
+      "feedback": {
+        "hookSpecificOutput": {
+          "hookEventName": "PostToolUse",
+          "additionalContext": "StudyFlow tests: exit 1\n................................................................F....... [ 33%]\n........................................................................ [ 66%]\n........................................................................ [ 99%]\n.                                                                        [100%]\n=================================== FAILURES ===================================\n_ test_unexpected_database_failure_returns_safe_json_and_preserves_saved_course _\n\ntmp_path = PosixPath('/private/var/folders/72/w8hds8y57h55rr1z462m6qx40000gn/T/pytest-of-maxwell/pytest-313/test_unexpected_database_failu0')\n\n    def test_unexpected_database_failure_returns_safe_json_and_preserves_saved_course(tmp_path):\n        path = tmp_path / \"courses.sqlite3\"\n        with TestClient(create_app(db_path=path), raise_server_exceptions=False) as client:\n            course = client.post(\"/api/courses\", json={\"name\": \"Algorithms\"}).json()\n            with sqlite3.connect(path) as connection:\n                connection.execute(\n                    \"CREATE TRIGGER reject_edit BEFORE UPDATE ON courses BEGIN \"\n                    \"SELECT RAISE(ABORT, 'Sensitive database details'); END\"\n                )\n            response = client.patch(f\"/api/courses/{course['id']}\", json={\"name\": \"Advanced algorithms\"})\n            assert response.status_code == 500\n>           assert response.json() == {\"error\": {\n                   ^^^^^^^^^^^^^^^\n                \"code\": \"INTERNAL_ERROR\", \"message\": \"The request could not be completed.\", \"fields\": {},\n            }}\n\ntests/test_courses.py:184: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n.venv/lib/python3.12/site-packages/httpx2/_models.py:830: in json\n    return jsonlib.loads(self.content, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n.python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/json/__init__.py:346: in loads\n    return _default_decoder.decode(s)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n.python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/json/decoder.py:338: in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <json.decoder.JSONDecoder object at 0x1063629f0>\ns = 'Internal Server Error', idx = 0\n\n    def raw_decode(self, s, idx=0):\n        \"\"\"Decode a JSON document from ``s`` (a ``str`` beginning with\n        a JSON document) and return a 2-tuple of the Python\n        representation and the index in ``s`` where the document ended.\n    \n        This can be used to decode a JSON document from a string that may\n        have extraneous data at the end.\n    \n        \"\"\"\n        try:\n            obj, end = self.scan_once(s, idx)\n        except StopIteration as err:\n>           raise JSONDecodeError(\"Expecting value\", s, err.value) from None\nE           json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)\n\n.python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/json/decoder.py:356: JSONDecodeError\n=========================== short test summary info ============================\nFAILED tests/test_courses.py::test_unexpected_database_failure_returns_safe_json_and_preserves_saved_course\n1 failed, 216 passed, 53 deselected in 20.31s\n"
+        },
+        "decision": "block",
+        "reason": "StudyFlow verification failed. Repair failing tests before unrelated work."
+      },
+      "event": {}
+    },
+    {
+      "timestamp": "2026-10-07T15:42:23.133888+00:00",
+      "fingerprint": "b9c853777ec386b0a5fa62dac48d21aac0800cd167a09d189a3dd626a98167f6",
+      "exit_code": 0,
+      "feedback": {
+        "hookSpecificOutput": {
+          "hookEventName": "PostToolUse",
+          "additionalContext": "StudyFlow tests: exit 0\n........................................................................ [ 33%]\n........................................................................ [ 66%]\n........................................................................ [ 99%]\n.                                                                        [100%]\n217 passed, 53 deselected in 20.10s\n"
+        }
+      },
+      "event": {}
+    },
+    {
+      "timestamp": "2026-10-07T15:45:05.855496+00:00",
+      "fingerprint": "99de19d21b93f81fbbb3260819a29905808576242fa2ce71a06fe0d9cf3334b8",
+      "exit_code": 1,
+      "feedback": {
+        "hookSpecificOutput": {
+          "hookEventName": "PostToolUse",
+          "additionalContext": "StudyFlow tests: exit 1\n........................................................................ [ 33%]\n...F.................................................................... [ 66%]\n........................................................................ [ 99%]\n..                                                                       [100%]\n=================================== FAILURES ===================================\n___________ test_unadvertised_tool_is_rejected_before_github_access ____________\n  + Exception Group Traceback (most recent call last):\n  |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/tests/test_mcp.py\", line 77, in test_unadvertised_tool_is_rejected_before_github_access\n  |     asyncio.run(scenario())\n  |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/.python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/asyncio/runners.py\", line 195, in run\n  |     return runner.run(main)\n  |            ^^^^^^^^^^^^^^^^\n  |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/.python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/asyncio/runners.py\", line 118, in run\n  |     return self._loop.run_until_complete(task)\n  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/.python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/asyncio/base_events.py\", line 691, in run_until_complete\n  |     return future.result()\n  |            ^^^^^^^^^^^^^^^\n  |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/tests/test_mcp.py\", line 71, in scenario\n  |     async with Client(create_server(transport=httpx.MockTransport(github))) as client:\n  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/.venv/lib/python3.12/site-packages/mcp/client/client.py\", line 480, in __aexit__\n  |     await self._exit_stack.__aexit__(exc_type, exc_val, exc_tb)\n  |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/.python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/contextlib.py\", line 754, in __aexit__\n  |     raise exc_details[1]\n  |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/.python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/contextlib.py\", line 737, in __aexit__\n  |     cb_suppress = await cb(*exc_details)\n  |                   ^^^^^^^^^^^^^^^^^^^^^^\n  |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py\", line 847, in __aexit__\n  |     raise BaseExceptionGroup(\n  | BaseExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)\n  +-+---------------- 1 ----------------\n    | Exception Group Traceback (most recent call last):\n    |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/.python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/contextlib.py\", line 737, in __aexit__\n    |     cb_suppress = await cb(*exc_details)\n    |                   ^^^^^^^^^^^^^^^^^^^^^^\n    |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/.venv/lib/python3.12/site-packages/mcp/client/session.py\", line 514, in __aexit__\n    |     result = await self._task_group.__aexit__(exc_type, exc_val, exc_tb)\n    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py\", line 847, in __aexit__\n    |     raise BaseExceptionGroup(\n    | BaseExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)\n    +-+---------------- 1 ----------------\n      | Traceback (most recent call last):\n      |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/tests/test_mcp.py\", line 72, in scenario\n      |     with pytest.raises(MCPError) as error:\n      |          ^^^^^^^^^^^^^^^^^^^^^^^\n      |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/.venv/lib/python3.12/site-packages/_pytest/raises.py\", line 699, in __exit__\n      |     fail(f\"DID NOT RAISE {self.expected_exceptions[0].__name__}\")\n      |   File \"/Users/maxwell/itmo/AI/ITMOv2/practices/practice_04/StudyFlow/.venv/lib/python3.12/site-packages/_pytest/outcomes.py\", line 162, in __call__\n      |     raise Failed(msg=reason, pytrace=pytrace)\n      | Failed: DID NOT RAISE MCPError\n      +------------------------------------\n------------------------------ Captured log call -------------------------------\nWARNING  client:session.py:1133 Tool delete_repository not listed by server, cannot validate any structured content\n=========================== short test summary info ============================\nFAILED tests/test_mcp.py::test_unadvertised_tool_is_rejected_before_github_access\n1 failed, 217 passed, 53 deselected in 20.70s\n"
+        },
+        "decision": "block",
+        "reason": "StudyFlow verification failed. Repair failing tests before unrelated work."
+      },
+      "event": {}
+    },
+    {
+      "timestamp": "2026-10-07T15:45:52.968367+00:00",
+      "fingerprint": "469133e27c203d9eaedee1043caa33906f0cdc606259cd82ee93017c4b45030a",
+      "exit_code": 0,
+      "feedback": {
+        "hookSpecificOutput": {
+          "hookEventName": "PostToolUse",
+          "additionalContext": "StudyFlow tests: exit 0\n........................................................................ [ 33%]\n........................................................................ [ 66%]\n........................................................................ [ 99%]\n..                                                                       [100%]\n218 passed, 53 deselected in 21.04s\n"
+        }
+      },
+      "event": {}
+    }
+  ]
+}

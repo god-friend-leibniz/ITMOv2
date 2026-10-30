@@ -1,0 +1,36 @@
+:root { font-family: system-ui, sans-serif; color: #20372f; background: #f6f7f3; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+header { display: flex; justify-content: space-between; gap: 1rem; padding: 1.5rem max(1.5rem, calc((100vw - 1120px) / 2)); border-bottom: 1px solid #dce3d9; background: white; }
+.brand { font-weight: 750; font-size: 1.25rem; }
+header > :last-child { color: #53665c; }
+main { max-width: 1168px; margin: 4rem auto; padding: 0 1.5rem; display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 3rem; }
+.eyebrow { letter-spacing: .14em; font-size: .75rem; font-weight: 700; color: #586e61; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); margin: .5rem 0; }
+h2 { font-size: 1.15rem; margin-top: 0; }
+.intro { color: #53665c; margin-bottom: 2rem; }
+.course, .new-course, .empty { background: white; border: 1px solid #dce3d9; border-radius: 12px; padding: 1.5rem; }
+.course { margin-bottom: 1rem; overflow-wrap: anywhere; }
+.course p { white-space: pre-wrap; color: #53665c; margin-bottom: 0; }
+.new-course { align-self: start; }
+.sidebar { display: grid; gap: 1.5rem; align-self: start; }
+label { display: block; margin: 1.25rem 0 .5rem; font-weight: 600; font-size: .9rem; }
+input, textarea, button { font: inherit; width: 100%; border-radius: 6px; padding: .75rem; }
+input, textarea { border: 1px solid #8b9d91; background: #fff; }
+textarea { resize: vertical; }
+button { margin-top: 1.25rem; border: 0; color: white; background: #245c43; cursor: pointer; font-weight: 650; }
+button:hover { background: #17422f; }
+button.danger { color: #a02222; background: #fff1ed; border: 1px solid #a02222; }
+button.danger:hover { background: #ffe1d8; }
+button:disabled { opacity: .6; cursor: wait; }
+:focus-visible { outline: 3px solid #aa6b19; outline-offset: 3px; }
+[role="alert"] { color: #a02222; }
+#checklist { list-style: none; padding: 0; display: grid; gap: 1rem; }
+#checklist li { background: white; border: 1px solid #dce3d9; border-radius: 12px; padding: 1rem; }
+#checklist label { display: flex; align-items: center; gap: .75rem; margin: 0; overflow-wrap: anywhere; }
+#checklist input[type="checkbox"] { width: 1.2rem; height: 1.2rem; padding: 0; flex: none; accent-color: #245c43; }
+.task-edit { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }
+.task-edit input { flex: 1 1 100%; min-width: 0; }
+.task-edit button { width: auto; margin-top: 0; font-size: .85rem; }
+.task-error { flex-basis: 100%; margin: 0; }
+@media (max-width: 760px) { main { grid-template-columns: 1fr; margin-top: 2rem; gap: 1.5rem; } header > :last-child { display: none; } }

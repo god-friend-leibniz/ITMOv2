@@ -1,0 +1,13 @@
+.venv/
+.tools/
+.uv-cache/
+.python/
+!.python-version
+.pytest_cache/
+__pycache__/
+*.py[cod]
+data/
+dist/
+*.egg-info/
+.playwright/
+test-results/
