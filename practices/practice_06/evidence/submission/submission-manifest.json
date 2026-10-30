@@ -15,5 +15,9 @@
     "files_ai_http": 47,
     "planner_trials": 4
   },
-  "note": "Test logs predate documentation-only submission additions; tested service is unchanged."
+  "note": "Test logs predate documentation-only submission additions; tested service is unchanged.",
+  "pull_request": "https://github.com/god-friend-leibniz/ITMOv2/pull/5",
+  "judge_final_score": 10,
+  "judge_score_type": "advisory LLM rubric, not instructor grade",
+  "evidence_redaction": "evidence/submission/evidence-redaction.json"
 }

@@ -10,5 +10,8 @@
   "pre_pr_max_score": 10,
   "pre_pr_status": "pass_with_limitations",
   "pre_pr_remaining_item": "Open actual PR and verify URL and conclusions; 0.5 points pending",
-  "note": "The raw pre-PR JSON is saved separately, not rewritten after PR creation."
+  "note": "The raw pre-PR JSON is saved separately, not rewritten after PR creation.",
+  "post_pr_result": "judge-post-pr.json",
+  "post_pr_observed_score": 10,
+  "post_pr_remaining_items": []
 }

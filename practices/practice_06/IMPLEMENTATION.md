@@ -15,7 +15,7 @@
 | REPORT_01 (2) | `REPORT_01.md`, исходные доказательства `evidence/before/` |
 | Исправления и тесты (2) | `lab/service.py`, 55 тестов; `make step6`, `make test` |
 | REPORT_02 (2) | `REPORT_02.md`, `SECURITY_REVIEW.md`, `evidence/after/`, `reaudit/`, `model-validation/` |
-| PR и выводы (1) | Ссылка добавляется после фактического открытия; выводы ниже |
+| PR и выводы (1) | [PR №5](https://github.com/god-friend-leibniz/ITMOv2/pull/5); два абзаца выводов ниже и в PR |
 
 ## Выводы автора
 
@@ -43,3 +43,14 @@
 Необезличенные исходники доказательств сохранены локально вне репозитория
 и не публикуются. Модельные входы, исходные финальные ответы и их SHA256
 не изменены. Сведения об обработке — `evidence/submission/evidence-redaction.json`.
+
+## Завершение сдачи
+
+Открыт [PR №5](https://github.com/god-friend-leibniz/ITMOv2/pull/5):
+`practice_06` → `main`. GitHub connector подтвердил открытое состояние и
+состав только `practices/practice_06/`; локальный корневой конфиг исключён.
+
+Независимый LLM-судья дал 9.5/10 до PR и 10/10 после отдельной проверки
+его открытия и двух абзацев выводов. Это вспомогательная оценка, не оценка
+преподавателя. Исходные JSON: `evidence/submission/judge-pre-pr.json` и
+`judge-post-pr.json`; прежний ответ не переписывался.

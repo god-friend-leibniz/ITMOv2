@@ -45,3 +45,6 @@
 
 Доказательства реальных модельных прогонов через Codex — в
 `evidence/model-validation/`; прежние OpenCode timeout сохранены отдельно.
+
+Сдача: [PR №5](https://github.com/god-friend-leibniz/ITMOv2/pull/5).
+Результаты независимого судьи — `evidence/submission/` (вспомогательное ревью).
