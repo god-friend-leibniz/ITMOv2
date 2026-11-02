@@ -1,0 +1,32 @@
+{
+  "description": "Run fast offline checks after edits and full verification before finishing.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "^(apply_patch|Edit|Write|Bash)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/verify_after_change.py",
+            "timeout": 75,
+            "statusMessage": "Verifying StudyFlow",
+            "async": false
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/verify_before_finish.py",
+            "timeout": 200,
+            "statusMessage": "Final verification of StudyFlow",
+            "async": false
+          }
+        ]
+      }
+    ]
+  }
+}

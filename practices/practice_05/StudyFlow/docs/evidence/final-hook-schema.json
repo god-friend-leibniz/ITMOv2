@@ -1,0 +1,126 @@
+{
+  "codex_version": "0.160.1",
+  "source": "Installed codex binary strings and generated app-server JSON schema",
+  "event_names": [
+    "preToolUse",
+    "permissionRequest",
+    "postToolUse",
+    "preCompact",
+    "postCompact",
+    "sessionStart",
+    "sessionEnd",
+    "userPromptSubmit",
+    "subagentStart",
+    "subagentStop",
+    "stop",
+    "interrupt"
+  ],
+  "stop_input": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "definitions": {
+      "NullableString": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "properties": {
+      "cwd": {
+        "type": "string"
+      },
+      "hook_event_name": {
+        "const": "Stop",
+        "type": "string"
+      },
+      "last_assistant_message": {
+        "$ref": "#/definitions/NullableString"
+      },
+      "model": {
+        "type": "string"
+      },
+      "permission_mode": {
+        "enum": [
+          "default",
+          "acceptEdits",
+          "plan",
+          "dontAsk",
+          "bypassPermissions"
+        ],
+        "type": "string"
+      },
+      "session_id": {
+        "type": "string"
+      },
+      "stop_hook_active": {
+        "type": "boolean"
+      },
+      "transcript_path": {
+        "$ref": "#/definitions/NullableString"
+      },
+      "turn_id": {
+        "description": "Codex extension: expose the active turn id to internal turn-scoped hooks.",
+        "type": "string"
+      }
+    },
+    "required": [
+      "cwd",
+      "hook_event_name",
+      "last_assistant_message",
+      "model",
+      "permission_mode",
+      "session_id",
+      "stop_hook_active",
+      "transcript_path",
+      "turn_id"
+    ],
+    "title": "stop.command.input",
+    "type": "object"
+  },
+  "stop_output": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "definitions": {
+      "BlockDecisionWire": {
+        "enum": [
+          "block"
+        ],
+        "type": "string"
+      }
+    },
+    "properties": {
+      "continue": {
+        "default": true,
+        "type": "boolean"
+      },
+      "decision": {
+        "allOf": [
+          {
+            "$ref": "#/definitions/BlockDecisionWire"
+          }
+        ],
+        "default": null
+      },
+      "reason": {
+        "default": null,
+        "description": "Claude requires `reason` when `decision` is `block`; we enforce that semantic rule during output parsing rather than in the JSON schema.",
+        "type": "string"
+      },
+      "stopReason": {
+        "default": null,
+        "type": "string"
+      },
+      "suppressOutput": {
+        "default": false,
+        "type": "boolean"
+      },
+      "systemMessage": {
+        "default": null,
+        "type": "string"
+      }
+    },
+    "title": "stop.command.output",
+    "type": "object"
+  }
+}

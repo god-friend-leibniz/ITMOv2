@@ -1,0 +1,286 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="7310" viewBox="0 0 1440 7310" role="img" aria-labelledby="title desc">
+<title id="title">StudyFlow: OpenSpec и две команды Spec Kit</title>
+<desc id="desc">Полный цикл OpenSpec и настройка Mermaid; независимые UI и logic worktree Spec Kit; согласование требований, четыре передачи изменений между ветками, исправление T041 после converge. Перенос в practice_05 ещё не выполнен.</desc>
+<defs>
+<marker id="arrow-flow" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 Z" fill="#94a3b8"/></marker>
+<marker id="arrow-merge" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 Z" fill="#b07b23"/></marker>
+<marker id="arrow-info" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 Z" fill="#8b5ac2"/></marker>
+<marker id="arrow-pending" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 Z" fill="#94a3b8"/></marker>
+</defs>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#1e3347}.title{font-size:42px;font-weight:700}.section{font-size:31px;font-weight:700}.sub{font-size:24px;fill:#52667b}.cmd{font-family:Menlo,Consolas,monospace;font-size:24px;font-weight:600}.task{font-size:25px}.note{font-size:22px;fill:#52667b}.label{font-size:21px;fill:#64748b}.lane{font-size:25px;font-weight:700}</style>
+<rect width="1440" height="7310" fill="#ffffff"/>
+<text x="54" y="60" class="title" text-anchor="start">StudyFlow · от первой спеки до интеграции</text>
+<text x="54" y="104" class="section" text-anchor="start">01  OpenSpec: реализованная фича и настройка формы документа</text>
+<text x="54" y="1510" class="sub" text-anchor="start">Завершённый фильтр — в архиве. Сортировка / Overdue в OpenSpec осталась планом.</text>
+<text x="54" y="1587" class="section" text-anchor="start">02  Spec Kit: общая база → независимые спецификации</text>
+<text x="720" y="2330" class="sub" text-anchor="middle">Два независимых worktree</text>
+<text x="364" y="2547" class="lane" text-anchor="middle">UI · codex/hw5-ui</text>
+<text x="1076" y="2547" class="lane" text-anchor="middle">Логика · codex/hw5-logic</text>
+<text x="720" y="3020" class="sub" text-anchor="middle">Контракт 1.0 согласован</text>
+<text x="54" y="4297" class="section" text-anchor="start">03  Реализация: серверное ядро → UI → интеграция → converge</text>
+<text x="364" y="4380" class="lane" text-anchor="middle">UI worktree</text>
+<text x="1076" y="4380" class="lane" text-anchor="middle">Logic worktree</text>
+<rect x="38" y="4410" width="652" height="2420" rx="18" fill="#7145b8" fill-opacity=".035"/>
+<rect x="750" y="4410" width="652" height="2420" rx="18" fill="#2563a6" fill-opacity=".035"/>
+<polyline points="674,211 766,211" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="1076.0,277 1076.0,365" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="766,431 674,431" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="364.0,497 364.0,585" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="674,651 766,651" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="1076.0,717 1076.0,805" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="766,871 674,871" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="364.0,937 364.0,1025" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="674,1091 766,1091" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="1076.0,1157 1076.0,1201.0 720.0,1201.0 720.0,1245" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="720.0,1377 720.0,1430 1425,1430 1425,1625 720.0,1625 720.0,1665" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="720.0,1797 720.0,1885" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="720.0,2017 720.0,2105" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="720.0,2237 720.0,2301.0 364.0,2301.0 364.0,2365" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="720.0,2237 720.0,2301.0 1076.0,2301.0 1076.0,2365" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="364.0,2497 364.0,2585" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="364.0,2717 364.0,2805" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="1076.0,2497 1076.0,2585" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="1076.0,2717 1076.0,2805" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="674,2852 766,2852" fill="none" stroke="#8b5ac2" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="8 7" marker-end="url(#arrow-info)"/>
+<polyline points="766,2892 674,2892" fill="none" stroke="#8b5ac2" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="8 7" marker-end="url(#arrow-info)"/>
+<polyline points="364.0,2937 364.0,3315" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="1076.0,2937 1076.0,3095" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="1076.0,3227 1076.0,3271.0 364.0,3271.0 364.0,3315" fill="none" stroke="#8b5ac2" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="8 7" marker-end="url(#arrow-info)"/>
+<text x="720" y="3259.0" class="label" text-anchor="middle">Технический интерфейс 0.1</text>
+<polyline points="364.0,3447 364.0,3535" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="1076.0,3227 1076.0,3535" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="364.0,3667 364.0,3755" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="364.0,3887 364.0,3975" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="1076.0,3667 1076.0,3755" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="1076.0,3887 1076.0,3975" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="94,3755 94,3719 314,3719 314,3755" fill="none" stroke="#8b5ac2" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-info)"/>
+<polyline points="1076.0,4107 1076.0,4150 1425,4150 1425,4420 1076.0,4420 1076.0,4465" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="364.0,4107 364.0,4150 18,4150 18,4640 364.0,4640 364.0,4685" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="8 7" marker-end="url(#arrow-pending)"/>
+<polyline points="1076.0,4597 1076.0,4641.0 364.0,4641.0 364.0,4685" fill="none" stroke="#b07b23" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-merge)"/>
+<text x="720" y="4629.0" class="label" text-anchor="middle">передача коммитов → UI</text>
+<polyline points="364.0,4817 364.0,4905" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="1076.0,4597 1076.0,5125" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="8 7" marker-end="url(#arrow-pending)"/>
+<polyline points="364.0,5037 364.0,5081.0 1076.0,5081.0 1076.0,5125" fill="none" stroke="#b07b23" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-merge)"/>
+<text x="720" y="5069.0" class="label" text-anchor="middle">передача коммитов → логике</text>
+<polyline points="1076.0,5257 1076.0,5345" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="364.0,5037 364.0,5565" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="8 7" marker-end="url(#arrow-pending)"/>
+<polyline points="1076.0,5477 1076.0,5521.0 364.0,5521.0 364.0,5565" fill="none" stroke="#b07b23" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-merge)"/>
+<text x="720" y="5509.0" class="label" text-anchor="middle">передача коммитов → UI</text>
+<polyline points="364.0,5697 364.0,5785" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="1076.0,5477 1076.0,6005" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="8 7" marker-end="url(#arrow-pending)"/>
+<polyline points="364.0,5917 364.0,5961.0 1076.0,5961.0 1076.0,6005" fill="none" stroke="#b07b23" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-merge)"/>
+<text x="720" y="5949.0" class="label" text-anchor="middle">передача коммитов → логике</text>
+<polyline points="1076.0,6137 1076.0,6225" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="364.0,5917 364.0,6225" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="364.0,6357 364.0,6445" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="364.0,6577 364.0,6665" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow-flow)"/>
+<polyline points="364.0,6797 364.0,6903.5 720.0,6903.5 720.0,7010" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="8 7" marker-end="url(#arrow-pending)"/>
+<rect x="54" y="145" width="620" height="132" rx="14" fill="#eefbf7" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="161" width="5" height="100" rx="2" fill="#0f766e"/>
+<text x="78" y="181" class="cmd" text-anchor="start">openspec init --profile core</text>
+<text x="78" y="220" class="task" text-anchor="start">OpenSpec в существующем StudyFlow</text>
+<rect x="766" y="145" width="620" height="132" rx="14" fill="#eefbf7" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="161" width="5" height="100" rx="2" fill="#0f766e"/>
+<text x="790" y="181" class="cmd" text-anchor="start">$openspec-explore</text>
+<text x="790" y="220" class="task" text-anchor="start">Код, тесты и baseline</text>
+<text x="790" y="254" class="note" text-anchor="start">Выбран фильтр завершённости</text>
+<rect x="766" y="365" width="620" height="132" rx="14" fill="#eefbf7" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="381" width="5" height="100" rx="2" fill="#0f766e"/>
+<text x="790" y="401" class="cmd" text-anchor="start">$openspec-propose</text>
+<text x="790" y="440" class="task" text-anchor="start">Proposal, specs, design и tasks</text>
+<text x="790" y="474" class="note" text-anchor="start">Условия приёмки и границы</text>
+<rect x="54" y="365" width="620" height="132" rx="14" fill="#eefbf7" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="381" width="5" height="100" rx="2" fill="#0f766e"/>
+<text x="78" y="401" class="cmd" text-anchor="start">$openspec-update-change</text>
+<text x="78" y="440" class="task" text-anchor="start">Учесть независимое review</text>
+<text x="78" y="474" class="note" text-anchor="start">Уточнить URL и скрытое создание</text>
+<rect x="54" y="585" width="620" height="132" rx="14" fill="#eefbf7" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="601" width="5" height="100" rx="2" fill="#0f766e"/>
+<text x="78" y="621" class="cmd" text-anchor="start">$openspec-apply-change</text>
+<text x="78" y="660" class="task" text-anchor="start">Реализовать фильтр и проверить</text>
+<text x="78" y="694" class="note" text-anchor="start">Все / Незавершённые / Завершённые</text>
+<rect x="766" y="585" width="620" height="132" rx="14" fill="#eefbf7" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="601" width="5" height="100" rx="2" fill="#0f766e"/>
+<text x="790" y="621" class="cmd" text-anchor="start">$openspec-sync-specs</text>
+<text x="790" y="660" class="task" text-anchor="start">После проверки и приёмки</text>
+<text x="790" y="694" class="note" text-anchor="start">Обновить текущую main spec</text>
+<rect x="766" y="805" width="620" height="132" rx="14" fill="#eefbf7" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="821" width="5" height="100" rx="2" fill="#0f766e"/>
+<text x="790" y="841" class="cmd" text-anchor="start">$openspec-archive-change</text>
+<text x="790" y="880" class="task" text-anchor="start">Сохранить завершённый change</text>
+<text x="790" y="914" class="note" text-anchor="start">История требований в archive</text>
+<rect x="54" y="805" width="620" height="132" rx="14" fill="#eefbf7" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="821" width="5" height="100" rx="2" fill="#0f766e"/>
+<text x="78" y="841" class="cmd" text-anchor="start">$openspec-propose</text>
+<text x="78" y="880" class="task" text-anchor="start">Сортировка + вкладка Overdue</text>
+<text x="78" y="914" class="note" text-anchor="start">Только план; сохранить design «до»</text>
+<rect x="54" y="1025" width="620" height="132" rx="14" fill="#eefbf7" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="1041" width="5" height="100" rx="2" fill="#0f766e"/>
+<text x="78" y="1061" class="cmd" text-anchor="start">openspec instructions design</text>
+<text x="78" y="1100" class="task" text-anchor="start">Добавить rules.design: Mermaid</text>
+<text x="78" y="1134" class="note" text-anchor="start">Получить свежие инструкции</text>
+<rect x="766" y="1025" width="620" height="132" rx="14" fill="#eefbf7" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="1041" width="5" height="100" rx="2" fill="#0f766e"/>
+<text x="790" y="1061" class="cmd" text-anchor="start">$openspec-update-change</text>
+<text x="790" y="1100" class="task" text-anchor="start">Предложить diff и принять правку</text>
+<text x="790" y="1134" class="note" text-anchor="start">Текстовая схема → Mermaid</text>
+<rect x="410" y="1245" width="620" height="132" rx="14" fill="#eefbf7" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="410" y="1261" width="5" height="100" rx="2" fill="#0f766e"/>
+<text x="434" y="1281" class="cmd" text-anchor="start">openspec validate … --strict</text>
+<text x="434" y="1320" class="task" text-anchor="start">Проверить документ и диаграмму</text>
+<text x="434" y="1354" class="note" text-anchor="start">Сохранены design до / после и diff</text>
+<rect x="410" y="1665" width="620" height="132" rx="14" fill="#f1f5f9" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="410" y="1681" width="5" height="100" rx="2" fill="#475569"/>
+<text x="434" y="1701" class="cmd" text-anchor="start">specify init</text>
+<text x="434" y="1740" class="task" text-anchor="start">Подготовить GitHub Spec Kit</text>
+<text x="434" y="1774" class="note" text-anchor="start">Существующие правила сохранены</text>
+<rect x="410" y="1885" width="620" height="132" rx="14" fill="#f1f5f9" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="410" y="1901" width="5" height="100" rx="2" fill="#475569"/>
+<text x="434" y="1921" class="cmd" text-anchor="start">$speckit-constitution</text>
+<text x="434" y="1960" class="task" text-anchor="start">Общие принципы StudyFlow</text>
+<text x="434" y="1994" class="note" text-anchor="start">Архитектура, доменные правила и TDD</text>
+<rect x="410" y="2105" width="620" height="132" rx="14" fill="#fff8e9" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="410" y="2121" width="5" height="100" rx="2" fill="#996417"/>
+<text x="434" y="2141" class="cmd" text-anchor="start">git commit</text>
+<text x="434" y="2180" class="task" text-anchor="start">Зафиксировать исходную базу</text>
+<text x="434" y="2214" class="note" text-anchor="start">32ffa22 · код + документы + инструменты</text>
+<rect x="54" y="2365" width="620" height="132" rx="14" fill="#f5f0fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="2381" width="5" height="100" rx="2" fill="#7145b8"/>
+<text x="78" y="2401" class="cmd" text-anchor="start">git worktree add -b …</text>
+<text x="78" y="2440" class="task" text-anchor="start">codex/hw5-ui · ITMOv2-ui</text>
+<text x="78" y="2474" class="note" text-anchor="start">Отдельный чат и состояние .specify</text>
+<rect x="766" y="2365" width="620" height="132" rx="14" fill="#edf5fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="2381" width="5" height="100" rx="2" fill="#2563a6"/>
+<text x="790" y="2401" class="cmd" text-anchor="start">git worktree add -b …</text>
+<text x="790" y="2440" class="task" text-anchor="start">codex/hw5-logic · ITMOv2-logic</text>
+<text x="790" y="2474" class="note" text-anchor="start">Отдельный чат и состояние .specify</text>
+<rect x="54" y="2585" width="620" height="132" rx="14" fill="#f5f0fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="2601" width="5" height="100" rx="2" fill="#7145b8"/>
+<text x="78" y="2621" class="cmd" text-anchor="start">$speckit-specify</text>
+<text x="78" y="2660" class="task" text-anchor="start">Экраны, действия, состояния и ошибки</text>
+<text x="78" y="2694" class="note" text-anchor="start">Сохранить UI spec.initial.md</text>
+<rect x="766" y="2585" width="620" height="132" rx="14" fill="#edf5fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="2601" width="5" height="100" rx="2" fill="#2563a6"/>
+<text x="790" y="2621" class="cmd" text-anchor="start">$speckit-specify</text>
+<text x="790" y="2660" class="task" text-anchor="start">Данные, правила отбора и даты</text>
+<text x="790" y="2694" class="note" text-anchor="start">Сохранить logic spec.initial.md</text>
+<rect x="54" y="2805" width="620" height="132" rx="14" fill="#f5f0fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="2821" width="5" height="100" rx="2" fill="#7145b8"/>
+<text x="78" y="2841" class="cmd" text-anchor="start">$speckit-clarify</text>
+<text x="78" y="2880" class="task" text-anchor="start">Прочитать исходную спеку логики</text>
+<text x="78" y="2914" class="note" text-anchor="start">Обновить UI-spec и проект контракта</text>
+<rect x="766" y="2805" width="620" height="132" rx="14" fill="#edf5fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="2821" width="5" height="100" rx="2" fill="#2563a6"/>
+<text x="790" y="2841" class="cmd" text-anchor="start">$speckit-clarify</text>
+<text x="790" y="2880" class="task" text-anchor="start">Прочитать исходную спеку UI</text>
+<text x="790" y="2914" class="note" text-anchor="start">Обновить logic-spec и проект контракта</text>
+<rect x="766" y="3095" width="620" height="132" rx="14" fill="#edf5fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="3111" width="5" height="100" rx="2" fill="#2563a6"/>
+<text x="790" y="3131" class="cmd" text-anchor="start">$speckit-plan</text>
+<text x="790" y="3170" class="task" text-anchor="start">Сначала технический план логики</text>
+<text x="790" y="3204" class="note" text-anchor="start">Предложить HTML-интерфейс 0.1</text>
+<rect x="54" y="3315" width="620" height="132" rx="14" fill="#f5f0fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="3331" width="5" height="100" rx="2" fill="#7145b8"/>
+<text x="78" y="3351" class="cmd" text-anchor="start">$speckit-plan</text>
+<text x="78" y="3390" class="task" text-anchor="start">Принять техническую границу</text>
+<text x="78" y="3424" class="note" text-anchor="start">План UI и распределение файлов</text>
+<rect x="54" y="3535" width="620" height="132" rx="14" fill="#f5f0fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="3551" width="5" height="100" rx="2" fill="#7145b8"/>
+<text x="78" y="3571" class="cmd" text-anchor="start">$speckit-tasks</text>
+<text x="78" y="3610" class="task" text-anchor="start">40 задач UI</text>
+<text x="78" y="3644" class="note" text-anchor="start">Сервер обозначен внешней зависимостью</text>
+<rect x="766" y="3535" width="620" height="132" rx="14" fill="#edf5fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="3551" width="5" height="100" rx="2" fill="#2563a6"/>
+<text x="790" y="3571" class="cmd" text-anchor="start">$speckit-tasks</text>
+<text x="790" y="3610" class="task" text-anchor="start">24 задачи логики</text>
+<text x="790" y="3644" class="note" text-anchor="start">Ядро отдельно от интеграции с UI</text>
+<rect x="54" y="3755" width="620" height="132" rx="14" fill="#f5f0fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="3771" width="5" height="100" rx="2" fill="#7145b8"/>
+<text x="78" y="3791" class="cmd" text-anchor="start">$speckit-analyze</text>
+<text x="78" y="3830" class="task" text-anchor="start">I1 / D1: порядок и дубль задач</text>
+<text x="78" y="3864" class="note" text-anchor="start">Правка tasks.md → повтор: замечаний нет</text>
+<rect x="766" y="3755" width="620" height="132" rx="14" fill="#edf5fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="3771" width="5" height="100" rx="2" fill="#2563a6"/>
+<text x="790" y="3791" class="cmd" text-anchor="start">$speckit-analyze</text>
+<text x="790" y="3830" class="task" text-anchor="start">Проверить покрытие и зависимости</text>
+<text x="790" y="3864" class="note" text-anchor="start">Замечаний нет; ядро можно выполнять</text>
+<rect x="54" y="3975" width="620" height="132" rx="14" fill="#fff8e9" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="3991" width="5" height="100" rx="2" fill="#996417"/>
+<text x="78" y="4011" class="cmd" text-anchor="start">git commit</text>
+<text x="78" y="4050" class="task" text-anchor="start">Сохранить UI-документы до кода</text>
+<text x="78" y="4084" class="note" text-anchor="start">c4cf22b</text>
+<rect x="766" y="3975" width="620" height="132" rx="14" fill="#fff8e9" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="3991" width="5" height="100" rx="2" fill="#996417"/>
+<text x="790" y="4011" class="cmd" text-anchor="start">git commit</text>
+<text x="790" y="4050" class="task" text-anchor="start">Сохранить logic-документы до кода</text>
+<text x="790" y="4084" class="note" text-anchor="start">1d4e3ee</text>
+<rect x="766" y="4465" width="620" height="132" rx="14" fill="#edf5fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="4481" width="5" height="100" rx="2" fill="#2563a6"/>
+<text x="790" y="4501" class="cmd" text-anchor="start">$speckit-implement</text>
+<text x="790" y="4540" class="task" text-anchor="start">Серверное ядро: 17 / 24 задач</text>
+<text x="790" y="4574" class="note" text-anchor="start">c8f4e78 · domain + web + HTTP-тесты</text>
+<rect x="54" y="4685" width="620" height="132" rx="14" fill="#fff8e9" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="4701" width="5" height="100" rx="2" fill="#996417"/>
+<text x="78" y="4721" class="cmd" text-anchor="start">git merge codex/hw5-logic</text>
+<text x="78" y="4760" class="task" text-anchor="start">Передать серверное ядро в UI</text>
+<text x="78" y="4794" class="note" text-anchor="start">03ce694 · сервер доступен в UI-worktree</text>
+<rect x="54" y="4905" width="620" height="132" rx="14" fill="#f5f0fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="4921" width="5" height="100" rx="2" fill="#7145b8"/>
+<text x="78" y="4941" class="cmd" text-anchor="start">$speckit-implement</text>
+<text x="78" y="4980" class="task" text-anchor="start">T001–T037: шаблон, JS и browser-тесты</text>
+<text x="78" y="5014" class="note" text-anchor="start">ae22a86 · UI работает с настоящим сервером</text>
+<rect x="766" y="5125" width="620" height="132" rx="14" fill="#fff8e9" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="5141" width="5" height="100" rx="2" fill="#996417"/>
+<text x="790" y="5161" class="cmd" text-anchor="start">git merge --ff-only codex/hw5-ui</text>
+<text x="790" y="5200" class="task" text-anchor="start">Передать настоящий шаблон логике</text>
+<text x="790" y="5234" class="note" text-anchor="start">Fast-forward до ae22a86</text>
+<rect x="766" y="5345" width="620" height="132" rx="14" fill="#edf5fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="5361" width="5" height="100" rx="2" fill="#2563a6"/>
+<text x="790" y="5381" class="cmd" text-anchor="start">$speckit-implement</text>
+<text x="790" y="5420" class="task" text-anchor="start">Интеграционные проверки и финал</text>
+<text x="790" y="5454" class="note" text-anchor="start">9c728b9 · 24 / 24; общая spec обновлена</text>
+<rect x="54" y="5565" width="620" height="132" rx="14" fill="#fff8e9" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="5581" width="5" height="100" rx="2" fill="#996417"/>
+<text x="78" y="5601" class="cmd" text-anchor="start">git merge --ff-only codex/hw5-logic</text>
+<text x="78" y="5640" class="task" text-anchor="start">Получить интеграционные проверки</text>
+<text x="78" y="5674" class="note" text-anchor="start">Fast-forward до 9c728b9</text>
+<rect x="54" y="5785" width="620" height="132" rx="14" fill="#f5f0fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="5801" width="5" height="100" rx="2" fill="#7145b8"/>
+<text x="78" y="5821" class="cmd" text-anchor="start">$speckit-implement</text>
+<text x="78" y="5860" class="task" text-anchor="start">T038–T040: общий gate и ручной проход</text>
+<text x="78" y="5894" class="note" text-anchor="start">4bd71f6 · 40 / 40 задач UI</text>
+<rect x="766" y="6005" width="620" height="132" rx="14" fill="#fff8e9" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="6021" width="5" height="100" rx="2" fill="#996417"/>
+<text x="790" y="6041" class="cmd" text-anchor="start">git merge --ff-only codex/hw5-ui</text>
+<text x="790" y="6080" class="task" text-anchor="start">Получить финальный UI</text>
+<text x="790" y="6114" class="note" text-anchor="start">Fast-forward до 4bd71f6</text>
+<rect x="54" y="6225" width="620" height="132" rx="14" fill="#f5f0fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="6241" width="5" height="100" rx="2" fill="#7145b8"/>
+<text x="78" y="6261" class="cmd" text-anchor="start">$speckit-converge</text>
+<text x="78" y="6300" class="task" text-anchor="start">F1: длинное название при 360 px</text>
+<text x="78" y="6334" class="note" text-anchor="start">tasks_appended → добавить T041</text>
+<rect x="766" y="6225" width="620" height="132" rx="14" fill="#effaf2" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="766" y="6241" width="5" height="100" rx="2" fill="#21754b"/>
+<text x="790" y="6261" class="cmd" text-anchor="start">$speckit-converge</text>
+<text x="790" y="6300" class="task" text-anchor="start">Спека ↔ план ↔ задачи ↔ код</text>
+<text x="790" y="6334" class="note" text-anchor="start">Converged</text>
+<rect x="54" y="6445" width="620" height="132" rx="14" fill="#f5f0fc" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="6461" width="5" height="100" rx="2" fill="#7145b8"/>
+<text x="78" y="6481" class="cmd" text-anchor="start">$speckit-implement</text>
+<text x="78" y="6520" class="task" text-anchor="start">T041: RED → локальный CSS → GREEN</text>
+<text x="78" y="6554" class="note" text-anchor="start">7d43b94 · 2 регрессии для узкого экрана</text>
+<rect x="54" y="6665" width="620" height="132" rx="14" fill="#effaf2" stroke="#d9e2ea" stroke-width="1.5"/>
+<rect x="54" y="6681" width="5" height="100" rx="2" fill="#21754b"/>
+<text x="78" y="6701" class="cmd" text-anchor="start">$speckit-converge</text>
+<text x="78" y="6740" class="task" text-anchor="start">Повторная сверка после исправления</text>
+<text x="78" y="6774" class="note" text-anchor="start">Converged · 41 / 41 задач UI</text>
+<rect x="245" y="7010" width="950" height="132" rx="14" fill="#f8fafc" stroke="#d9e2ea" stroke-width="1.5" stroke-dasharray="8 6"/>
+<rect x="245" y="7026" width="5" height="100" rx="2" fill="#64748b"/>
+<text x="269" y="7046" class="cmd" text-anchor="start">git merge --ff-only codex/hw5-ui</text>
+<text x="269" y="7085" class="task" text-anchor="start">Перенести общий результат в practice_05</text>
+<text x="269" y="7119" class="note" text-anchor="start">Будущий шаг: на момент запроса не выполнен</text>
+<text x="54" y="7182" class="sub" text-anchor="start">Итог техники: обе команды Converged · 289 offline + 89 browser · сборка успешна</text>
+<text x="54" y="7210" class="note" text-anchor="start">Сплошная стрелка — выполнение; охра — merge; пунктир — обмен / ожидание / будущий шаг.</text>
+<text x="54" y="7252" class="note" text-anchor="start">Отчёт, рефлексия и демо — этап сдачи; на схеме не выдаются за завершённую работу.</text>
+<text x="54" y="7291" class="label" text-anchor="start">Снимок процесса: практика 25.10 и ДЗ 25–26.10.2026 · git-команды показаны отдельно от SDD-навыков.</text>
+</svg>

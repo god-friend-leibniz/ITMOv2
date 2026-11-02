@@ -1,0 +1,795 @@
+{
+  "width": 1440,
+  "height": 7310,
+  "nodes": [
+    {
+      "id": "O0",
+      "x": 54,
+      "y": 145,
+      "w": 620,
+      "h": 132,
+      "cmd": "openspec init --profile core",
+      "a": "OpenSpec в существующем StudyFlow",
+      "b": "",
+      "tone": "open"
+    },
+    {
+      "id": "O1",
+      "x": 766,
+      "y": 145,
+      "w": 620,
+      "h": 132,
+      "cmd": "$openspec-explore",
+      "a": "Код, тесты и baseline",
+      "b": "Выбран фильтр завершённости",
+      "tone": "open"
+    },
+    {
+      "id": "O2",
+      "x": 766,
+      "y": 365,
+      "w": 620,
+      "h": 132,
+      "cmd": "$openspec-propose",
+      "a": "Proposal, specs, design и tasks",
+      "b": "Условия приёмки и границы",
+      "tone": "open"
+    },
+    {
+      "id": "O3",
+      "x": 54,
+      "y": 365,
+      "w": 620,
+      "h": 132,
+      "cmd": "$openspec-update-change",
+      "a": "Учесть независимое review",
+      "b": "Уточнить URL и скрытое создание",
+      "tone": "open"
+    },
+    {
+      "id": "O4",
+      "x": 54,
+      "y": 585,
+      "w": 620,
+      "h": 132,
+      "cmd": "$openspec-apply-change",
+      "a": "Реализовать фильтр и проверить",
+      "b": "Все / Незавершённые / Завершённые",
+      "tone": "open"
+    },
+    {
+      "id": "O5",
+      "x": 766,
+      "y": 585,
+      "w": 620,
+      "h": 132,
+      "cmd": "$openspec-sync-specs",
+      "a": "После проверки и приёмки",
+      "b": "Обновить текущую main spec",
+      "tone": "open"
+    },
+    {
+      "id": "O6",
+      "x": 766,
+      "y": 805,
+      "w": 620,
+      "h": 132,
+      "cmd": "$openspec-archive-change",
+      "a": "Сохранить завершённый change",
+      "b": "История требований в archive",
+      "tone": "open"
+    },
+    {
+      "id": "O7",
+      "x": 54,
+      "y": 805,
+      "w": 620,
+      "h": 132,
+      "cmd": "$openspec-propose",
+      "a": "Сортировка + вкладка Overdue",
+      "b": "Только план; сохранить design «до»",
+      "tone": "open"
+    },
+    {
+      "id": "O8",
+      "x": 54,
+      "y": 1025,
+      "w": 620,
+      "h": 132,
+      "cmd": "openspec instructions design",
+      "a": "Добавить rules.design: Mermaid",
+      "b": "Получить свежие инструкции",
+      "tone": "open"
+    },
+    {
+      "id": "O9",
+      "x": 766,
+      "y": 1025,
+      "w": 620,
+      "h": 132,
+      "cmd": "$openspec-update-change",
+      "a": "Предложить diff и принять правку",
+      "b": "Текстовая схема → Mermaid",
+      "tone": "open"
+    },
+    {
+      "id": "O10",
+      "x": 410,
+      "y": 1245,
+      "w": 620,
+      "h": 132,
+      "cmd": "openspec validate … --strict",
+      "a": "Проверить документ и диаграмму",
+      "b": "Сохранены design до / после и diff",
+      "tone": "open"
+    },
+    {
+      "id": "S0",
+      "x": 410,
+      "y": 1665,
+      "w": 620,
+      "h": 132,
+      "cmd": "specify init",
+      "a": "Подготовить GitHub Spec Kit",
+      "b": "Существующие правила сохранены",
+      "tone": "common"
+    },
+    {
+      "id": "S1",
+      "x": 410,
+      "y": 1885,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-constitution",
+      "a": "Общие принципы StudyFlow",
+      "b": "Архитектура, доменные правила и TDD",
+      "tone": "common"
+    },
+    {
+      "id": "S2",
+      "x": 410,
+      "y": 2105,
+      "w": 620,
+      "h": 132,
+      "cmd": "git commit",
+      "a": "Зафиксировать исходную базу",
+      "b": "32ffa22 · код + документы + инструменты",
+      "tone": "git"
+    },
+    {
+      "id": "U0",
+      "x": 54,
+      "y": 2365,
+      "w": 620,
+      "h": 132,
+      "cmd": "git worktree add -b …",
+      "a": "codex/hw5-ui · ITMOv2-ui",
+      "b": "Отдельный чат и состояние .specify",
+      "tone": "ui"
+    },
+    {
+      "id": "L0",
+      "x": 766,
+      "y": 2365,
+      "w": 620,
+      "h": 132,
+      "cmd": "git worktree add -b …",
+      "a": "codex/hw5-logic · ITMOv2-logic",
+      "b": "Отдельный чат и состояние .specify",
+      "tone": "logic"
+    },
+    {
+      "id": "U1",
+      "x": 54,
+      "y": 2585,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-specify",
+      "a": "Экраны, действия, состояния и ошибки",
+      "b": "Сохранить UI spec.initial.md",
+      "tone": "ui"
+    },
+    {
+      "id": "L1",
+      "x": 766,
+      "y": 2585,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-specify",
+      "a": "Данные, правила отбора и даты",
+      "b": "Сохранить logic spec.initial.md",
+      "tone": "logic"
+    },
+    {
+      "id": "U2",
+      "x": 54,
+      "y": 2805,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-clarify",
+      "a": "Прочитать исходную спеку логики",
+      "b": "Обновить UI-spec и проект контракта",
+      "tone": "ui"
+    },
+    {
+      "id": "L2",
+      "x": 766,
+      "y": 2805,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-clarify",
+      "a": "Прочитать исходную спеку UI",
+      "b": "Обновить logic-spec и проект контракта",
+      "tone": "logic"
+    },
+    {
+      "id": "L3",
+      "x": 766,
+      "y": 3095,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-plan",
+      "a": "Сначала технический план логики",
+      "b": "Предложить HTML-интерфейс 0.1",
+      "tone": "logic"
+    },
+    {
+      "id": "U3",
+      "x": 54,
+      "y": 3315,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-plan",
+      "a": "Принять техническую границу",
+      "b": "План UI и распределение файлов",
+      "tone": "ui"
+    },
+    {
+      "id": "U4",
+      "x": 54,
+      "y": 3535,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-tasks",
+      "a": "40 задач UI",
+      "b": "Сервер обозначен внешней зависимостью",
+      "tone": "ui"
+    },
+    {
+      "id": "L4",
+      "x": 766,
+      "y": 3535,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-tasks",
+      "a": "24 задачи логики",
+      "b": "Ядро отдельно от интеграции с UI",
+      "tone": "logic"
+    },
+    {
+      "id": "U5",
+      "x": 54,
+      "y": 3755,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-analyze",
+      "a": "I1 / D1: порядок и дубль задач",
+      "b": "Правка tasks.md → повтор: замечаний нет",
+      "tone": "ui"
+    },
+    {
+      "id": "L5",
+      "x": 766,
+      "y": 3755,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-analyze",
+      "a": "Проверить покрытие и зависимости",
+      "b": "Замечаний нет; ядро можно выполнять",
+      "tone": "logic"
+    },
+    {
+      "id": "U6",
+      "x": 54,
+      "y": 3975,
+      "w": 620,
+      "h": 132,
+      "cmd": "git commit",
+      "a": "Сохранить UI-документы до кода",
+      "b": "c4cf22b",
+      "tone": "git"
+    },
+    {
+      "id": "L6",
+      "x": 766,
+      "y": 3975,
+      "w": 620,
+      "h": 132,
+      "cmd": "git commit",
+      "a": "Сохранить logic-документы до кода",
+      "b": "1d4e3ee",
+      "tone": "git"
+    },
+    {
+      "id": "L7",
+      "x": 766,
+      "y": 4465,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-implement",
+      "a": "Серверное ядро: 17 / 24 задач",
+      "b": "c8f4e78 · domain + web + HTTP-тесты",
+      "tone": "logic"
+    },
+    {
+      "id": "U7",
+      "x": 54,
+      "y": 4685,
+      "w": 620,
+      "h": 132,
+      "cmd": "git merge codex/hw5-logic",
+      "a": "Передать серверное ядро в UI",
+      "b": "03ce694 · сервер доступен в UI-worktree",
+      "tone": "git"
+    },
+    {
+      "id": "U8",
+      "x": 54,
+      "y": 4905,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-implement",
+      "a": "T001–T037: шаблон, JS и browser-тесты",
+      "b": "ae22a86 · UI работает с настоящим сервером",
+      "tone": "ui"
+    },
+    {
+      "id": "L8",
+      "x": 766,
+      "y": 5125,
+      "w": 620,
+      "h": 132,
+      "cmd": "git merge --ff-only codex/hw5-ui",
+      "a": "Передать настоящий шаблон логике",
+      "b": "Fast-forward до ae22a86",
+      "tone": "git"
+    },
+    {
+      "id": "L9",
+      "x": 766,
+      "y": 5345,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-implement",
+      "a": "Интеграционные проверки и финал",
+      "b": "9c728b9 · 24 / 24; общая spec обновлена",
+      "tone": "logic"
+    },
+    {
+      "id": "U9",
+      "x": 54,
+      "y": 5565,
+      "w": 620,
+      "h": 132,
+      "cmd": "git merge --ff-only codex/hw5-logic",
+      "a": "Получить интеграционные проверки",
+      "b": "Fast-forward до 9c728b9",
+      "tone": "git"
+    },
+    {
+      "id": "U10",
+      "x": 54,
+      "y": 5785,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-implement",
+      "a": "T038–T040: общий gate и ручной проход",
+      "b": "4bd71f6 · 40 / 40 задач UI",
+      "tone": "ui"
+    },
+    {
+      "id": "L10",
+      "x": 766,
+      "y": 6005,
+      "w": 620,
+      "h": 132,
+      "cmd": "git merge --ff-only codex/hw5-ui",
+      "a": "Получить финальный UI",
+      "b": "Fast-forward до 4bd71f6",
+      "tone": "git"
+    },
+    {
+      "id": "U11",
+      "x": 54,
+      "y": 6225,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-converge",
+      "a": "F1: длинное название при 360 px",
+      "b": "tasks_appended → добавить T041",
+      "tone": "ui"
+    },
+    {
+      "id": "L11",
+      "x": 766,
+      "y": 6225,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-converge",
+      "a": "Спека ↔ план ↔ задачи ↔ код",
+      "b": "Converged",
+      "tone": "done"
+    },
+    {
+      "id": "U12",
+      "x": 54,
+      "y": 6445,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-implement",
+      "a": "T041: RED → локальный CSS → GREEN",
+      "b": "7d43b94 · 2 регрессии для узкого экрана",
+      "tone": "ui"
+    },
+    {
+      "id": "U13",
+      "x": 54,
+      "y": 6665,
+      "w": 620,
+      "h": 132,
+      "cmd": "$speckit-converge",
+      "a": "Повторная сверка после исправления",
+      "b": "Converged · 41 / 41 задач UI",
+      "tone": "done"
+    },
+    {
+      "id": "P0",
+      "x": 245,
+      "y": 7010,
+      "w": 950,
+      "h": 132,
+      "cmd": "git merge --ff-only codex/hw5-ui",
+      "a": "Перенести общий результат в practice_05",
+      "b": "Будущий шаг: на момент запроса не выполнен",
+      "tone": "pending"
+    }
+  ],
+  "edges": [
+    {
+      "a": "O0",
+      "b": "O1",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "O1",
+      "b": "O2",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "O2",
+      "b": "O3",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "O3",
+      "b": "O4",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "O4",
+      "b": "O5",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "O5",
+      "b": "O6",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "O6",
+      "b": "O7",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "O7",
+      "b": "O8",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "O8",
+      "b": "O9",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "O9",
+      "b": "O10",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "O10",
+      "b": "S0",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "S0",
+      "b": "S1",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "S1",
+      "b": "S2",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "S2",
+      "b": "U0",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "S2",
+      "b": "L0",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U0",
+      "b": "U1",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U1",
+      "b": "U2",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "L0",
+      "b": "L1",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "L1",
+      "b": "L2",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U2",
+      "b": "L2",
+      "kind": "info",
+      "route": null,
+      "label": "исходная UI-spec"
+    },
+    {
+      "a": "L2",
+      "b": "U2",
+      "kind": "info",
+      "route": null,
+      "label": "исходная logic-spec"
+    },
+    {
+      "a": "U2",
+      "b": "U3",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "L2",
+      "b": "L3",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "L3",
+      "b": "U3",
+      "kind": "info",
+      "route": null,
+      "label": "Технический интерфейс 0.1"
+    },
+    {
+      "a": "U3",
+      "b": "U4",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "L3",
+      "b": "L4",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U4",
+      "b": "U5",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U5",
+      "b": "U6",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "L4",
+      "b": "L5",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "L5",
+      "b": "L6",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U5",
+      "b": "U5",
+      "kind": "loop",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "L6",
+      "b": "L7",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U6",
+      "b": "U7",
+      "kind": "wait",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "L7",
+      "b": "U7",
+      "kind": "merge",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U7",
+      "b": "U8",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "L7",
+      "b": "L8",
+      "kind": "wait",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U8",
+      "b": "L8",
+      "kind": "merge",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "L8",
+      "b": "L9",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U8",
+      "b": "U9",
+      "kind": "wait",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "L9",
+      "b": "U9",
+      "kind": "merge",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U9",
+      "b": "U10",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "L9",
+      "b": "L10",
+      "kind": "wait",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U10",
+      "b": "L10",
+      "kind": "merge",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "L10",
+      "b": "L11",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U10",
+      "b": "U11",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U11",
+      "b": "U12",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U12",
+      "b": "U13",
+      "kind": "flow",
+      "route": null,
+      "label": null
+    },
+    {
+      "a": "U13",
+      "b": "P0",
+      "kind": "pending",
+      "route": null,
+      "label": null
+    }
+  ]
+}
