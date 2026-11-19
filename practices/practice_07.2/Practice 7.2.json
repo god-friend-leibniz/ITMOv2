@@ -1,0 +1,543 @@
+{
+  "name": "Practice 7.2",
+  "nodes": [
+    {
+      "parameters": {
+        "owner": {
+          "__rl": true,
+          "value": "https://github.com/god-friend-leibniz",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "AI-Techonology",
+          "mode": "list",
+          "cachedResultName": "AI-Techonology",
+          "cachedResultUrl": "https://github.com/god-friend-leibniz/AI-Techonology"
+        },
+        "events": [
+          "issues"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.githubTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7341f34a-d9a6-4b75-9daf-9f4f894b70fb",
+      "name": "Issue Trigger",
+      "webhookId": "f0b8cb2d-f62d-4866-81a2-f096bf038009",
+      "credentials": {
+        "githubApi": {
+          "id": "zEP5NFlOuFrZRIW0",
+          "name": "GitHub account 18"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "1b6c63fd-4779-4428-9ff4-1f9e2ebbef66",
+              "leftValue": "={{ $json.body.action === 'opened' && !!$json.body.issue && !$json.body.issue.pull_request }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "1f117095-6c38-4f00-a3a0-fedea9a62a81",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "51d642d6-9b6d-4933-ba38-30e5b97702b3",
+              "name": "title",
+              "value": "={{ $json.body.issue.title }}",
+              "type": "string"
+            },
+            {
+              "id": "d9cda220-8194-403c-9681-7d8490f2791a",
+              "name": "body",
+              "value": "={{ $json.body.issue.body }}",
+              "type": "string"
+            },
+            {
+              "id": "2e99b835-6c7b-4abe-a2e0-24617d9ad4b4",
+              "name": "issue_number",
+              "value": "={{ $json.body.issue.number }}",
+              "type": "number"
+            },
+            {
+              "id": "a0590d72-863e-4dac-be99-f1c6fb22b5c1",
+              "name": "repository",
+              "value": "={{ $json.body.repository.full_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "2b744deb-8750-4f18-a58f-e608208d0650",
+      "name": "Prepare Issue"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "bug",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a53cc9e1-2cc5-4b83-bd8e-2e218413eb58"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Bug"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "ae42d811-44ce-4f7c-9d55-c63a911b4cb6",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "task",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Task"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "974f35c3-7cce-4039-bd7e-7a167baa0f6d",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "feature",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Feature"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "23d8f712-74a6-4c17-98eb-bb2ee8cde50f",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "unknown",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Needs triage"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.5,
+      "position": [
+        1152,
+        -128
+      ],
+      "id": "97a931b3-e03f-4f59-aefe-5300e64a4e06",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.github.com/repos/' + $json.repository + '/issues/' + $json.issue_number + '/labels' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"labels\": [\"bug\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1376,
+        -336
+      ],
+      "id": "bdae227c-3b92-4e49-acde-b40ed3088ea1",
+      "name": "Bug Label",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ioBF5BA1UrdjMuhm",
+          "name": "Bearer Auth account 15"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.github.com/repos/' + $json.repository + '/issues/' + $json.issue_number + '/labels' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"labels\": [\"task\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1376,
+        -176
+      ],
+      "id": "4a309d89-9cd8-40fb-aade-1a0482dffa39",
+      "name": "Task Label",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ioBF5BA1UrdjMuhm",
+          "name": "Bearer Auth account 15"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.github.com/repos/' + $json.repository + '/issues/' + $json.issue_number + '/labels' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"labels\": [\"needs-triage\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1376,
+        144
+      ],
+      "id": "6d264332-5763-47c5-a574-ecf4863267c9",
+      "name": "Needs Triage Label",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ioBF5BA1UrdjMuhm",
+          "name": "Bearer Auth account 15"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.github.com/repos/' + $json.repository + '/issues/' + $json.issue_number + '/labels' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"labels\": [\"feature\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1376,
+        -16
+      ],
+      "id": "c4c58cb9-c0fd-41a7-8458-a864620044e9",
+      "name": "Feature Label",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ioBF5BA1UrdjMuhm",
+          "name": "Bearer Auth account 15"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const result = $json.text ?? $json.output ?? $json;\n\nconst confident = typeof result.confidence === 'number'\n  && result.confidence >= 0.8\n  && result.confidence <= 1;\n\nconst knownType = ['bug', 'task', 'feature'].includes(result.type);\n\nreturn {\n  json: {\n    ...$('Prepare Issue').item.json,\n    type: confident && knownType ? result.type : 'unknown',\n    confidence: result.confidence,\n  },\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        -96
+      ],
+      "id": "5159d522-2ead-409d-96ea-5977d242d1d4",
+      "name": "Prepare Classification"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "9R6j8UtqOxObWXnK",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/9R6j8UtqOxObWXnK",
+          "cachedResultName": "Practice 7.2 - Issue Classifier"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "title": "={{ $json.title }}",
+            "body": "={{ $json.body }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "body",
+              "displayName": "body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        688,
+        -96
+      ],
+      "id": "d29c2343-aece-444d-80ff-b78606f5c3ba",
+      "name": "Call 'Issue Classifier'"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Issue Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Prepare Issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Issue": {
+      "main": [
+        [
+          {
+            "node": "Call 'Issue Classifier'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Bug Label",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Task Label",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Feature Label",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Needs Triage Label",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Classification": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'Issue Classifier'": {
+      "main": [
+        [
+          {
+            "node": "Prepare Classification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "7145dbc8-d210-4d6d-85e0-84bd06cd4338",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "68dbbb4e8fa686c3fd4e9982ade6836edb66976f207553e7ac22df961581c78c"
+  },
+  "nodeGroups": [],
+  "id": "AROzDIjioI2J1k1q",
+  "tags": []
+}

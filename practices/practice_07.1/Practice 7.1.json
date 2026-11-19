@@ -1,0 +1,930 @@
+{
+  "name": "Practice 7.1",
+  "nodes": [
+    {
+      "parameters": {
+        "owner": {
+          "__rl": true,
+          "value": "god-friend-leibniz",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "AI-Techonology",
+          "mode": "list",
+          "cachedResultName": "AI-Techonology",
+          "cachedResultUrl": "https://github.com/god-friend-leibniz/AI-Techonology"
+        },
+        "events": [
+          "pull_request",
+          "issue_comment"
+        ],
+        "options": {}
+      },
+      "id": "125bc81b-d4d0-4b67-b452-a15249c08e82",
+      "name": "PR Trigger",
+      "type": "n8n-nodes-base.githubTrigger",
+      "position": [
+        -1088,
+        272
+      ],
+      "webhookId": "c6a30e53-bda5-4922-87f3-8cdfb399a35f",
+      "notesInFlow": false,
+      "typeVersion": 1,
+      "credentials": {
+        "githubApi": {
+          "id": "zEP5NFlOuFrZRIW0",
+          "name": "GitHub account 18"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Проведи ревью блока изменений в файле {{ $json.path }}.\n\nПроверь корректность, возможные ошибки и читаемость.\nДай краткий комментарий по этому блоку с конкретными обоснованиями.\nЕсли проблем не обнаружено, кратко сообщи об этом.\n\nБлок изменений:\n{{ $json.patch }}",
+        "options": {
+          "systemMessage": ""
+        }
+      },
+      "id": "96f8774b-56a4-4fd8-afbb-fed192ac461e",
+      "name": "Code Review Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        864,
+        112
+      ],
+      "typeVersion": 1.9
+    },
+    {
+      "parameters": {
+        "operation": "edit",
+        "owner": {
+          "__rl": true,
+          "value": "god-friend-leibniz",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "AI-Techonology",
+          "mode": "list",
+          "cachedResultName": "AI-Techonology",
+          "cachedResultUrl": "https://github.com/god-friend-leibniz/AI-Techonology"
+        },
+        "issueNumber": "={{ $('PR Trigger').first().json.body.number ?? $('PR Trigger').first().json.body.issue?.number }}",
+        "editFields": {
+          "labels": [
+            {
+              "label": "ReviewedByAI"
+            }
+          ]
+        }
+      },
+      "id": "cafc3ebe-ea79-4bb2-8ce6-477e8e79d67e",
+      "name": "Add Label to PR",
+      "type": "n8n-nodes-base.github",
+      "position": [
+        2176,
+        304
+      ],
+      "webhookId": "70d2db56-965b-4f1f-817c-1fbb311320c0",
+      "typeVersion": 1,
+      "credentials": {
+        "githubApi": {
+          "id": "zEP5NFlOuFrZRIW0",
+          "name": "GitHub account 18"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Проведи ревью блока изменений в файле {{ $json.path }}.\n\nПроверь корректность, возможные ошибки и читаемость.\nДай краткий комментарий по этому блоку с конкретными обоснованиями.\nЕсли проблем не обнаружено, кратко сообщи об этом.\n\nБлок изменений:\n{{ $json.patch }}",
+        "options": {
+          "systemMessage": ""
+        }
+      },
+      "id": "e1314f8c-dc8f-4ef5-ada8-4bffe3ddbb26",
+      "name": "Code Review Agent1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        864,
+        496
+      ],
+      "typeVersion": 1.9
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "anthropic/claude-sonnet-4.6",
+          "mode": "list",
+          "cachedResultName": "anthropic/claude-sonnet-4.6"
+        },
+        "options": {}
+      },
+      "id": "f8bfffea-db7d-4787-b900-a82b13fd8ccd",
+      "name": "Claude Sonnet",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        864,
+        704
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "2dlCUzuEnANcWaTz",
+          "name": "OpenAI account 15"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const blocks = [];\nconst files = $input.all();\n\nfor (const [fileIndex, item] of files.entries()) {\n  const file = item.json;\n\n  if (typeof file.patch !== 'string') {\n    continue;\n  }\n\n  let block = null;\n\n  for (const text of file.patch.split(/\\r?\\n/)) {\n    const header = text.match(\n      /^@@ -(\\d+)(?:,(\\d+))? \\+(\\d+)(?:,(\\d+))? @@/\n    );\n\n    if (header) {\n      const newCount = Number(header[4] ?? 1);\n      const side = newCount > 0 ? 'RIGHT' : 'LEFT';\n      const start = Number(side === 'RIGHT' ? header[3] : header[1]);\n      const count = side === 'RIGHT' ? newCount : Number(header[2] ?? 1);\n\n      block = {\n        path: file.filename,\n        patch: text,\n        start_line: start,\n        start_side: side,\n        line: start + count - 1,\n        side,\n      };\n\n      blocks.push({ json: block, pairedItem: { item: fileIndex } });\n    } else if (block) {\n      block.patch += '\\n' + text;\n    }\n  }\n}\n\nreturn blocks;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        304
+      ],
+      "id": "2113c109-b318-4a48-ba95-ea4e008bc733",
+      "name": "Prepare Review Blocks"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "068e5a33-7599-4f41-a6e3-9d821ab4080a",
+              "name": "path",
+              "value": "={{ $('Prepare Review Blocks').item.json.path }}",
+              "type": "string"
+            },
+            {
+              "id": "58ffc86a-c910-4b13-a2d2-50f205acba7c",
+              "name": "line",
+              "value": "={{ $('Prepare Review Blocks').item.json.line }}",
+              "type": "number"
+            },
+            {
+              "id": "b9694230-e929-4da0-b6e0-0a3d6db523e9",
+              "name": "side",
+              "value": "={{ $('Prepare Review Blocks').item.json.side }}",
+              "type": "string"
+            },
+            {
+              "id": "2d217369-c232-42ea-9eed-3d711ee4f59a",
+              "name": "body",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "7f35ae13-c001-4f1a-aab8-6ce01c639817",
+              "name": "start_line",
+              "value": "={{ $('Prepare Review Blocks').item.json.start_line }}",
+              "type": "number"
+            },
+            {
+              "id": "10ce8fc2-a5c6-40ed-a412-545f4b5aa034",
+              "name": "start_side",
+              "value": "={{ $('Prepare Review Blocks').item.json.start_side }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1280,
+        304
+      ],
+      "id": "87160ca1-b0e8-42f9-a2ba-2106f2eb8c4d",
+      "name": "Prepare Inline Comment"
+    },
+    {
+      "parameters": {
+        "jsCode": "const pr = $('Get PR Info').first().json;\n\nif (!pr.head?.sha) {\n  throw new Error('Get PR Info must return JSON containing head.sha.');\n}\n\nconst comments = $input.all().map(item => {\n  const block = item.json;\n  const comment = {\n    path: block.path,\n    body: block.body,\n    line: block.line,\n    side: block.side,\n  };\n\n  if (block.start_line < block.line) {\n    comment.start_line = block.start_line;\n    comment.start_side = block.start_side;\n  }\n\n  return comment;\n});\n\nconst command = ($('PR Trigger').first().json.body.comment?.body ?? '').trim();\n\nconst reviewBody = command === '/make_other_ai_review'\n  ? 'AI-ревью другой моделью — Claude Sonnet 4.6.'\n  : 'AI-ревью изменённых блоков кода.';\n\nreturn [{\n  json: {\n    commit_id: pr.head.sha,\n    event: 'COMMENT',\n    body: reviewBody,\n    comments,\n  },\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1504,
+        304
+      ],
+      "id": "cd492704-a17b-4b29-8677-d650f18a1f5a",
+      "name": "Build Review"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Get PR Info').first().json.url + '/reviews' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "f264430e-e407-4746-b37c-72a21fa64844",
+      "name": "Publish Inline Review",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1728,
+        304
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ioBF5BA1UrdjMuhm",
+          "name": "Bearer Auth account 15"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "opened",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "5c4cd408-1756-4ad7-ace8-574d8d974a26"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PR opened"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "c5dd1a9d-4d91-4c80-9555-da6c3247738d",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "created",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Comment added"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "none"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.5,
+      "position": [
+        -880,
+        272
+      ],
+      "id": "2736dd97-9e37-4a20-a477-eec1c088ceed",
+      "name": "Type Switch"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ ($json.body.comment?.body ?? '').trim() }}",
+                    "rightValue": "/make_ai_review",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "360858d7-8063-47c9-873d-c38219adcb03"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "AI Review"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "9859dea7-c1dd-4beb-9419-77ee41710551",
+                    "leftValue": "={{ ($json.body.comment?.body ?? '').trim() }}",
+                    "rightValue": "/make_other_ai_review",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Other AI Review"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.5,
+      "position": [
+        -656,
+        288
+      ],
+      "id": "29bc0f0c-c88a-4812-a45d-f8b4cd9a773c",
+      "name": "Cmd Switch"
+    },
+    {
+      "parameters": {
+        "operation": "rowNotExists",
+        "dataTableId": {
+          "__rl": true,
+          "value": "JUKrMDxItdYZzWVP",
+          "mode": "list",
+          "cachedResultName": "Reviewed PRs",
+          "cachedResultUrl": "/projects/N1oOWk13DOrX0Fif/datatables/JUKrMDxItdYZzWVP"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "repository",
+              "keyValue": "={{ $('PR Trigger').first().json.body.repository.full_name }}"
+            },
+            {
+              "keyName": "pr_number",
+              "keyValue": "={{ $('PR Trigger').first().json.body.number ?? $('PR Trigger').first().json.body.issue?.number }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -432,
+        112
+      ],
+      "id": "ed72ab27-90ae-46f1-a49a-4768b7240e25",
+      "name": "Duplicate Check"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Get PR Info').first().json.url + '/files' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "per_page",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "pagination": {
+            "pagination": {
+              "parameters": {
+                "parameters": [
+                  {
+                    "name": "page",
+                    "value": "={{ $pageCount + 1 }}"
+                  }
+                ]
+              },
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ $response.body.length < 100 }}"
+            }
+          }
+        }
+      },
+      "id": "bf213815-ca65-435f-b960-ee7c1cdf1baf",
+      "name": "Get Files",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        32,
+        304
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ioBF5BA1UrdjMuhm",
+          "name": "Bearer Auth account 15"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('PR Trigger').first().json.body.pull_request?.url ?? $('PR Trigger').first().json.body.issue?.pull_request?.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "cc760217-7c65-466e-91fa-2d788ed8a0e0",
+      "name": "Get PR Info",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -192,
+        304
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ioBF5BA1UrdjMuhm",
+          "name": "Bearer Auth account 15"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ ($('PR Trigger').item.json.body.comment.body ?? '').trim() }}",
+                    "rightValue": "/make_ai_review",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "360858d7-8063-47c9-873d-c38219adcb03"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "GPT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "351c0fb7-1055-4a73-97ac-47051fa1cf2a",
+                    "leftValue": "={{ $('PR Trigger').item.json.body.action }}",
+                    "rightValue": "opened",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "GPT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "9859dea7-c1dd-4beb-9419-77ee41710551",
+                    "leftValue": "={{ ($('PR Trigger').item.json.body.comment.body ?? '').trim() }}",
+                    "rightValue": "/make_other_ai_review",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Claude"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.5,
+      "position": [
+        496,
+        304
+      ],
+      "id": "fb261653-8015-4aef-a4d2-e982bc8fe02e",
+      "name": "Choose Model"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "openai/gpt-5.2",
+          "mode": "list",
+          "cachedResultName": "openai/gpt-5.2"
+        },
+        "options": {}
+      },
+      "id": "47730965-f41f-4b49-ba6b-3eddce150620",
+      "name": "GPT",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        864,
+        320
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "2dlCUzuEnANcWaTz",
+          "name": "OpenAI account 15"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "JUKrMDxItdYZzWVP",
+          "mode": "list",
+          "cachedResultName": "Reviewed PRs",
+          "cachedResultUrl": "/projects/N1oOWk13DOrX0Fif/datatables/JUKrMDxItdYZzWVP"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "repository",
+              "keyValue": "={{ $('PR Trigger').first().json.body.repository.full_name }}"
+            },
+            {
+              "keyName": "pr_number",
+              "keyValue": "={{ $('PR Trigger').first().json.body.number ?? $('PR Trigger').first().json.body.issue?.number }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "repository": "={{ $('PR Trigger').first().json.body.repository.full_name }}",
+            "pr_number": "={{ $('PR Trigger').first().json.body.number ?? $('PR Trigger').first().json.body.issue?.number }}",
+            "review_date": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "repository",
+              "displayName": "repository",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "pr_number",
+              "displayName": "pr_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "review_date",
+              "displayName": "review_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1952,
+        304
+      ],
+      "id": "ec648209-c1e3-4faa-810d-c26376fb66a0",
+      "name": "Upsert rows"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "PR Trigger": {
+      "main": [
+        [
+          {
+            "node": "Type Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Review Agent": {
+      "main": [
+        [
+          {
+            "node": "Prepare Inline Comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Review Agent1": {
+      "main": [
+        [
+          {
+            "node": "Prepare Inline Comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude Sonnet": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Code Review Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Review Blocks": {
+      "main": [
+        [
+          {
+            "node": "Choose Model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Inline Comment": {
+      "main": [
+        [
+          {
+            "node": "Build Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Review": {
+      "main": [
+        [
+          {
+            "node": "Publish Inline Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish Inline Review": {
+      "main": [
+        [
+          {
+            "node": "Upsert rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Type Switch": {
+      "main": [
+        [
+          {
+            "node": "Duplicate Check",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cmd Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cmd Switch": {
+      "main": [
+        [
+          {
+            "node": "Duplicate Check",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get PR Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplicate Check": {
+      "main": [
+        [
+          {
+            "node": "Get PR Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Files": {
+      "main": [
+        [
+          {
+            "node": "Prepare Review Blocks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get PR Info": {
+      "main": [
+        [
+          {
+            "node": "Get Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Choose Model": {
+      "main": [
+        [
+          {
+            "node": "Code Review Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code Review Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code Review Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Code Review Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert rows": {
+      "main": [
+        [
+          {
+            "node": "Add Label to PR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f674e046-1c92-46e1-963d-226a2c5d6938",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "68dbbb4e8fa686c3fd4e9982ade6836edb66976f207553e7ac22df961581c78c"
+  },
+  "nodeGroups": [],
+  "id": "DlabsnhaVtWhMPwB",
+  "tags": []
+}
