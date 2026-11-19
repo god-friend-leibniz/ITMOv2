@@ -1,0 +1,8 @@
+# Launch Codex from the StudyFlow directory after uv sync --frozen.
+[mcp_servers.studyflow_github]
+command = ".venv/bin/python"
+args = ["-m", "studyflow_mcp.server"]
+env_vars = ["GITHUB_TOKEN"]
+startup_timeout_sec = 10
+tool_timeout_sec = 15
+enabled_tools = ["get_repository_summary"]

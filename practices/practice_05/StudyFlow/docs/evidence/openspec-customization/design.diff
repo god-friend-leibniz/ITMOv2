@@ -1,0 +1,41 @@
+--- design-before.md
++++ design-after.md
+@@ -33,19 +33,26 @@
+ 
+ ### 2. HTML-путь сначала отбирает, затем сортирует
+ 
+-```text
+-GET /courses/{id}?completion=...
+-  -> normalize completion (all / incomplete / completed / overdue)
+-  -> read course assignments with saved progress
+-  -> remember has_assignments before filtering
+-  -> capture server-local today once for this request
+-  -> filter by selected tab
+-  -> sort visible assignments by (due_date is None, due_date or "", id)
+-  -> render course.html with current tab and ready list
++```mermaid
++flowchart TB
++  subgraph HTML["HTML: course page"]
++    H1["GET /courses/{id}?completion=..."]
++    H2["normalize completion<br/>(all / incomplete / completed / overdue)"]
++    H3["read course assignments with saved progress"]
++    H4["remember has_assignments before filtering"]
++    H5["capture server-local today once for this request"]
++    H6["filter by selected tab"]
++    H7["sort visible assignments by<br/>(due_date is None, due_date or '', id)"]
++    H8["render course.html with current tab and ready list"]
++    H1 --> H2 --> H3 --> H4 --> H5 --> H6 --> H7 --> H8
++  end
+ 
+-GET /api/courses/{id}/assignments
+-  -> existing coursework.list_assignments
+-  -> all assignments in ascending ID order, unchanged fields/errors
++  subgraph API["JSON API"]
++    J1["GET /api/courses/{id}/assignments"]
++    J2["existing coursework.list_assignments"]
++    J3["all assignments in ascending ID order,<br/>unchanged fields/errors"]
++    J1 --> J2 --> J3
++  end
+ ```
+ 
+ Ключ явно ставит отсутствие даты в конец и разрешает равенство через ID, в том числе среди недатированных. Канонические строки ISO сравнимы хронологически; пустая строка внутри ключа не становится допустимой датой ввода. Сам ключ не использует часы: во «Все» прошлые даты просто идут раньше будущих. У Overdue часы влияют на состав, а не на порядок.

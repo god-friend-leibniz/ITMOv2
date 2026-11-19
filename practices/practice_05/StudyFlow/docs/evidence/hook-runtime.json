@@ -1,0 +1,44 @@
+[
+  {
+    "action": "passing edit",
+    "timestamp_utc": "2026-10-06T16:12:54.371590+00:00",
+    "exit_code": 0,
+    "event": {
+      "session_id": "01a111fd-2ed4-7450-b821-d8f05d8c6edb",
+      "turn_id": "01a111fd-3bae-7203-9087-c3e8229e0808",
+      "hook_event_name": "PostToolUse",
+      "tool_name": "Bash",
+      "tool_use_id": "call_probe"
+    },
+    "feedback": "Verification passed",
+    "test_summary": "16 passed, 3 deselected, 1 warning in 1.64s"
+  },
+  {
+    "action": "HTTP status regression",
+    "timestamp_utc": "2026-10-06T16:13:36.437393+00:00",
+    "exit_code": 1,
+    "event": {
+      "session_id": "01a111fd-d7b4-70f1-918f-8bfe0e13095c",
+      "turn_id": "01a111fd-e2e7-73d1-9066-aa65cedebe50",
+      "hook_event_name": "PostToolUse",
+      "tool_name": "Bash",
+      "tool_use_id": "call_probe"
+    },
+    "feedback": "StudyFlow verification failed. Repair failing tests before unrelated work.",
+    "test_summary": "1 failed, 15 passed, 3 deselected, 1 warning in 1.73s"
+  },
+  {
+    "action": "repair",
+    "timestamp_utc": "2026-10-06T16:13:58.895357+00:00",
+    "exit_code": 0,
+    "event": {
+      "session_id": "01a111fe-2e40-71d2-a107-a5a4dd9f7d9a",
+      "turn_id": "01a111fe-3b22-7f83-9180-a21501f37f58",
+      "hook_event_name": "PostToolUse",
+      "tool_name": "Bash",
+      "tool_use_id": "call_probe"
+    },
+    "feedback": "Verification passed",
+    "test_summary": "16 passed, 3 deselected, 1 warning in 1.56s"
+  }
+]
