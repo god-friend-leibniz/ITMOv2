@@ -41,7 +41,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Проведи ревью блока изменений в файле {{ $json.path }}.\n\nПроверь корректность, возможные ошибки и читаемость.\nДай краткий комментарий по этому блоку с конкретными обоснованиями.\nЕсли проблем не обнаружено, кратко сообщи об этом.\n\nБлок изменений:\n{{ $json.patch }}",
+        "text": "=Проведи ревью указанного блока изменений в файле {{ $json.path }}.\n\nИспользуй diff файла, чтобы учесть связи между правками. В комментарий включай только замечания, относящиеся к указанному блоку. Если причина проблемы находится в другой правке, объясни её связь с этим блоком.\n\nПроверь корректность, возможные ошибки и читаемость. Дай краткий комментарий с конкретным обоснованием. Если проблем нет, кратко сообщи об этом.\n\nБлок для комментария:\n{{ $json.patch }}\n\nDiff файла для контекста:\n{{ $json.filePatch }}",
         "options": {
           "systemMessage": ""
         }
@@ -98,7 +98,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Проведи ревью блока изменений в файле {{ $json.path }}.\n\nПроверь корректность, возможные ошибки и читаемость.\nДай краткий комментарий по этому блоку с конкретными обоснованиями.\nЕсли проблем не обнаружено, кратко сообщи об этом.\n\nБлок изменений:\n{{ $json.patch }}",
+        "text": "=Проведи ревью указанного блока изменений в файле {{ $json.path }}.\n\nИспользуй diff файла, чтобы учесть связи между правками. В комментарий включай только замечания, относящиеся к указанному блоку. Если причина проблемы находится в другой правке, объясни её связь с этим блоком.\n\nПроверь корректность, возможные ошибки и читаемость. Дай краткий комментарий с конкретным обоснованием. Если проблем нет, кратко сообщи об этом.\n\nБлок для комментария:\n{{ $json.patch }}\n\nDiff файла для контекста:\n{{ $json.filePatch }}",
         "options": {
           "systemMessage": ""
         }
@@ -139,7 +139,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const blocks = [];\nconst files = $input.all();\n\nfor (const [fileIndex, item] of files.entries()) {\n  const file = item.json;\n\n  if (typeof file.patch !== 'string') {\n    continue;\n  }\n\n  let block = null;\n\n  for (const text of file.patch.split(/\\r?\\n/)) {\n    const header = text.match(\n      /^@@ -(\\d+)(?:,(\\d+))? \\+(\\d+)(?:,(\\d+))? @@/\n    );\n\n    if (header) {\n      const newCount = Number(header[4] ?? 1);\n      const side = newCount > 0 ? 'RIGHT' : 'LEFT';\n      const start = Number(side === 'RIGHT' ? header[3] : header[1]);\n      const count = side === 'RIGHT' ? newCount : Number(header[2] ?? 1);\n\n      block = {\n        path: file.filename,\n        patch: text,\n        start_line: start,\n        start_side: side,\n        line: start + count - 1,\n        side,\n      };\n\n      blocks.push({ json: block, pairedItem: { item: fileIndex } });\n    } else if (block) {\n      block.patch += '\\n' + text;\n    }\n  }\n}\n\nreturn blocks;\n"
+        "jsCode": "const blocks = [];\n\nfor (const [fileIndex, { json: file }] of $input.all().entries()) {\n  if (typeof file.patch !== 'string') {\n    continue;\n  }\n\n  let oldLine;\n  let newLine;\n  let change = null;\n\n  const flushChange = () => {\n    if (!change) return;\n\n    const { oldStart, newStart, removed, added, lines } = change;\n    const oldRangeStart = removed === 0 ? oldStart - 1 : oldStart;\n    const newRangeStart = added === 0 ? newStart - 1 : newStart;\n    const header = `@@ -${oldRangeStart},${removed} +${newRangeStart},${added} @@`;\n\n    const side = added > 0 ? 'RIGHT' : 'LEFT';\n    const start = added > 0 ? newStart : oldStart;\n    const count = added > 0 ? added : removed;\n\n    blocks.push({\n      json: {\n        path: file.filename,\n        patch: [header, ...lines].join('\\n'),\n        filePatch: file.patch,\n        start_line: start,\n        start_side: side,\n        line: start + count - 1,\n        side,\n      },\n      pairedItem: { item: fileIndex },\n    });\n\n    change = null;\n  };\n\n  for (const text of file.patch.split(/\\r?\\n/)) {\n    const header = text.match(/^@@ -(\\d+)(?:,(\\d+))? \\+(\\d+)(?:,(\\d+))? @@/);\n    if (header) {\n      flushChange();\n      oldLine = Number(header[1]) + (header[2] === '0' ? 1 : 0);\n      newLine = Number(header[3]) + (header[4] === '0' ? 1 : 0);\n      continue;\n    }\n\n    if (oldLine === undefined) continue;\n\n    const prefix = text[0];\n    if (prefix === ' ') {\n      flushChange();\n      oldLine++;\n      newLine++;\n      continue;\n    }\n\n    if (prefix === '\\\\') {\n      change?.lines.push(text);\n      continue;\n    }\n\n    if (prefix !== '+' && prefix !== '-') continue;\n\n    change ??= { oldStart: oldLine, newStart: newLine, removed: 0, added: 0, lines: [] };\n    change.lines.push(text);\n\n    if (prefix === '+') {\n      change.added++;\n      newLine++;\n    } else {\n      change.removed++;\n      oldLine++;\n    }\n  }\n\n  flushChange();\n}\n\nreturn blocks;\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
