@@ -1,0 +1,177 @@
+{
+  "name": "Practice 7.2 - Issue Classifier",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "title"
+            },
+            {
+              "name": "body"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7adf1438-d9ea-425e-8187-131ea0a1d96e",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Классифицируй GitHub Issue по заголовку и описанию.\n\nВыбери type:\n- bug — ошибка существующего функционала;\n- feature — запрос новой возможности;\n- task — задача по сопровождению, документации или вопрос об использовании;\n- unknown — информации недостаточно для определения типа.\n\nУкажи confidence — свою уверенность в классификации от 0 до 1.\nДля расплывчатого обращения без конкретики выбирай unknown\nи confidence ниже 0.8.\n\nЗаголовок:\n{{ $json.title }}\n\nОписание:\n{{ $json.body }}",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        256,
+        0
+      ],
+      "id": "138047af-01c5-466c-9810-617217264211",
+      "name": "Classify Issue"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"type\": {\n      \"type\": \"string\",\n      \"enum\": [\"bug\", \"task\", \"feature\", \"unknown\"]\n    },\n    \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n    }\n  },\n  \"required\": [\"type\", \"confidence\"],\n  \"additionalProperties\": false\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        208
+      ],
+      "id": "202e1ac1-280d-4da9-90a5-4211a2751bff",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "anthropic/claude-sonnet-5",
+          "mode": "list",
+          "cachedResultName": "anthropic/claude-sonnet-5"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        256,
+        208
+      ],
+      "id": "aa31886d-2d82-4ad9-94dc-62250ac9278d",
+      "name": "Claude",
+      "credentials": {
+        "openAiApi": {
+          "id": "2dlCUzuEnANcWaTz",
+          "name": "OpenAI account 15"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "668d433b-6cde-49f9-a645-84dde9cc05af",
+              "name": "type",
+              "value": "={{ $json.text?.type ?? $json.output?.type ?? $json.type }}",
+              "type": "string"
+            },
+            {
+              "id": "0ca08b2d-0b18-4dd2-9312-10e64b6417fc",
+              "name": "",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "993c4555-7316-4b5d-b602-e4ce26f25cc6",
+              "name": "confidence",
+              "value": "={{ $json.text?.confidence ?? $json.output?.confidence ?? $json.confidence }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        624,
+        0
+      ],
+      "id": "106a220c-a7c6-46d5-a9d7-33c4b9fd6463",
+      "name": "Return Classification"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Classify Issue",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classify Issue",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Classify Issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Issue": {
+      "main": [
+        [
+          {
+            "node": "Return Classification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9679d80b-8dab-4d6f-8186-81b2536a8cb6",
+  "meta": {
+    "instanceId": "68dbbb4e8fa686c3fd4e9982ade6836edb66976f207553e7ac22df961581c78c"
+  },
+  "nodeGroups": [],
+  "id": "9R6j8UtqOxObWXnK",
+  "tags": []
+}

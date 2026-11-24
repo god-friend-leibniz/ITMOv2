@@ -1,0 +1,459 @@
+{
+  "name": "Practice 7.2 - Weekly Report with AI",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * MON"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        2240,
+        864
+      ],
+      "id": "1a0c026e-ab93-4a23-93db-6bb1e6b5b3aa",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        1040
+      ],
+      "id": "f3f020c7-c1da-4886-8ec5-29fc88db6ee9",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "jsCode": "const repository = 'god-friend-leibniz/AI-Techonology';\n\nconst weekEnd = $now.startOf('week');\nconst weekStart = weekEnd.minus({ weeks: 1 });\nconst start = weekStart.toISO({ suppressMilliseconds: true });\nconst lastSecond = weekEnd.minus({ seconds: 1 })\n  .toISO({ suppressMilliseconds: true });\n\nconst filters = {\n  bug: 'label:bug',\n  task: 'label:task',\n  feature: 'label:feature',\n  unclassified: '-label:bug -label:task -label:feature',\n};\n\nconst scope = `repo:${repository} is:issue created:${start}..${lastSecond}`;\n\nreturn Object.entries(filters).map(([category, filter]) => ({\n  json: {\n    category,\n    repository,\n    weekStart: weekStart.toISODate(),\n    weekEnd: weekEnd.toISODate(),\n    q: `${scope} ${filter}`,\n  },\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2480,
+        960
+      ],
+      "id": "2fd503b3-ed33-4a12-bcf3-9b2f16cf0cb6",
+      "name": "Prepare Weekly Issues"
+    },
+    {
+      "parameters": {
+        "url": "https://api.github.com/search/issues",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.q }}"
+            },
+            {
+              "name": "per_page",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "pagination": {
+            "pagination": {
+              "parameters": {
+                "parameters": [
+                  {
+                    "name": "page",
+                    "value": "={{ $pageCount + 1 }}"
+                  }
+                ]
+              },
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !($response.headers.link ?? '').includes('rel=\"next\"') }}"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2704,
+        960
+      ],
+      "id": "fc162b7d-2835-4f69-ae22-ec7136b8e3d4",
+      "name": "Fetch Weekly Issues",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ioBF5BA1UrdjMuhm",
+          "name": "Bearer Auth account 15"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const { repository, weekStart, weekEnd } = $('Prepare Weekly Issues').first().json;\nconst types = ['bug', 'task', 'feature'];\nconst byType = { bug: 0, task: 0, feature: 0, unclassified: 0 };\nconst authorCounts = new Map();\nconst seen = new Set();\n\nfor (const { json: page } of $input.all()) {\n  if (!Array.isArray(page.items)) {\n    throw new Error('В ответе GitHub отсутствует массив items.');\n  }\n\n  if (page.incomplete_results || page.total_count > 1000) {\n    throw new Error('GitHub вернул неполные результаты поиска.');\n  }\n\n  for (const issue of page.items) {\n    if (seen.has(issue.id)) continue;\n    seen.add(issue.id);\n\n    const labels = issue.labels.map(label => label.name.toLowerCase());\n    const type = types.find(name => labels.includes(name)) ?? 'unclassified';\n    const login = issue.user?.login ?? '(неизвестен)';\n\n    byType[type]++;\n    authorCounts.set(login, (authorCounts.get(login) ?? 0) + 1);\n  }\n}\n\nconst byAuthor = Array.from(authorCounts, ([login, count]) => ({ login, count }));\nbyAuthor.sort((a, b) => b.count - a.count || a.login.localeCompare(b.login));\n\nreturn [{\n  json: { repository, weekStart, weekEnd, total: seen.size, byType, byAuthor },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2928,
+        960
+      ],
+      "id": "654b3dd4-64a7-44dd-9124-922e986bc359",
+      "name": "Group Weekly Issues"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "MbcROJFmVebj5TsY",
+          "mode": "list",
+          "cachedResultName": "Weekly Issue Stats",
+          "cachedResultUrl": "/projects/N1oOWk13DOrX0Fif/datatables/MbcROJFmVebj5TsY"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "repository",
+              "keyValue": "={{ $json.repository }}"
+            },
+            {
+              "keyName": "week_start",
+              "keyValue": "={{ DateTime.fromISO($json.weekStart, { zone: 'Europe/Moscow' }).toUTC().toISO() }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "repository": "={{ $json.repository }}",
+            "week_start": "={{ DateTime.fromISO($json.weekStart, { zone: 'Europe/Moscow' }).toUTC().toISO() }}",
+            "stats_json": "={{ JSON.stringify({ total: $json.total, byType: $json.byType, byAuthor: $json.byAuthor }) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "repository",
+              "displayName": "repository",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "week_start",
+              "displayName": "week_start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "stats_json",
+              "displayName": "stats_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3152,
+        960
+      ],
+      "id": "f6928eff-8f9b-4933-b733-d2e5617f24a6",
+      "name": "Upsert row(s)"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "MbcROJFmVebj5TsY",
+          "mode": "list",
+          "cachedResultName": "Weekly Issue Stats",
+          "cachedResultUrl": "/projects/N1oOWk13DOrX0Fif/datatables/MbcROJFmVebj5TsY"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "repository",
+              "keyValue": "={{ $json.repository }}"
+            },
+            {
+              "keyName": "week_start",
+              "keyValue": "={{ DateTime.fromISO($json.week_start).setZone('Europe/Moscow').minus({ weeks: 1 }).toUTC().toISO() }}"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3376,
+        960
+      ],
+      "id": "4ac29a16-c4c8-453f-8b12-88291bb1b993",
+      "name": "Get Previous Week",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const stats = $('Group Weekly Issues').first().json;\nconst { weekStart, weekEnd, total, byType, byAuthor } = stats;\n\nconst lastDay = new Date(`${weekEnd}T00:00:00Z`);\nlastDay.setUTCDate(lastDay.getUTCDate() - 1);\nconst period = `${weekStart} — ${lastDay.toISOString().slice(0, 10)}`;\n\nfunction escapeHtml(value) {\n  return String(value)\n    .replaceAll('&', '&amp;')\n    .replaceAll('<', '&lt;')\n    .replaceAll('>', '&gt;');\n}\n\nfunction table(headers, rows) {\n  const cellStyle = 'border:1px solid #ddd;padding:6px 10px;text-align:left';\n  const head = headers.map(header =>\n    `<th scope=\"col\" style=\"${cellStyle}\">${escapeHtml(header)}</th>`\n  ).join('');\n  const body = rows.map(row =>\n    `<tr>${row.map(value =>\n      `<td style=\"${cellStyle}\">${escapeHtml(value)}</td>`\n    ).join('')}</tr>`\n  ).join('');\n\n  return `<table style=\"border-collapse:collapse\">\n    <thead><tr>${head}</tr></thead>\n    <tbody>${body}</tbody>\n  </table>`;\n}\n\nconst previous = $json.stats_json ? JSON.parse($json.stats_json) : null;\n\nconst delta = previous ? {\n  total: total - previous.total,\n  byType: Object.fromEntries(Object.keys(byType).map(type => [\n    type,\n    byType[type] - (previous.byType[type] ?? 0),\n  ])),\n} : null;\n\nconst formatDelta = value => value > 0 ? `+${value}` : String(value);\n\nconst typeRows = [\n  ['Баги', 'bug'],\n  ['Задачи', 'task'],\n  ['Запросы на новые функции', 'feature'],\n  ['Без категории', 'unclassified'],\n].map(([label, type]) => [\n  label,\n  byType[type],\n  delta ? formatDelta(delta.byType[type]) : '—',\n]);\n\nconst comparison = delta\n  ? `<p>Изменение к прошлой неделе <strong>${formatDelta(delta.total)}</strong></p>`\n  : '<p>Нет данных за предыдущую неделю.</p>';\nconst authorRows = byAuthor.map(({ login, count }) => [login, count]);\nconst authorSection = authorRows.length\n  ? table(['Автор', 'Issues'], authorRows)\n  : '<p>За неделю новых Issues не было.</p>';\n\nconst subject = `Еженедельный отчёт по GitHub Issues — ${period}`;\nconst html = `\n  <h1>GitHub Issues за неделю</h1>\n  <p>Период <strong>${period}</strong></p>\n  <p>Всего новых Issues <strong>${total}</strong></p>\n  ${comparison}\n  <h2>По типам</h2>\n  ${table(['Тип', 'Issues', 'Δ'], typeRows)}\n  <h2>По авторам</h2>\n  ${authorSection}\n`;\n\nreturn { json: { ...stats, delta, subject, html } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3600,
+        960
+      ],
+      "id": "05d8f6cc-0cad-4d45-8ca1-4043151c70c6",
+      "name": "Build Weekly Email"
+    },
+    {
+      "parameters": {
+        "fromEmail": "victoryznov@gmail.com",
+        "toEmail": "zampedristepanek671@gmail.com",
+        "subject": "={{ $json.subject }}",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        4416,
+        960
+      ],
+      "id": "d8adc3ce-ac8a-4bb8-929e-401611fdaf7d",
+      "name": "Send an Email",
+      "webhookId": "8657367c-ede9-49fb-bcab-f04ee36267e5",
+      "credentials": {
+        "smtp": {
+          "id": "qXhTshRYPDNHlt1T",
+          "name": "SMTP account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Напиши AI-комментарий к еженедельному отчёту по GitHub Issues. Ответь на русском двумя или тремя короткими предложениями обычного текста.\n\nНазови самое заметное изменение, если есть данные для сравнения. Используй только приведённые числа. Для delta.total и delta.byType знак плюс означает рост, минус — снижение. Если delta равна null, опиши текущую неделю и укажи, что данных для сравнения пока нет. Не объясняй причины изменений без данных.\n\nПериод отчёта начинается {{ $json.weekStart }}.\nВсего новых Issues {{ $json.total }}.\nПо типам {{ JSON.stringify($json.byType) }}.\nИзменения к предыдущей неделе {{ JSON.stringify($json.delta) }}.\n\nТипы: bug — баги, task — задачи, feature — запросы на новые функции, unclassified — без категории.",
+        "batching": {}
+      },
+      "name": "Write Weekly AI Comment",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "id": "5223dfcc-efd3-4c80-b40c-0ac807bb7a82",
+      "position": [
+        3824,
+        960
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "openai/gpt-5.2",
+          "mode": "list",
+          "cachedResultName": "openai/gpt-5.2"
+        },
+        "options": {}
+      },
+      "id": "5fd1f8c2-70d2-4042-bfac-c4c52ef05812",
+      "name": "Weekly Report Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        3824,
+        1152
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "2dlCUzuEnANcWaTz",
+          "name": "OpenAI account 15"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const report = $('Build Weekly Email').first().json;\nconst annotation = typeof $json.text === 'string' ? $json.text.trim() : '';\n\nconst message = annotation || 'AI-комментарий временно недоступен.';\nconst safeMessage = message\n  .replaceAll('&', '&amp;')\n  .replaceAll('<', '&lt;')\n  .replaceAll('>', '&gt;')\n  .replace(/\\r?\\n/g, '<br>');\n\nconst html = report.html + `\n  <h2>AI-комментарий недели</h2>\n  <p>${safeMessage}</p>\n`;\n\nreturn { json: { ...report, html } };"
+      },
+      "name": "Add AI Comment to Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "7ec51454-eea2-4033-87db-022cdcda2c84",
+      "position": [
+        4176,
+        960
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Prepare Weekly Issues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Prepare Weekly Issues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Weekly Issues": {
+      "main": [
+        [
+          {
+            "node": "Fetch Weekly Issues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Weekly Issues": {
+      "main": [
+        [
+          {
+            "node": "Group Weekly Issues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Group Weekly Issues": {
+      "main": [
+        [
+          {
+            "node": "Upsert row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert row(s)": {
+      "main": [
+        [
+          {
+            "node": "Get Previous Week",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Previous Week": {
+      "main": [
+        [
+          {
+            "node": "Build Weekly Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Weekly Email": {
+      "main": [
+        [
+          {
+            "node": "Write Weekly AI Comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Weekly AI Comment": {
+      "main": [
+        [
+          {
+            "node": "Add AI Comment to Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly Report Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Write Weekly AI Comment",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add AI Comment to Email": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a2b3f603-27e9-443b-b65e-aa528e7f1078",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "68dbbb4e8fa686c3fd4e9982ade6836edb66976f207553e7ac22df961581c78c"
+  },
+  "nodeGroups": [],
+  "id": "wtXLk5zd5nbpsOvt",
+  "tags": []
+}
